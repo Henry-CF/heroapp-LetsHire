@@ -3,12 +3,11 @@ class User < ActiveRecord::Base
   # :registerable, :recoverable, :rememberable, :trackable, :validatable
   # :token_authenticatable, :confirmable,
   # :lockable, :timeoutable and :omniauthable
-  devise :database_authenticatable, :rememberable, :validatable, :token_authenticatable
+  devise :database_authenticatable, :rememberable, :token_authenticatable
 
   before_save :ensure_authentication_token
 
-  validates_confirmation_of :password, :if => :already_has_password?, :on => :update
-  validates_presence_of :password, :if => :already_has_password?, :on => :update
+  validates_confirmation_of :password
 
   # Setup accessible (or protected) attributes for your model
   #attr_accessible :email, :password, :password_confirmation, :remember_me, :name
@@ -75,8 +74,4 @@ class User < ActiveRecord::Base
     Department.find(self.department_id).name if self.department_id
   end
 
-private
-  def already_has_password?
-    !encrypted_password.blank?
-  end
 end
