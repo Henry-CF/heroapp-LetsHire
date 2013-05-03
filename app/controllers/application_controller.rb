@@ -9,6 +9,22 @@ class ApplicationController < ActionController::Base
     redirect_to root_path, :notice => NO_PERMISSION
   end
 
+  # Hack for db_seed because 'vmc console' is slow
+  def db_seed
+    return render :text => 'DB is initialized already' if User.count > 0 || Department.count > 0
+    long_password = '123456789'
+
+    Department.create([ { name: 'Marketing', description: 'Markecting'},
+                    { name: 'IT', description: 'IT'},
+                    { name: 'Facility', description: 'Facility'}])
+    User.new_admin(:email => 'admin@local.com',
+                   :password => long_password,
+                   :name => 'System Administrator',
+                   :department_id => 2).save
+
+    redirect_to new_user_session_path, :notice => 'DB initialized successfully'
+  end
+
   private
 
   def require_login

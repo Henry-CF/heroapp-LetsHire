@@ -1,9 +1,11 @@
 = ' '
 span#opening_state_wrapper
   -country_code ||= params[:country_code]
+  -city ||= ""
   -country = Carmen::Country.coded(country_code)
   -unless country.nil?
     -if country.subregions?
-      =subregion_select container, :province, country_code
+      =subregion_select container, :province, country_code, :prompt => 'province'
+      = text_field container, :city, { :value => city, :placeholder => 'city' }
     -else
       =text_field container, :province

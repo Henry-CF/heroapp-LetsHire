@@ -38,6 +38,8 @@ class InitialSchema < ActiveRecord::Migration
       t.boolean :admin, :null => false, :default => false # whether is system administrator
       t.integer :roles_mask, :default => 1
       t.integer :department_id
+      t.string :authentication_token
+      t.boolean :deleted, :null => false, :default => false
 
       t.timestamps
     end
@@ -54,8 +56,6 @@ class InitialSchema < ActiveRecord::Migration
       t.string :phone
       t.string :source
       t.text   :description
-      t.string :resume
-      # TODO reference JD
       t.timestamps
     end
 
@@ -65,6 +65,7 @@ class InitialSchema < ActiveRecord::Migration
     create_table :departments do |t|
       t.string :name, :null => false
       t.string :description
+      t.integer :openings_count
     end
 
     add_index :departments, :name, :unique => true
@@ -80,28 +81,42 @@ class InitialSchema < ActiveRecord::Migration
       t.integer :recruiter_id
       t.text :description
       t.integer :status, :default => 0
+      t.integer :creator_id
+      t.integer :total_no, :default => 1
+      t.integer :filled_no, :default => 0
 
       t.timestamps
     end
 
     add_index :openings, :hiring_manager_id
     add_index :openings, :recruiter_id
+    add_index :openings, :creator_id
+    add_index :openings, :department_id
 
-    create_table :opening_participants, :id => false do |t|
+    create_table :opening_participants do |t|
       t.belongs_to :user
       t.belongs_to :opening
     end
 
-    add_index :opening_participants, :user_id
-    add_index :opening_participants, :opening_id
+    add_index :opening_participants, [:user_id, :opening_id], :unique => true
 
     create_table :opening_candidates do |t|
       t.belongs_to :opening
       t.belongs_to :candidate
+      t.integer :status, :default => 1
+      t.boolean :hold
     end
 
-    add_index :opening_candidates, :opening_id
-    add_index :opening_candidates, :candidate_id
+    add_index :opening_candidates, [:opening_id, :candidate_id], :unique => true
+
+    create_table :assessments do |t|
+      t.belongs_to :opening_candidate
+      t.integer :creator_id
+      t.text :comment
+
+      t.timestamps
+    end
+    add_index :assessments, :opening_candidate_id
 
     create_table :interviews do |t|
       t.belongs_to :opening_candidate
@@ -109,7 +124,7 @@ class InitialSchema < ActiveRecord::Migration
       t.string :modality,       :null => false
       t.string :title,          :null => false
       t.text :description
-      t.string :status
+      t.string :status, :default => 'scheduled'
       t.float :score
       t.text :assessment
       t.datetime :scheduled_at, :null => false
@@ -128,7 +143,6 @@ class InitialSchema < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :interviewers, :interview_id
-    add_index :interviewers, :user_id
+    add_index :interviewers, [:user_id, :interview_id], :unique => true
   end
 end

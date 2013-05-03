@@ -63,7 +63,6 @@ class OpeningsController < ApplicationController
   # GET /openings/1/edit
   def edit
     @opening = Opening.find(params[:id])
-
   rescue ActiveRecord::RecordNotFound
     redirect_to openings_url, notice: 'Invalid opening'
   end
@@ -74,14 +73,10 @@ class OpeningsController < ApplicationController
     @opening = Opening.new(params[:opening])
 
     @opening.creator = current_user
-    respond_to do |format|
-      if @opening.save
-        format.html { redirect_to @opening, notice: 'Opening was successfully created.' }
-        format.json { render json: @opening, status: :created, location: @opening }
-      else
-        format.html { render action: "new" }
-        format.json { render json: @opening.errors, status: :unprocessable_entity }
-      end
+    if @opening.save
+      redirect_to @opening, notice: 'Opening was successfully created.'
+    else
+      render action: "new"
     end
   end
 
@@ -90,18 +85,15 @@ class OpeningsController < ApplicationController
   def update
     @opening = Opening.find(params[:id])
 
-    respond_to do |format|
-      if @opening.update_attributes(params[:opening])
-        format.html { redirect_to @opening, notice: 'Opening was successfully updated.' }
-        format.json { head :no_content }
-      else
-        format.html { render action: "edit" }
-        format.json { render json: @opening.errors, status: :unprocessable_entity }
-      end
+    if @opening.update_attributes(params[:opening])
+      redirect_to @opening, notice: 'Opening was successfully updated.'
+    else
+      render action: "edit"
     end
   rescue ActiveRecord::RecordNotFound
     redirect_to openings_url, notice: 'Invalid opening'
   end
+
 
   # DELETE /openings/1
   # DELETE /openings/1.json
@@ -109,10 +101,9 @@ class OpeningsController < ApplicationController
     @opening = Opening.find(params[:id])
     @opening.destroy
 
-    respond_to do |format|
-      format.html { redirect_to openings_url }
-      format.json { head :no_content }
-    end
+    redirect_to openings_url
+  rescue
+    redirect_to openings_url, notice: 'Invalid opening'
   end
 
   def subregion_options
@@ -121,7 +112,7 @@ class OpeningsController < ApplicationController
 
 
   def opening_options
-    render :partial => 'opening_select'
+    render :partial => 'openings/opening_select', :locals => {:selected_department_id => params[:selected_department_id] }
   end
 
   private

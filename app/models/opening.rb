@@ -36,21 +36,22 @@ class Opening < ActiveRecord::Base
   end
 
   def full_address
-    if country.nil?
-      (city || "UNKNOWN")
-    else
-      Country.coded(country).try { |country_obj|
+    items = []
+    items << city unless city.to_s.blank?
+    unless country.nil?
+      Country.coded(country).try do |country_obj|
         sub_regions = country_obj.subregions
         province_obj = sub_regions.respond_to?(:coded) ?  sub_regions.coded(province) : nil
-        logger.debug sub_regions.inspect
-        logger.debug province
-        if province_obj.nil?
-          (city || "UNKNOWN") + ',' + (province || "UNKNOWN") + ', ' + country_obj.name
+        unless province_obj.nil?
+          province_str = province_obj.try(:name)
         else
-          (city || "UNKNOWN") + ',' + province_obj.name.to_s + ',' + country_obj.name
+          province_str = province
         end
-      }
+        items << province_str.to_s unless province_str.to_s.blank?
+        items << country_obj.try(:name)
+      end
     end
+    items.join(', ')
   end
 
   def participant_tokens=(ids)
@@ -74,8 +75,8 @@ class Opening < ActiveRecord::Base
     if status != STATUS_LIST[:closed]
       if hiring_manager_id && hiring_manager_id.to_i > 0
         begin
-          user = User.find(hiring_manager_id)
-          valid = user && user.has_role?(:hiringmanager)
+          user = User.active.find(hiring_manager_id)
+          valid = user && user.has_role?(:hiring_manager)
         rescue
         end
         errors.add(:hiring_manager_id, "isn't a hiring manager") unless valid
@@ -83,7 +84,7 @@ class Opening < ActiveRecord::Base
       if recruiter_id && recruiter_id.to_i > 0
         valid = nil
         begin
-          user = User.find(recruiter_id)
+          user = User.active.find(recruiter_id)
           valid = user && user.has_role?(:recruiter)
         rescue
         end

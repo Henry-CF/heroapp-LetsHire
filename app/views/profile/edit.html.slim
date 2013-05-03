@@ -1,5 +1,10 @@
+h3
+  span
+  = "Profile for #{@user.email}"
+
 = form_for @user, :url => { :action => 'update' } do |form|
   = form.error_messages
+
   .field
     = form.label :current_password
     = form.password_field :current_password

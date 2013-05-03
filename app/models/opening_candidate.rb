@@ -12,21 +12,11 @@ class OpeningCandidate < ActiveRecord::Base
 
   validates :candidate_id, :uniqueness => { :scope => :opening_id }
 
-  #Don't change order randomly. order matters.
-  STATUS_LIST = { 'Interview Loop' => 1,
-                  'Fail' => 2,
-                  'Quit' => 3,
-                  'Offer Pending' => 7,
-                  'Offer Sent' => 8,
-                  'Offer Declined' => 9,
-                  'Offer Accepted' => 10}
-
-  STATUS_STRINGS = STATUS_LIST.invert
 
   def status_str
     if status.nil?
       return "interview unscheduled"
-    elsif STATUS_STRINGS[status] == :interview_loop
+    elsif STATUS_STRINGS[status] == OpeningCandidate::INTERVIEW_LOOP
       if interviews.count == 0
         return "interview unscheduled"
       else
@@ -43,7 +33,19 @@ class OpeningCandidate < ActiveRecord::Base
 
 
   def in_interview_loop?
-    status == OpeningCandidate::STATUS_LIST[:interview_loop]
+    status.nil? || (status == OpeningCandidate::STATUS_LIST[OpeningCandidate::INTERVIEW_LOOP])
   end
+
+  private
+  INTERVIEW_LOOP = 'Interview Loop'
+  #Don't change order randomly. order matters.
+  STATUS_LIST = { INTERVIEW_LOOP => 1,
+                  'Fail' => 2,
+                  'Quit' => 3,
+                  'Offer Pending' => 7,
+                  'Offer Sent' => 8,
+                  'Offer Declined' => 9,
+                  'Offer Accepted' => 10}
+  STATUS_STRINGS = STATUS_LIST.invert
 
 end

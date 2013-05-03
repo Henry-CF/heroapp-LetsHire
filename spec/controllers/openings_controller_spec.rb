@@ -24,19 +24,12 @@ describe OpeningsController do
   # Opening. As you add validations to Opening, be sure to
   # update the return value of this method accordingly.
   def valid_attributes
-    { :title => 'Marketing Manager',
-      :department_id => 1,
-      :hiring_manager_id => @hiring_manager1.id,
+    FactoryGirl.attributes_for(:opening).merge({:hiring_manager_id => @hiring_manager1.id,
       :recruiter_id => @recruiter1.id,
-      :status => 1}
+      :department_id => @hiring_manager1.department_id,
+      :status => 1})
   end
 
-  def create_user(role)
-    attrs = FactoryGirl.attributes_for(role)
-    attrs.delete(:admin)
-    attrs.delete(:roles_mask)
-    User.create! attrs
-  end
 
   # This should return the minimal set of values that should be in the session
   # in order to pass any filters (e.g. authentication) defined in

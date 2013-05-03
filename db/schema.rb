@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130418025954) do
+ActiveRecord::Schema.define(:version => 20130428012939) do
 
   create_table "assessments", :force => true do |t|
     t.integer  "opening_candidate_id"
@@ -21,13 +21,14 @@ ActiveRecord::Schema.define(:version => 20130418025954) do
     t.datetime "updated_at",           :null => false
   end
 
+  add_index "assessments", ["opening_candidate_id"], :name => "index_assessments_on_opening_candidate_id"
+
   create_table "candidates", :force => true do |t|
     t.string   "name",        :null => false
     t.string   "email",       :null => false
     t.string   "phone"
     t.string   "source"
     t.text     "description"
-    t.string   "resume"
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
   end
@@ -43,6 +44,11 @@ ActiveRecord::Schema.define(:version => 20130418025954) do
 
   add_index "departments", ["name"], :name => "index_departments_on_name", :unique => true
 
+  create_table "fake_data", :id => false, :force => true do |t|
+    t.integer "id",      :null => false
+    t.binary  "content"
+  end
+
   create_table "interviewers", :force => true do |t|
     t.integer  "interview_id"
     t.integer  "user_id"
@@ -54,18 +60,18 @@ ActiveRecord::Schema.define(:version => 20130418025954) do
 
   create_table "interviews", :force => true do |t|
     t.integer  "opening_candidate_id"
-    t.string   "modality",                             :null => false
-    t.string   "title",                                :null => false
+    t.string   "modality",                                      :null => false
+    t.string   "title",                                         :null => false
     t.text     "description"
-    t.string   "status"
+    t.string   "status",               :default => "scheduled"
     t.float    "score"
     t.text     "assessment"
-    t.datetime "scheduled_at",                         :null => false
+    t.datetime "scheduled_at",                                  :null => false
     t.integer  "duration",             :default => 30
     t.string   "phone"
     t.string   "location"
-    t.datetime "created_at",                           :null => false
-    t.datetime "updated_at",                           :null => false
+    t.datetime "created_at",                                    :null => false
+    t.datetime "updated_at",                                    :null => false
   end
 
   add_index "interviews", ["opening_candidate_id"], :name => "index_interviews_on_opening_candidate_id"
@@ -73,13 +79,13 @@ ActiveRecord::Schema.define(:version => 20130418025954) do
   create_table "opening_candidates", :force => true do |t|
     t.integer "opening_id"
     t.integer "candidate_id"
-    t.integer "status"
+    t.integer "status",       :default => 1
     t.boolean "hold"
   end
 
   add_index "opening_candidates", ["opening_id", "candidate_id"], :name => "index_opening_candidates_on_opening_id_and_candidate_id", :unique => true
 
-  create_table "opening_participants", :id => false, :force => true do |t|
+  create_table "opening_participants", :force => true do |t|
     t.integer "user_id"
     t.integer "opening_id"
   end
@@ -96,16 +102,25 @@ ActiveRecord::Schema.define(:version => 20130418025954) do
     t.integer  "recruiter_id"
     t.text     "description"
     t.integer  "status",            :default => 0
-    t.datetime "created_at",                       :null => false
-    t.datetime "updated_at",                       :null => false
     t.integer  "creator_id"
     t.integer  "total_no",          :default => 1
     t.integer  "filled_no",         :default => 0
+    t.datetime "created_at",                       :null => false
+    t.datetime "updated_at",                       :null => false
   end
 
   add_index "openings", ["creator_id"], :name => "index_openings_on_creator_id"
+  add_index "openings", ["department_id"], :name => "index_openings_on_department_id"
   add_index "openings", ["hiring_manager_id"], :name => "index_openings_on_hiring_manager_id"
   add_index "openings", ["recruiter_id"], :name => "index_openings_on_recruiter_id"
+
+  create_table "resumes", :force => true do |t|
+    t.integer  "candidate_id"
+    t.string   "resume_name"
+    t.string   "resume_path"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
 
   create_table "users", :force => true do |t|
     t.string   "email",                :default => "",    :null => false
@@ -115,9 +130,10 @@ ActiveRecord::Schema.define(:version => 20130418025954) do
     t.boolean  "admin",                :default => false, :null => false
     t.integer  "roles_mask",           :default => 1
     t.integer  "department_id"
+    t.string   "authentication_token"
     t.datetime "created_at",                              :null => false
     t.datetime "updated_at",                              :null => false
-    t.string   "authentication_token"
+    t.datetime "deleted_at"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true

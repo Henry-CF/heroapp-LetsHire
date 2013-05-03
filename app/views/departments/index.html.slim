@@ -1,0 +1,23 @@
+h1 Listing departments
+
+table
+  tr
+    th Title
+    th # of Users
+    th # of Openings
+    th
+    th
+
+  - @departments.each do |department|
+    tr
+      td= department.name
+      td= department.users.count
+      td= department.openings.count
+      td.actions
+        = link_to 'Rename', :class => 'btn'
+        - if department.users.count == 0
+          = link_to 'Delete', department, :confirm => 'Are you sure?', :method => :delete, :class => 'btn btn-danger'
+br
+
+h4 New/Edit Department Below
+

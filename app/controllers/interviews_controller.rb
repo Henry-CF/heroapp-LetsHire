@@ -46,12 +46,9 @@ class InterviewsController < AuthorizedController
       redirect_to @opening.candidate, :notice => "The candidate isn't pending for interview."
       return
     end
-    @interview = Interview.new params[:interview]
-    @interview.opening_candidate = @opening_candidate
-    @interview.status = Interview::STATUS_NEW
+    params[:interview].merge! :status => Interview::STATUS_NEW
+    @interview = @opening_candidate.interviews.build params[:interview]
     if @interview.save
-      @opening_candidate.status = OpeningCandidate::STATUS_LIST[:interview_loop]
-      @opening_candidate.save
       redirect_to @interview, :notice => "Interview was successfully created"
     else
       prepare_edit
@@ -78,21 +75,28 @@ class InterviewsController < AuthorizedController
     @interview.destroy
 
     respond_to do |format|
-      format.html { redirect_to candidate_path(@candidate), :notice => "Interview deleted" }
-      format.json { head :no_content }
+      format.html do
+        if request.referrer == interview_path(@interview)
+          redirect_to interviews_url, :notice => "Interview deleted"
+        else
+          redirect_to :back, :notice => "Interview deleted"
+        end
+      end
     end
+  rescue
+    redirect_to interviews_url, notice: 'Invalid interview'
   end
 
   private
 
   def prepare_edit
-    @candidate = @interview.opening_candidate.candidate
     @opening_candidate = @interview.opening_candidate
-    load_openings
+    @candidate = @opening_candidate.candidate
+    load_openings unless @candidate.nil?
   end
 
   def load_openings
-    @opening_candidates = @candidate.opening_candidates.where(:status => OpeningCandidate::STATUS_LIST[:interview_loop])
+    @opening_candidates = @candidate.opening_candidates.select { |item| item.in_interview_loop? }
     interviewers_hash = {}
     @opening_candidates.each do |opening_candidate|
       opening = opening_candidate.opening

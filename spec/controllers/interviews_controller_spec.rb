@@ -11,9 +11,7 @@ describe InterviewsController do
 
   before :all do
     @users = []
-    3.times do
-      @users << User.create!(FactoryGirl.attributes_for(:user))
-    end
+    3.times { @users << create_user(:user) }
     @opening = Opening.create! FactoryGirl.attributes_for(:opening)
     @candidate = Candidate.create! FactoryGirl.attributes_for(:candidate)
     @candidate.should be_valid

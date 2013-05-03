@@ -2,7 +2,7 @@
   = f.label :opening, "Department", :class => "control-label"
   .controls
     - if (not @departments.nil?) and @departments.size > 0
-      select id="department_ids" name="candidate[department_ids]"
+      select id="candidate_department_id" name="candidate[department_id]"
         option value="0" ="Assign to department..."
         - @departments.each do |department|
           -if @selected_department_id == department.id

@@ -7,15 +7,21 @@ table class='table table-hover'
     tr
       th Name
       th Email
+      th Department
       th
   tbody
     - for user in @users do
       tr
         td = link_to user.name, user
         td = user.email
+        td = user.department.try(:name)
         td.actions
+          -if user != current_user
+            -if user.deleted_at.nil?
+              =link_to 'Deactivate',  disable_user_path(user), :confirm => 'Are you sure?', :class => 'btn btn-danger'
+            -else
+              =link_to 'Reactivate',  enable_user_path(user), :class => 'btn'
           a.btn href=edit_user_path(user.id) Edit
-          =link_to 'Delete', user, :confirm => 'Are you sure?', :method => :delete, :class => 'btn btn-danger'
 
 div.digg_pagination
   = will_paginate @users, :class => "digg-paginate"

@@ -35,43 +35,25 @@ describe Interview do
   end
 
   describe 'interviewers' do
-    let :valid_candidate do
-      {
-          :name => Faker::Name.name,
-          :email => Faker::Internet.email,
-          :phone => Faker::PhoneNumber.phone_number
-      }
-    end
-
     let :valid_opening_candidate do
       {
-          :candidate_id => @candidate.id,
-          :opening_id => 1
+          :candidate_id => Candidate.first.try(:id),
+          :opening_id => Opening.first.try(:id)
       }
     end
 
     def valid_interview
-      {
-          :opening_candidate_id => @opening.id,
-          :modality     => Interview::MODALITY_PHONE,
-          :title        => "interview for David",
-          :description  => "30 minutes discussion",
-          :status       => Interview::STATUS_NEW,
-          :phone        => Faker::PhoneNumber.phone_number,
-          :scheduled_at => DateTime.now.to_s,
-          :duration     => 1,
-          :interviewer_ids => [@users[0].id]
-      }
+      FactoryGirl.attributes_for(:interview).merge({ :opening_candidate_id => OpeningCandidate.first.try(:id),
+                                     :interviewer_ids => [@users[0].id]})
     end
 
     before :all do
-      @candidate = Candidate.create! valid_candidate
-      @opening = OpeningCandidate.create! valid_opening_candidate
       @users = []
-      user_password = '12345678'
-      3.times do
-        @users << User.create!(:name => Faker::Name.name, :email => Faker::Internet.email + UUIDTools::UUID.random_create.to_s, :password => user_password)
-      end
+      3.times { @users << create_user(:user) }
+      Opening.create! FactoryGirl.attributes_for(:opening).merge({:department_id => @users[0].department_id,
+                                                                  :status => 1})
+      Candidate.create! FactoryGirl.attributes_for :candidate
+      OpeningCandidate.create! valid_opening_candidate
     end
 
     before :each do

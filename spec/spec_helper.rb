@@ -48,7 +48,12 @@ end
 
 Spork.each_run do
   # This code will be run each time you run your specs.
-
+  def create_user(role)
+    user = User.create! FactoryGirl.attributes_for(role)
+    user.roles = [ role.to_s ]
+    user.save!
+    user
+  end
 end
 
 # --- Instructions ---

@@ -8,43 +8,42 @@
   .control-group
     =f.label :department, :class => 'control-label'
     .controls
-      = f.select :department_id, Department.all.map { |d| [ d.name, d.id ] }
-
-  .control-group
-      =f.label :total_no, 'Total Seats', :class => 'control-label'
-      .controls
-        = f.number_field :total_no, :in => 1..1000
-
-  .control-group
-      =f.label :filled_no, 'Filled Seats', :class => 'control-label'
-      .controls
-              = f.number_field :filled_no, :in => 0..1000
+      - departments = User.active_departments
+      - if departments.size > 0
+        = f.select :department_id, departments, :prompt => 'Please select a department'
+      - else
+        = f.label 'No hiring manager created?!'
 
   .control-group
     =f.label :hiring_manager, 'Hiring Manager', :class => 'control-label'
     .controls
-      = f.select :hiring_manager_id, User.users_with_role(:hiringmanager).map { |user| [ user.name, user.id ] }
+      = render 'users/user_select', { :selected_department_id => @opening.department_id, :role => 'hiring_manager', :user_id => @opening.hiring_manager.try(:id) }
 
   .control-group
     =f.label :recruiter, :class => 'control-label'
     .controls
-      = f.select :recruiter_id, User.users_with_role(:recruiter).map { |user| [ user.name, user.id ] }
+      = f.select :recruiter_id, User.with_role(:recruiter).map { |user| [ user.name, user.id ] }
 
   .control-group
-    =f.label :country, :class => 'control-label'
+    =f.label :total_no, 'Total Seats', :class => 'control-label'
     .controls
-      = f.country_select :country, { :priority => ['US', 'CN'], :prompt => 'Please select a country' }
-      = render 'utilities/province_select', { :opening_form => f, :country_code => f.object.country, :container => 'opening'}
+      = f.number_field :total_no, :in => 1..1000
+
+  .control-group
+    =f.label :filled_no, 'Filled Seats', :class => 'control-label'
+    .controls
+      = f.number_field :filled_no, :in => 0..1000
 
   .control-group
     =f.label :city, :class => 'control-label'
     .controls
-      = f.text_field :city
+      = f.country_select :country, { :priority => ['US', 'CN'], :prompt => 'Please select a country' }
+      = render 'utilities/province_select', { :opening_form => f, :country_code => f.object.country, :city => @opening.city, :container => 'opening'}
 
   .control-group
     =f.label :description, :class => 'control-label'
     .controls
-      = f.text_area :description, :class => 'span8'
+      = f.text_area :description, :class => 'span9'
 
   -if @opening.id && @opening.status != Opening::STATUS_LIST[:draft]
     .control-group
@@ -52,12 +51,10 @@
       .controls
         = f.select :status, Opening::STATUS_LIST, {}, {:class => 'capitalized-text'}
 
-    -if @opening.published?
-      .control-group
-        =f.label :participants, "Assign Possible Interviewers", :class => 'control-label'
-        .controls
-          = f.text_field :participant_tokens, "data-pre" => @opening.participants.map(&:attributes).to_json
-          = link_to 'List(ToDo...)', :controller => "users", :action => 'index_for_tokens', "format" => "json"
+    .control-group
+      =f.label :participants, "Assign Possible Interviewers", :class => 'control-label'
+      .controls
+        = f.text_field :participant_tokens, "data-pre" => @opening.participants.map(&:attributes).to_json
   -else
     .control-group
       =f.label :status, "Make Job Opening active immediately", :class => 'control-label'

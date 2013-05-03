@@ -2,11 +2,7 @@ require 'spec_helper'
 
 describe UsersController do
   def valid_attributes
-    {
-      :email    => 'test@test.com',
-      :password => 'testtest',
-      :name     => 'test_user'
-    }
+    FactoryGirl.attributes_for(:user)
   end
 
   before :each do
@@ -126,19 +122,103 @@ describe UsersController do
     end
   end
 
-  describe "DELETE destroy" do
-    it "destroys the requested user" do
-      user = User.create! valid_attributes
-      expect {
-        delete :destroy, {:id => user.to_param}
-      }.to change(User, :count).by(-1)
+  describe "User Reactivate/Deactivate" do
+
+    before :each do
+      request.env['HTTP_REFERER'] = users_url
     end
 
-    it "redirects to the users list" do
+    it "deactivate a user" do
       user = User.create! valid_attributes
-      delete :destroy, {:id => user.to_param}
-      response.should redirect_to(users_url)
+      put :deactivate, {:id => user.to_param}
+      expect(response).to redirect_to(users_url)
+      expect(flash[:notice]).to eq(nil)
+
+      expect(assigns(:user).deleted_at).to_not eq(nil)
+
     end
+
+    it "reactivate a user" do
+      user = User.create! valid_attributes.merge(:deleted_at => Time.current)
+      put :reactivate, {:id => user.to_param}
+      response.should redirect_to(users_url)
+      flash[:notice].should eq(nil)
+
+      assigns(:user).deleted_at.should eq(nil)
+
+    end
+
+    it "cannot deactivate yourself" do
+      put :deactivate, { :id => subject.current_user.to_param}
+      flash[:notice].should eq('Cannot disable yourself')
+    end
+
+    it "cannot deactivate an active hiring_manager" do
+      users = []
+      [:hiring_manager, :recruiter].each { |role| users << create_user(role) }
+      opening = Opening.create! FactoryGirl.attributes_for(:opening).merge({:hiring_manager_id => users[0].id,
+                                                    :department_id => users[0].department_id,
+                                                    :recruiter_id => users[1].id,
+                                                    :status => 1})
+      put :deactivate, { :id => users[0].to_param}
+      flash[:notice].should include('active openings')
+      user = users[0]
+      user.reload
+      user.deleted_at.should eq(nil)
+
+    end
+
+    it "cannot deactivate an active recruiter" do
+      users = []
+      [:hiring_manager, :recruiter, :interviewer, :interviewer].each { |role| users << create_user(role) }
+      opening = Opening.create! FactoryGirl.attributes_for(:opening).merge({:hiring_manager_id => users[0].id,
+                                                                            :department_id => users[0].department_id,
+                                                                            :recruiter_id => users[1].id,
+                                                                            :status => 1})
+      put :deactivate, { :id => users[1].to_param}
+      flash[:notice].should include('active openings')
+      user = users[1]
+      user.reload
+      user.deleted_at.should eq(nil)
+
+    end
+
+
+    it "cannot deactivate an active interviewer" do
+      users = []
+      [:hiring_manager, :recruiter, :interviewer, :interviewer].each { |role| users << create_user(role) }
+      opening = Opening.create! FactoryGirl.attributes_for(:opening).merge({:hiring_manager_id => users[0].id,
+                                                                            :department_id => users[0].department_id,
+                                                                            :recruiter_id => users[1].id,
+                                                                            :status => 1})
+      candidate = Candidate.create! FactoryGirl.attributes_for(:candidate)
+      opening_candidate = candidate.opening_candidates.create! :opening_id => opening.to_param
+      Interview.create! FactoryGirl.attributes_for(:interview).merge({
+                                                   :status => Interview::STATUS_CLOSED,
+                                                   :opening_candidate_id => opening_candidate.id,
+                                                   :interviewer_ids => [users[2].id]})
+      put :deactivate, { :id => users[2].to_param}
+      flash[:notice].should eq(nil)
+      user = users[2]
+      user.reload
+      expect(user.deleted_at).not_to eq(nil)
+
+      interview = Interview.create! FactoryGirl.attributes_for(:interview).merge({
+                                                   :opening_candidate_id => opening_candidate.id,
+                                                   :interviewer_ids => [users[3].id]})
+      put :deactivate, { :id => users[3].to_param}
+      flash[:notice].should include('active interviews')
+      user = users[3]
+      user.reload
+      user.deleted_at.should eq(nil)
+
+    end
+
+    it "should not contain deactivated user in list for user selection" do
+      pending "will refactor UserController.index_for_tokens later and add test cases here"
+    end
+
+
   end
 
 end

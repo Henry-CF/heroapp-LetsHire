@@ -6,8 +6,14 @@ class ProfileController < AuthenticatedController
   end
 
   def update
-    @user = User.find(current_user.id)
-    if @user.update_with_password(params[:user])
+    @user = User.active.find(current_user.id)
+
+    safe_params = {}
+    [:current_password, :password, :password_confirmation].each do | key |
+      safe_params[key] = params[:user][key]
+    end
+
+    if @user.update_with_password(safe_params)
       sign_in @user, :bypass => true
       redirect_to root_path, :notice => 'Reset Password successfully'
     else

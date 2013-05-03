@@ -1,5 +1,5 @@
 class Candidate < ActiveRecord::Base
-  attr_accessible :name, :email, :phone, :source, :description, :resume
+  attr_accessible :name, :email, :phone, :source, :description
 
   # valid phone number examples
   # 754-647-0105 x6950
@@ -18,6 +18,7 @@ class Candidate < ActiveRecord::Base
 
   has_many :opening_candidates, :class_name => "OpeningCandidate", :dependent => :destroy
   has_many :openings, :class_name => "Opening", :through => :opening_candidates
+  has_one  :resume, :class_name => "Resume", :dependent => :destroy
 
   def opening(index)
     opening_candidates[index].opening if opening_candidates.size > index

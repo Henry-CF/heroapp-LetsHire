@@ -3,7 +3,7 @@
 // You can also rename this file to openings.js.coffee, and only keep the coffee script
 
 $(function() {
-    $('select#department_ids').change(function(event) {
+    $('select#candidate_department_id').change(function(event) {
         var select_wrapper = $('#openingid_select_wrapper');
         $('select', select_wrapper).attr('disabled', true);
         var department_id = $(this).val();

@@ -3,21 +3,7 @@ require 'spec_helper'
 describe CandidatesController do
 
   def valid_candidate
-    {
-      :name  => Faker::Name.name,
-      :email => Faker::Internet.email,
-      :phone => Faker::PhoneNumber.phone_number,
-      :source => Faker::Lorem.word,
-      :description => Faker::Lorem.sentence
-    }
-  end
-
-  def invalid_candidate
-    {
-      :phone => Faker::PhoneNumber.phone_number,
-      :source => Faker::Lorem.word,
-      :description => Faker::Lorem.sentence
-    }
+    FactoryGirl.attributes_for(:candidate)
   end
 
   before :each  do
@@ -80,13 +66,8 @@ describe CandidatesController do
     describe "with invalid params" do
       it "assigns a newly created but unsaved candidate as @candidate" do
         Candidate.any_instance.stub(:save).and_return(false)
-        post :create, { :candidate => invalid_candidate }
+        post :create, { :candidate => valid_candidate.merge(:email => nil) }
         assigns(:candidate).should be_a_new(Candidate)
-      end
-
-      it "re-renders the new template" do
-        Candidate.any_instance.stub(:save).and_return(false)
-        post :create, { :candidate => invalid_candidate }
         response.should render_template("new")
       end
     end

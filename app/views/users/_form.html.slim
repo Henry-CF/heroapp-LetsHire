@@ -24,7 +24,8 @@
   .control-group
     = form.label :role, :class => 'control-label'
     .controls
-      - for role in User::ROLES
+      - User::ROLES.each do |role|
+        - next if role == 'interviewer'
         = check_box_tag "user[roles][#{role}]", role, @user.roles.include?(role), {:name => "user[roles][]", :class => 'checkbox'}
         = label_tag "user_roles_#{role}", role.humanize, :class => 'checkbox inline capitalized-text'
         br
