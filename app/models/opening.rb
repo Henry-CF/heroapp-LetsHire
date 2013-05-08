@@ -1,6 +1,8 @@
 require 'carmen'
 
 class Opening < ActiveRecord::Base
+  default_scope order('title ASC')
+
   include Carmen
 
   attr_accessible :title, :description,:department_id, :status, :country, :province, :city, :total_no, :filled_no

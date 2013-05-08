@@ -9,9 +9,9 @@ class CandidatesController < AuthenticatedController
       opening = Opening.find(params[:opening_id])
     end
     if opening
-      @candidates = opening.candidates.paginate(:page => params[:page], :order => 'name ASC')
+      @candidates = opening.candidates.paginate(:page => params[:page])
     else
-      @candidates = Candidate.paginate(:page => params[:page], :order => 'name ASC')
+      @candidates = Candidate.paginate(:page => params[:page])
     end
   end
 
