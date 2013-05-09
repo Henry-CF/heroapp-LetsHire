@@ -3,7 +3,7 @@ applications:
 - name: letshire
   framework: rails3
   runtime: ruby19
-  memory: 256M
+  memory: 512M
   instances: 1
   url: letshire.${target-base}
   path: .
