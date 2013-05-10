@@ -12,7 +12,7 @@ class Api::V1::PhotosController < Api::V1::ApiController
     end
 
     if tempio.size > MAX_FILE_SIZE
-      render :json => {:message => 'File size cannot be larger than 2M.'}, :status => 400
+      render :json => {:message => 'File size cannot be larger than 10M.'}, :status => 400
       return
     end
 

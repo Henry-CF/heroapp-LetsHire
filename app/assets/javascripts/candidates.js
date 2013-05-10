@@ -23,7 +23,7 @@ $(function() {
         } else {
             // firefox, chrome
             if (this.files[0].size > maxsize) {
-                alert('File size cannot be larger than 2M.');
+                alert('File size cannot be larger than 10M.');
                 $(this).attr('value', '');
             }
         }

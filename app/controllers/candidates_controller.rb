@@ -58,7 +58,7 @@ class CandidatesController < AuthenticatedController
       #TODO: async large file upload
       unless tempio.nil?
         if tempio.size > MAX_FILE_SIZE
-          render :status => 400, :json => {:message => 'File size cannot be larger than 2M.'}
+          render :status => 400, :json => {:message => 'File size cannot be larger than 10M.'}
           return
         end
 
@@ -118,7 +118,7 @@ class CandidatesController < AuthenticatedController
     if @candidate.update_attributes(params[:candidate])
       unless tempio.nil?
         if tempio.size > MAX_FILE_SIZE
-          render :status => 400, :json => {:message => 'File size cannot be larger than 2M.'}
+          render :status => 400, :json => {:message => 'File size cannot be larger than 10M.'}
           return
         end
 
