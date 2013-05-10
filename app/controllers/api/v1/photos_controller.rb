@@ -1,5 +1,7 @@
 class Api::V1::PhotosController < Api::V1::ApiController
 
+  MAX_FILE_SIZE = 10 * 1024 * 1024
+
   def upload_file
     #NOTE: Do we need to define a input parameters verification method?
     interview_id = params[:interview_id]
@@ -7,6 +9,11 @@ class Api::V1::PhotosController < Api::V1::ApiController
     if interview_id.nil? or tempio.nil?
       #NOTE: We may need a fine-grained error code definition.
       render :json => {:error => 'Invalid parameters.'}, :status => 400
+    end
+
+    if tempio.size > MAX_FILE_SIZE
+      render :json => {:message => 'File size cannot be larger than 10M.'}, :status => 400
+      return
     end
 
     begin
@@ -71,7 +78,10 @@ private
   def download_file(filepath)
     mimetype = MIME::Types.type_for(filepath)
     filename = File.basename(filepath)
-    send_file(filepath, :filename => filename, :type => "#{mimetype[0]}", :disposition => "inline")
+    File.open(filepath) do |fp|
+      send_data(fp.read, :filename => filename, :type => "#{mimetype[0]}", :disposition => "inline")
+    end
+    File.delete(filepath)
   end
 
 end
