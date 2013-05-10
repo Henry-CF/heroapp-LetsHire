@@ -1,7 +1,6 @@
 require 'rubygems'
 require 'spork'
 require 'coveralls'
-require 'headless'
 
 #uncomment the following line to use spork with the debugger
 #require 'spork/ext/ruby-debug'
@@ -45,11 +44,6 @@ Spork.prefork do
     # rspec-rails.
     config.infer_base_class_for_anonymous_controllers = false
 
-    config.before(:suite) do
-      # Use the headless gem to manage your Xvfb server
-      # Do not destroy X server incase another process is using it
-      Headless.new(:destroy_on_exit => false).start
-    end
   end
 end
 

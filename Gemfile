@@ -51,6 +51,5 @@ group :test, :ci do
   gem 'faker', '1.1.2'
   gem 'libnotify', '0.8.0'
   gem 'uuidtools', '2.1.3'
-  gem 'headless', '1.0.1'
 end
 
