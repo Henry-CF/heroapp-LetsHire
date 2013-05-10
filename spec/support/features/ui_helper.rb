@@ -3,6 +3,8 @@ module Features
   SERVER_ERROR_MSG = "but something went wrong"
   ADMIN_USERNAME = 'admin@local.com'
   ADMIN_PASSWORD = '123456789'
+  RECRUITER_USERNAME = 'r1@local.com'
+  RECRUITER_PASSWORD = '123456789'
 
   module SignIn
     def sign_in(username, password)
@@ -18,14 +20,14 @@ module Features
   end
 
   module JobOpening
-    def add_job_opening(title, department = '', publish = false, total_seats = 0, hiring_manager = '',
+    def add_job_opening(title, department, publish = false, total_seats = 0, hiring_manager = '',
       recruiter = '', country = '', province = '', city = '', description = '')
       click_link 'Job Openings'
       find_link('Add a Job Opening').click
       fill_in 'opening_title', with: title
-      select department, :from => 'opening_department_id' if department != ''
+      select department, :from => 'opening_department_id'
       fill_in 'opening_total_no', with: total_seats if total_seats > 0
-      select hiring_manager, :from => 'opening_hiring_manager_id' if hiring_manager != ''
+      select hiring_manager, :from => 'hiring_manager_id' if hiring_manager != ''
       select recruiter, :from => 'opening_recruiter_id' if recruiter != ''
       find(:xpath, "//select/option[text()='#{country}'][1]").select_option if country != ''
       select province, :from => 'opening_province' if province !=''
@@ -42,16 +44,16 @@ module Features
       page.should have_content(title)
     end
 
-    def edit_job_opening(currentTitle, newTitle, status = '', department = '', total_seats = 0, filled_seats = 0,
+    def edit_job_opening(currentTitle, newTitle, status = '', department = '', total_seats = 0,
       hiring_manager = '', recruiter = '', country = '', province = '', city = '', description = '', interviewer = '')
       click_link 'Job Openings'
+      click_link 'View All'
       currentStatus = find(:xpath, "//tr[td[contains(., '#{currentTitle}')]]/td[4]").text #will get Draft, Published or Closed
       find(:xpath, "//tr[td[contains(., '#{currentTitle}')]]/td/a", :text => 'Edit').click
       fill_in 'opening_title', with: newTitle
       select department, :from => 'opening_department_id' if department != ''
       fill_in 'opening_total_no', with: total_seats if total_seats > 0
-      fill_in 'opening_filled_no', with: filled_seats if filled_seats > 0
-      select hiring_manager, :from => 'opening_hiring_manager_id' if hiring_manager != ''
+      select hiring_manager, :from => 'hiring_manager_id' if hiring_manager != ''
       select recruiter, :from => 'opening_recruiter_id' if recruiter != ''
       find(:xpath, "//select/option[text()='#{country}'][1]").select_option if country != ''
       select province, :from => 'opening_province' if province !=''
