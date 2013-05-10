@@ -16,15 +16,20 @@ class InterviewsController < AuthorizedController
     @candidate = @interview.opening_candidate.candidate
   end
 
+
+  def schedule
+    authorize! :manage, Interview
+    @opening_candidate = OpeningCandidate.first
+    return redirect_to interviews_url, :notice  => "No Candidates to schedule interviews" if @opening_candidate.nil?
+    return redirect_to :back, :notice  => "Candidate isn't in interview status for this Job opening" unless @opening_candidate.in_interview_loop?
+    @interviews = @opening_candidate.interviews
+  end
+
   def new
     authorize! :manage, Interview
     @opening_candidate = OpeningCandidate.find params[:opening_candidate_id] if params[:opening_candidate_id]
-    if @opening_candidate.nil?
-      return redirect_to interviews_url, :notice  => "Invalid Parameter"
-    end
-    unless @opening_candidate.in_interview_loop?
-      return redirect_to :back, :notice  => "Candidate isn't in interview status for this Job opening"
-    end
+    return redirect_to interviews_url, :notice  => "No Candidates to schedule interviews" if @opening_candidate.nil?
+    return redirect_to :back, :notice  => "Candidate isn't in interview status for this Job opening" unless @opening_candidate.in_interview_loop?
     @interview = Interview.new
     render :action => 'edit'
   end
@@ -37,11 +42,11 @@ class InterviewsController < AuthorizedController
 
   def create
     authorize! :manage, Interview
-    if params[:interview][:opening_candidate_id].nil?
+    if params[:opening_candidate_id].nil?
       redirect_to candidates_path, :notice => "No opening is selected for the candidate"
       return
     end
-    @opening_candidate = OpeningCandidate.find params[:interview][:opening_candidate_id]
+    @opening_candidate = OpeningCandidate.find params[:opening_candidate_id]
     if @opening_candidate.nil?
       redirect_to candidates_path, :notice => "No opening is selected for the candidate"
       return

@@ -4,7 +4,7 @@ class Interview < ActiveRecord::Base
   has_many :users, :through => :interviewers
   has_many :photos, :dependent => :destroy
 
-  accepts_nested_attributes_for :interviewers, :allow_destroy => true, :reject_if => proc { |interviewers| interviewers.empty? }
+  accepts_nested_attributes_for :users, :allow_destroy => true, :reject_if => proc { |user| user.empty? }
 
   attr_accessible :user_id, :user_ids
 
@@ -56,4 +56,9 @@ class Interview < ActiveRecord::Base
     self.scheduled_at = Time.parse val
   rescue
   end
+
+  def editable?
+    status != STATUS_CLOSED
+  end
+
 end

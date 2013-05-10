@@ -37,7 +37,7 @@ $(function () {
     if ($("#interview_user_id").length > 0) {
         function reloadInterviewers() {
             var old_val = $("#interview_user_id").val();
-            var opening_id = $('#opening_id')[0].value;
+            var opening_id = $('#opening_id').val();
             if (opening_id != undefined)  {
                 var url = "/openings/" + opening_id + "/interviewers_select"
                 if (!$("#only_favorite_interviewers").is(':checked')) {
@@ -59,4 +59,9 @@ $(function () {
 
         reloadInterviewers();
     }
+
+    $('table.schedule_interviews td i').click(function() {
+        alert('clicked');
+    });
+
 });

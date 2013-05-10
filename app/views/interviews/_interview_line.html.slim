@@ -1,0 +1,14 @@
+tr
+  td.first = interview.id
+  - if interview.editable?
+    td = interview.scheduled_at
+    td = interview.duration
+    td = interview.modality
+    td = select_tag :status, options_for_select(Interview::STATUS.collect { |x| [x, x]} )
+    td
+      i.icon-remove
+  - else
+    td = interview.scheduled_at
+    td = interview.duration
+    td = interview.modality
+    td = select_tag :status, Interview::STATUS

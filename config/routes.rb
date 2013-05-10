@@ -1,5 +1,4 @@
 LetsHire::Application.routes.draw do
-  get "dashboard/overview"
   resources :AssessmentsController
 
   # all V1 rest api (for mobile) should be below
@@ -61,7 +60,6 @@ LetsHire::Application.routes.draw do
   get '/openings/:id/interviewers_select' => 'openings#interviewers_select'
   resources :openings
   resources :candidates do
-    resources :interviews
     member do
       get 'resume'
       get 'new_opening'
@@ -69,11 +67,14 @@ LetsHire::Application.routes.draw do
     end
   end
 
+  get 'interviews/schedule'
+  resources :interviews
   resources :opening_candidates do
     resource :assessments
+    resources :interviews
   end
 
-  resources :interviews
+  get "dashboard/overview"
 
   get '/settings', to: 'settings#index'
 

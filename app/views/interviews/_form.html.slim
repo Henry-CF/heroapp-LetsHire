@@ -1,4 +1,4 @@
-= form_for [candidate, @interview], :html => { :class => 'form-horizontal'} do |f|
+= form_for [@opening_candidate, @interview], :html => { :class => 'form-horizontal'} do |f|
   - if @interview.errors.any?
     .alert.alert-error
       = "#{pluralize(@interview.errors.count, 'error')} prohibited this interview from being saved:"
@@ -7,7 +7,6 @@
           li= msg
 
   = hidden_field_tag nil, opening.id, :id => 'opening_id'
-  = f.hidden_field :opening_candidate_id, :value => @opening_candidate.id
   .control-group
     = f.label :modality, 'Interview Type', :class => 'control-label'
     .controls
