@@ -256,6 +256,7 @@ DEPENDENCIES
   mime-types (= 1.21)
   pg (= 0.15.1)
   rails (= 3.2.12)
+  rake (= 10.0.4)
   ransack (= 0.7.2)
   rb-fsevent (= 0.9.1)
   rspec-rails (= 2.11.0)
