@@ -127,6 +127,7 @@ a.carousel-control-next {
   margin: 15px;
   border: 3px solid skyblue;
   background: none repeat scroll 0 0 #7ab5d3;
+  opacity: 0.9;
 }
 
 .action-item {
@@ -157,5 +158,22 @@ a.carousel-control-next {
   background: none repeat scroll 0 0 #555555;
   text-align: center;
   color:  #7aba7b;
+}
+
+/** status-board **/
+
+.status-board {
+  text-align: center;
+}
+
+.status-board top-part,bottom-part {
+  text-align: center;
+  padding: 3px;
+}
+
+.status-board h3 {
+  height: 38px;
+  font-size: 38px;
+  font-family: "Arial Black", Gadget, sans-serif;
 }
 
