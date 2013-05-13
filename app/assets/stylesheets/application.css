@@ -11,6 +11,8 @@
  *= require jquery.ui.all
  *= require jquery-ui-timepicker-addon
  *= require token-input
+ *= require bootstrap.min
+ *= require font-awesome/css/font-awesome.min
  *= require_self
  *= require_tree .
  */
