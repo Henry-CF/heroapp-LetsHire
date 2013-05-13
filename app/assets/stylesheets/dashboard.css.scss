@@ -139,6 +139,8 @@ a.carousel-control-next {
   text-align: center;
   font-size: 60px;
   height: 60px;
+  opacity: 1.0;
+  color: rgb(43, 43, 43);
 }
 
 .action-item h5 {
@@ -146,6 +148,8 @@ a.carousel-control-next {
   height: 72px;
   font-size: 14px;
   line-height: 18px;
+  opacity: 1.0;
+  color: rgb(43, 43, 43);
   font-family: "Arial Black", Gadget, sans-serif;
 }
 
@@ -155,9 +159,10 @@ a.carousel-control-next {
   padding: 4px 15px;
   position: absolute;
   text-decoration: none;
-  background: none repeat scroll 0 0 #555555;
+  background: none repeat scroll 0 0 rgb(43, 43, 43);
   text-align: center;
   color:  #7aba7b;
+  opacity: 1.0;
 }
 
 /** status-board **/
