@@ -60,8 +60,66 @@ $(function () {
         reloadInterviewers();
     }
 
-    $('table.schedule_interviews td i').click(function() {
-        alert('clicked');
-    });
+
+    if ($('table.schedule_interviews').length > 0) {
+        // Read all rows and return an array of objects
+        function GetAllInterviews()
+        {
+            var interviews = [];
+
+            $('table.schedule_interviews tbody tr').each(function (index, value)
+            {
+                var row = GetRow(index);
+                interviews.push(row);
+            });
+
+            return interviews;
+        }
+
+        // Read the row into an object
+        function GetRow(rowNum)
+        {
+            var row = $('table.schedule_interviews tbody tr').eq(rowNum);
+
+            var interview = {};
+
+            interview.id = row.find('td:eq(0)').text();
+            interview.scheduled_at = row.find('td:eq(1)').text();
+            interview.duration = row.find('td:eq(2)').text();
+            interview.interview_type = row.find('td:eq(3)').text();
+            interview.status = row.find('#status').val();
+            return interview;
+        }
+        $('table.schedule_interviews').on('click', 'td i.icon-remove', function() {
+            var row = $(this).parent().parent();
+            row.remove();
+        });
+
+        $('.add_new_interview').click(function() {
+            $.get("/interviews/interview_lineitem", function(data, status) {
+                if (status == 'success') {
+                    var tbody = $('table.schedule_interviews tbody');
+                    tbody.append(data);
+                }
+            });
+        });
+
+        $('.submit_interviews').click(function() {
+            var interviews = GetAllInterviews();
+            $.post('/interviews/update_multiple',
+                {
+                    opening_candidate_id: $('#opening_candidate_id').val(),
+                    interviews:interviews
+
+                },
+                function (response) {
+                    console.log(response);
+                }
+            ).done(function() { alert("second success"); })
+            .fail(function() { alert("error"); });
+        });
+    }
+
+
 
 });

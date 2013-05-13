@@ -1,0 +1,33 @@
+- opening = @opening_candidate.opening
+- candidate = @opening_candidate.candidate
+
+
+
+h3 Schedule Interview
+
+dl.dl-horizontal.clear-both
+  dt Candidate
+  dd =link_to candidate.name , candidate
+  dt Job Opening
+  dd =link_to opening.title , opening
+=hidden_field_tag :opening_candidate_id, @opening_candidate.id
+.pull-right
+  a.add_new_interview Add New Interview
+
+table.table.table-hover.schedule_interviews
+  thead
+    tr
+      th.first.hide ID
+      th Scheduled At
+      th Duration(min)
+      th Interview Type
+      th Status
+      th
+  tbody
+    = render :partial => "interviews/interview_line", :collection => @interviews, :as => :interview
+
+
+p
+.action_container
+  = submit_tag 'OK', :class => 'btn btn-primary submit_interviews'
+  = link_to 'Cancel', :back, :class => 'btn'

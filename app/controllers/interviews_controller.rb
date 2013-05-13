@@ -17,12 +17,29 @@ class InterviewsController < AuthorizedController
   end
 
 
-  def schedule
+  def edit_multiple
     authorize! :manage, Interview
     @opening_candidate = OpeningCandidate.first
     return redirect_to interviews_url, :notice  => "No Candidates to schedule interviews" if @opening_candidate.nil?
     return redirect_to :back, :notice  => "Candidate isn't in interview status for this Job opening" unless @opening_candidate.in_interview_loop?
+    #Temporarily fill in fake data
+    #@opening_candidate.interviews.create! :scheduled_at => Time.now, :duration => 30, :modality => Interview::MODALITY_ONSITE, :status => Interview::STATUS_CLOSED
     @interviews = @opening_candidate.interviews
+  end
+
+  def update_multiple
+    authorize! :manage, Interview
+    @opening_candidate = OpeningCandidate.find params[:opening_candidate_id]
+    if @opening_candidate.update_attributes params
+      return render :text => 'success'
+    end
+  rescue ActiveRecord::RecordNotFound
+    render :text => 'invalid parameter'
+  end
+
+  def interview_lineitem
+    authorize! :manage, Interview
+    render :partial => "interviews/interview_line", :locals => { :interview => Interview.new }
   end
 
   def new

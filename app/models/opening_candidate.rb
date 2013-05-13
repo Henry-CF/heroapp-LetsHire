@@ -12,6 +12,8 @@ class OpeningCandidate < ActiveRecord::Base
 
   validates :candidate_id, :uniqueness => { :scope => :opening_id }
 
+  accepts_nested_attributes_for :interviews, :allow_destroy => true, :reject_if => proc { |interview| interview.empty? }
+
 
   def status_str
     if status.nil?

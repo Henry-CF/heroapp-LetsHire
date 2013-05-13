@@ -23,9 +23,9 @@
     .control-group
       =f.label :hiring_manager, 'Hiring Manager', :class => 'control-label'
       .controls
-        - selected_users = []
-        - selected_users << @opening.hiring_manager_id unless @opening.hiring_manager_id.nil?
-        select#opening_hiring_manager_id data-value=@opening.hiring_manager_id
+        -if @opening.department
+          - users = @department.users.select { |user| (user.has_role?(:hiring_manager)) }
+        = render :partial => 'users/user_select', :locals => { :name => :opening_hiring_manager_id, :users=> users, :selected => @opening.try(:hiring_manager_id) }
   - else
     .control-group
       =f.label :hiring_manager, 'Hiring Manager', :class => 'control-label'
