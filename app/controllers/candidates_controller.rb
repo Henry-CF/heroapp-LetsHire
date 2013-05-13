@@ -1,6 +1,8 @@
 class CandidatesController < AuthenticatedController
   load_and_authorize_resource :except => [:create, :update]
 
+  MAX_FILE_SIZE = 10 * 1024 * 1024
+
   def index
     opening = nil
     if (params[:opening_id])
@@ -55,6 +57,11 @@ class CandidatesController < AuthenticatedController
 
       #TODO: async large file upload
       unless tempio.nil?
+        if tempio.size > MAX_FILE_SIZE
+          render :status => 400, :json => {:message => 'File size cannot be larger than 10M.'}
+          return
+        end
+
         @resume = @candidate.build_resume
         @resume.savefile(tempio.original_filename, tempio)
       end
@@ -110,6 +117,11 @@ class CandidatesController < AuthenticatedController
 
     if @candidate.update_attributes(params[:candidate])
       unless tempio.nil?
+        if tempio.size > MAX_FILE_SIZE
+          render :status => 400, :json => {:message => 'File size cannot be larger than 10M.'}
+          return
+        end
+
         #TODO: async large file upload
         if @candidate.resume.nil?
           @resume = @candidate.build_resume
@@ -151,7 +163,6 @@ class CandidatesController < AuthenticatedController
       fp.close
       download_file(path)
     end
-    #NOTE: We need an async job to delete the temporary file.
   end
 
 private
@@ -175,7 +186,10 @@ private
   def download_file(filepath)
     mimetype = MIME::Types.type_for(filepath)
     filename = File.basename(filepath)
-    send_file(filepath, :filename => filename, :type => "#{mimetype[0]}", :disposition => "inline")
+    File.open(filepath) do |fp|
+      send_data(fp.read, :filename => filename, :type => "#{mimetype[0]}", :disposition => "inline")
+    end
+    File.delete(filepath)
   end
 
 end
