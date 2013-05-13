@@ -16,3 +16,146 @@
   background-color: lightyellow;
 }
 
+.carousel-wrapper {
+  margin: 10px auto;
+  position: relative;
+  border: 10px solid #fff;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-box-shadow: 0 0 2px #999;
+  -moz-box-shadow: 0 0 2px #999;
+  box-shadow: 0 0 2px #999;
+}
+
+
+.carousel-wrapper .photo-credits {
+  position: absolute;
+  right: 15px;
+  bottom: 0;
+  font-size: 13px;
+  color: #fff;
+  text-shadow: 0 0 1px rgba(0, 0, 0, 0.85);
+  opacity: .66;
+}
+
+.carousel-wrapper .photo-credits a {
+  color: #fff;
+}
+
+/** Carousel **/
+
+.carousel {
+  position: relative;
+  overflow: hidden;
+  width: 90%;
+  height: 260px;
+  margin: 5%;
+  margin-top: 1px;
+  margin-bottom: 1px;
+}
+
+.carousel ul {
+  width: 20000em;
+  position: absolute;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.carousel li {
+  float: left;
+  margin-bottom: 1px;
+  margin-top: 1px;
+}
+
+/** Carousel Controls **/
+
+a.carousel-control-prev,
+a.carousel-control-next {
+  position: absolute;
+  top: 45%;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  background: #4E443C;
+  color: #fff;
+  text-decoration: none;
+  text-shadow: 0 0 1px #000;
+  font: 24px/27px Arial, sans-serif;
+  -webkit-border-radius: 30px;
+  -moz-border-radius: 30px;
+  border-radius: 30px;
+  -webkit-box-shadow: 0 0 2px #999;
+  -moz-box-shadow: 0 0 2px #999;
+  box-shadow: 0 0 2px #999;
+}
+
+.carousel-control-prev {
+  left: 0px;
+}
+
+.carousel-control-next {
+  right: 0px;
+}
+
+.carousel-control-prev:hover span,
+.carousel-control-next:hover span {
+  display: block;
+}
+
+/** title bar **/
+
+.action-item-title {
+  background-color: #7ab5d3;
+  padding: 2px;
+  margin: 1px;
+  border-radius: 5px;
+}
+
+.action-item-title span{
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin-left: 15px;
+}
+
+/** action item **/
+
+.action-item-wrapper {
+  height: 100%;
+  width: 180px;
+  text-align: center;
+  margin: 15px;
+  border: 3px solid skyblue;
+  background: none repeat scroll 0 0 #7ab5d3;
+}
+
+.action-item {
+  padding: 20px;
+  position: relative;
+}
+
+.action-item h2 {
+  text-align: center;
+  font-size: 60px;
+  height: 60px;
+}
+
+.action-item h5 {
+  text-align: left;
+  height: 72px;
+  font-size: 14px;
+  line-height: 18px;
+  font-family: "Arial Black", Gadget, sans-serif;
+}
+
+.action-item a {
+  bottom: 5px;
+  right: 0px;
+  padding: 4px 15px;
+  position: absolute;
+  text-decoration: none;
+  background: none repeat scroll 0 0 #555555;
+  text-align: center;
+  color:  #7aba7b;
+}
+
