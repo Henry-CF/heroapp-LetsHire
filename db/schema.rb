@@ -112,8 +112,8 @@ ActiveRecord::Schema.define(:version => 20130514025408) do
 
   create_table "photos", :force => true do |t|
     t.integer  "interview_id"
-    t.string   "photo_name"
-    t.string   "photo_path"
+    t.string   "name"
+    t.string   "path"
     t.text     "description"
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
@@ -121,8 +121,8 @@ ActiveRecord::Schema.define(:version => 20130514025408) do
 
   create_table "resumes", :force => true do |t|
     t.integer  "candidate_id"
-    t.string   "resume_name"
-    t.string   "resume_path"
+    t.string   "name"
+    t.string   "path"
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
   end
