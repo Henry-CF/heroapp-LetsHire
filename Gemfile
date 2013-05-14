@@ -16,6 +16,7 @@ gem 'pg', '0.15.1'
 gem 'carmen-rails', '1.0.0.beta3'
 gem 'jquery-tokeninput-rails', '1.6.0'
 gem 'ransack', '0.7.2'
+gem 'rake', '10.0.4'
 
 group :development, :test do
   gem 'sqlite3', '1.3.5'
@@ -51,6 +52,5 @@ group :test, :ci do
   gem 'faker', '1.1.2'
   gem 'libnotify', '0.8.0'
   gem 'uuidtools', '2.1.3'
-  gem 'headless', '1.0.1'
 end
 
