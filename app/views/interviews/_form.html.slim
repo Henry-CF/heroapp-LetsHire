@@ -26,7 +26,7 @@
   .control-group
     = label_tag :scheduled_at, 'Scheduled At', :class => 'control-label'
     .controls
-      = text_field_tag :scheduled_at, nil, :class => 'datetimepicker'
+      = text_field_tag "interview[scheduled_at]", @interview.scheduled_at, :class => 'datetimepicker', :data => {:iso => @interview.scheduled_at_iso}
   .control-group
     = f.label :duration, 'Duration(Minutes)', :class => 'control-label'
     .controls
@@ -54,4 +54,4 @@
       .actions
         = f.submit 'Save', :class => 'btn'
 
-  = f.hidden_field :scheduled_at_iso
+  = hidden_field_tag "interview[scheduled_at_iso]"

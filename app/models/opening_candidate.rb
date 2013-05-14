@@ -1,5 +1,5 @@
 class OpeningCandidate < ActiveRecord::Base
-  attr_accessible :candidate, :candidate_id, :opening, :opening_id, :status
+  attr_accessible :candidate_id, :opening_id, :status, :interviews_attributes
 
   belongs_to :candidate
   belongs_to :opening

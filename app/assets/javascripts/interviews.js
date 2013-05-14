@@ -1,14 +1,16 @@
 $(function () {
     $(".datetimepicker").datetimepicker().each(function (index, elem) {
-        var isoTime = $("#interview_" + elem.name + "_iso").val();
-        if (isoTime == "") {
-            $(elem).datetimepicker("setDate", new Date());
-            $("#interview_" + this.name + "_iso").val(new Date(elem.value).toISOString());
-        } else {
-            $(elem).datetimepicker("setDate", new Date(isoTime));
+        var isoTime = new Date($(elem).data('iso'));
+        var iso_elem = $("#" + elem.id.replace("scheduled_at", "scheduled_at_iso"));
+        if (iso_elem) {
+            iso_elem.val(isoTime.toISOString());
         }
+        $(elem).datetimepicker("setDate", isoTime);
     }).change(function () {
-        $("#interview_" + this.name + "_iso").val(new Date(this.value).toISOString());
+        var iso_elem = $("#" + this.id.replace("scheduled_at", "scheduled_at_iso"));
+        if (iso_elem) {
+            iso_elem.val(new Date(this.value).toISOString());
+        }
     });
 
     $(".iso-time").each(function (index, elem) {
@@ -84,10 +86,17 @@ $(function () {
             var interview = {};
 
             interview.id = row.find('td:eq(0)').text();
-            interview.scheduled_at = row.find('td:eq(1)').text();
-            interview.duration = row.find('td:eq(2)').text();
-            interview.interview_type = row.find('td:eq(3)').text();
             interview.status = row.find('#status').val();
+            if (row.find('.icon-remove').length > 0) {
+                interview.scheduled_at_iso = new Date(row.find('td:eq(1) input').val()).toISOString();
+                interview.duration = row.find('#duration').val();
+                interview.modality = row.find('#modality').val();
+            } else {
+                interview.scheduled_at_iso = row.find('td:eq(1)').text();
+                interview.duration = row.find('td:eq(2)').text();
+                interview.modality = row.find('td:eq(3)').text();
+            }
+
             return interview;
         }
         $('table.schedule_interviews').on('click', 'td i.icon-remove', function() {
@@ -96,10 +105,17 @@ $(function () {
         });
 
         $('.add_new_interview').click(function() {
+            var tbody = $('table.schedule_interviews tbody');
+            if (tbody.find('tr').length >= 20) {
+                alert('Too many interviews added.');
+                return;
+            }
             $.get("/interviews/interview_lineitem", function(data, status) {
                 if (status == 'success') {
-                    var tbody = $('table.schedule_interviews tbody');
                     tbody.append(data);
+                    var timePicker = tbody.find("tr:last .datetimepicker");
+                    timePicker.datetimepicker();
+                    timePicker.val(timePicker.data('iso'));
                 }
             });
         });
@@ -109,14 +125,23 @@ $(function () {
             $.post('/interviews/update_multiple',
                 {
                     opening_candidate_id: $('#opening_candidate_id').val(),
-                    interviews:interviews
+                    interviews_attributes:interviews
 
-                },
-                function (response) {
-                    console.log(response);
+                })
+            .done(function(response) {
+                if (!response.success) {
+                    $('#error_messages').html('<p class="errors">' + response.messages + '</p>').parent().show();
                 }
-            ).done(function() { alert("second success"); })
-            .fail(function() { alert("error"); });
+                else {
+                    var url = $('#previous_url').data('value');
+                    if (url) {
+                        window.location = url;
+                    }
+                }
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+                alert('fail');
+            });
         });
     }
 

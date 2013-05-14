@@ -20,7 +20,7 @@ class InterviewsController < AuthorizedController
   def edit_multiple
     authorize! :manage, Interview
     @opening_candidate = OpeningCandidate.first
-    return redirect_to interviews_url, :notice  => "No Candidates to schedule interviews" if @opening_candidate.nil?
+    return redirect_to :back, :notice  => "No Candidate to schedule interviews" if @opening_candidate.nil?
     return redirect_to :back, :notice  => "Candidate isn't in interview status for this Job opening" unless @opening_candidate.in_interview_loop?
     #Temporarily fill in fake data
     #@opening_candidate.interviews.create! :scheduled_at => Time.now, :duration => 30, :modality => Interview::MODALITY_ONSITE, :status => Interview::STATUS_CLOSED
@@ -30,16 +30,32 @@ class InterviewsController < AuthorizedController
   def update_multiple
     authorize! :manage, Interview
     @opening_candidate = OpeningCandidate.find params[:opening_candidate_id]
-    if @opening_candidate.update_attributes params
-      return render :text => 'success'
+    params.delete :opening_candidate_id
+    params.delete :action
+    params.delete :controller
+    interview_ids = []
+    params[:interviews_attributes].each { |key, val| interview_ids << val[:id].to_i }
+    removed_interview_ids = @opening_candidate.interview_ids - interview_ids
+    OpeningCandidate.transaction do
+      Interview.delete removed_interview_ids
+      if @opening_candidate.update_attributes params
+        render :json => { :success => true }
+      else
+        puts  @opening_candidate.errors.inspect
+        render :json => { :success => false, :messages => @opening_candidate.errors.full_messages, :status => 400 }
+      end
     end
   rescue ActiveRecord::RecordNotFound
-    render :text => 'invalid parameter'
+    render :json => { :success => false, :messages => ["Invalid object"] }
   end
 
   def interview_lineitem
     authorize! :manage, Interview
-    render :partial => "interviews/interview_line", :locals => { :interview => Interview.new }
+    interview = Interview.new({ :modality => Interview::MODALITY_PHONE,
+                                :duration => 30,
+                                :scheduled_at => Time.now + 1.hour,
+                                :status => Interview::STATUS_NEW})
+    render :partial => "interviews/interview_line", :locals => { :interview => interview }
   end
 
   def new

@@ -8,7 +8,7 @@ class Interview < ActiveRecord::Base
 
   attr_accessible :user_id, :user_ids
 
-  attr_accessible :opening_candidate, :opening_candidate_id
+  attr_accessible :opening_candidate_id
   attr_accessible :modality, :scheduled_at, :scheduled_at_iso, :duration, :phone, :location, :description
   attr_accessible :status, :score, :assessment
   attr_accessible :created_at, :updated_at

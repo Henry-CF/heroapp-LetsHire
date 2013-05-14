@@ -3,8 +3,9 @@
 
 
 
-h3 Schedule Interview
+h3 Schedule Interviews
 
+#previous_url.hide data-value=request.referer
 dl.dl-horizontal.clear-both
   dt Candidate
   dd =link_to candidate.name , candidate
@@ -13,6 +14,8 @@ dl.dl-horizontal.clear-both
 =hidden_field_tag :opening_candidate_id, @opening_candidate.id
 .pull-right
   a.add_new_interview Add New Interview
+.hide
+  p#error_messages
 
 table.table.table-hover.schedule_interviews
   thead
@@ -21,6 +24,7 @@ table.table.table-hover.schedule_interviews
       th Scheduled At
       th Duration(min)
       th Interview Type
+      th Location
       th Status
       th
   tbody
