@@ -65,6 +65,21 @@ class Opening < ActiveRecord::Base
     total_no - filled_no
   end
 
+  def self.openings_created_by_me(user_id)
+    openings = Opening.where("creator_id = %d", user_id)
+    openings
+  end
+
+  def self.openings_assigned_to_me(user_id)
+    openings = Opening.where("hiring_manager_id = %d OR recruiter_id = %d", user_id, user_id)
+    openings
+  end
+
+  def self.openings_without_interviewers
+    openings = Opening.where("id NOT IN (SELECT opening_id FROM opening_candidates)")
+    openings
+  end
+
   private
   def select_valid_owners_if_active
     if status != STATUS_LIST[:closed]
