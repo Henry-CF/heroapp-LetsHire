@@ -38,6 +38,36 @@ class OpeningCandidate < ActiveRecord::Base
     status.nil? || (status == OpeningCandidate::STATUS_LIST[OpeningCandidate::INTERVIEW_LOOP])
   end
 
+  def self.rejected?(user_id)
+    records = OpeningCandidate.find(:all, \
+                          :conditions=>["opening_candidates.id=interviews.opening_candidate_id and \
+                                       interviews.id=interviewers.interview_id and \
+                                       interviewers.user_id = #{user_id} and \
+                                       opening_candidates.status = 9"], \
+                          :include=>[:interviews=>[:interviewers]])
+    records
+  end
+
+  def self.notconfirmed?(user_id)
+    records = OpeningCandidate.find(:all, \
+                          :conditions=>["opening_candidates.id=interviews.opening_candidate_id and \
+                                       interviews.id=interviewers.interview_id and \
+                                       interviewers.user_id = #{user_id} and \
+                                       opening_candidates.status = 8"], \
+                          :include=>[:interviews=>[:interviewers]])
+    records
+  end
+
+  def self.accepted?(user_id)
+    records = OpeningCandidate.find(:all, \
+                          :conditions=>["opening_candidates.id=interviews.opening_candidate_id and \
+                                       interviews.id=interviewers.interview_id and \
+                                       interviewers.user_id = #{user_id} and \
+                                       opening_candidates.status = 10"], \
+                          :include=>[:interviews=>[:interviewers]])
+    records
+  end
+
   private
   INTERVIEW_LOOP = 'Interview Loop'
   #Don't change order randomly. order matters.
