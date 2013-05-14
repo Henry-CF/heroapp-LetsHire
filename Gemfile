@@ -5,7 +5,6 @@ source 'https://rubygems.org'
 gem 'mime-types', '1.21'
 gem 'rails', '3.2.12'
 gem 'slim-rails', '0.2.0'
-gem 'bootstrap-sass', '2.1'
 gem 'devise', '2.2.3'
 gem 'cancan', '1.6.9'
 gem 'will_paginate', '3.0.4'
@@ -17,6 +16,7 @@ gem 'carmen-rails', '1.0.0.beta3'
 gem 'jquery-tokeninput-rails', '1.6.0'
 gem 'ransack', '0.7.2'
 gem 'rake', '10.0.4'
+gem "jqplot-rails", "~> 0.3"
 
 group :development, :test do
   gem 'sqlite3', '1.3.5'

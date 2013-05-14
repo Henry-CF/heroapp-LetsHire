@@ -4,6 +4,17 @@ html
     title = full_title(yield(:title))
     = stylesheet_link_tag "application", meida: "all"
     = javascript_include_tag "application"
+    = javascript_include_tag "jqplot"
+    = javascript_include_tag "jqplot/plugins/trendline"
+    = javascript_include_tag "jqplot/plugins/pointLabels"
+    = javascript_include_tag "jqplot/plugins/pieRenderer"
+    = javascript_include_tag "jqplot/plugins/donutRenderer"
+    = javascript_include_tag "jqplot/plugins/dateAxisRenderer"
+    = javascript_include_tag "jqplot/plugins/canvasTextRenderer"
+    = javascript_include_tag "jqplot/plugins/canvasAxisTickRenderer"
+    = javascript_include_tag "jqplot/plugins/canvasAxisLabelRenderer"
+    = javascript_include_tag "jqplot/plugins/categoryAxisRenderer"
+    = javascript_include_tag "jqplot/plugins/barRenderer"
     = csrf_meta_tags
     = render 'layouts/shim'
   body
