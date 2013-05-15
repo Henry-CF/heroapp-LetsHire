@@ -27,8 +27,6 @@ describe "openings/index" do
     assert_select "tr>td", :text => "Title".to_s, :count => 2
     expect(rendered).not_to include "View Mine"
     expect(rendered).not_to include "View All"
-    expect(rendered).not_to include "Edit"
-    expect(rendered).not_to include "Delete"
     expect(rendered).not_to include "Add a Job Opening"
   end
 
