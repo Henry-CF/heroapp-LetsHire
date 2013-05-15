@@ -45,7 +45,7 @@ div.carousel-wrapper
         li
           div.action-item-wrapper
             div.action-item
-              h2 = @upcoming_interviews_of_mine.size
+              h2 = @upcoming_interviews_interviewed_by_me.size
               h5 = 'upcoming interviews for me as an interviewer'
               =link_to 'View', interviews_path
       - if can? :manage, Interview

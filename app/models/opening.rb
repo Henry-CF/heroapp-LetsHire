@@ -28,7 +28,7 @@ class Opening < ActiveRecord::Base
   STATUS_LIST = { :draft => 0, :published => 1, :closed => -1 }
   scope :published, where(:status => 1)
   scope :owned_by,  ->(user_id) { where('hiring_manager_id = ? OR recruiter_id = ?', user_id, user_id) }
-  scope :no_candidates, where(:opening_candidates_count => 0)
+  scope :without_candidates, where(:opening_candidates_count => 0)
 
   def status_str
     STATUS_STRINGS[status]

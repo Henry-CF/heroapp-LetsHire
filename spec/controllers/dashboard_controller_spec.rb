@@ -2,14 +2,14 @@ require 'spec_helper'
 
 describe DashboardController do
 
-  def valid_opening
+  def valid_opening(hiring_manager, recruiter, creator)
     {
       :title => 'Marketing Manager',
       :department_id => 1,
-      :hiring_manager_id => @hiring_manager1.id,
-      :recruiter_id => @recruiter1.id,
+      :hiring_manager_id => hiring_manager.id,
+      :recruiter_id => recruiter.id,
       :status => 1,
-      :creator_id => @hiring_manager1.id
+      :creator_id => creator.id
     }
   end
 
@@ -23,39 +23,134 @@ describe DashboardController do
     }
   end
 
+  def valid_opening_candidate(opening, candidate)
+    {
+        :opening_id => opening.id,
+        :candidate_id => candidate.id,
+    }
+  end
+
+  def valid_interview(opening_candidate)
+    {
+        :opening_candidate_id => opening_candidate.id,
+        :scheduled_at => (Time.zone.now + 1.day),
+        :modality => 'onsite interview'
+    }
+  end
+
   def create_user(role)
     attrs = FactoryGirl.attributes_for(role)
     attrs.delete(:admin)
-    attrs.delete(:roles_mask)
     User.create! attrs
   end
 
+  def create_opening(hiring_manager, recruiter, creator)
+    Opening.create! valid_opening(hiring_manager, recruiter, creator)
+  end
+
+  def create_opening_candidate(opening, candidate)
+    OpeningCandidate.create! valid_opening_candidate(opening, candidate)
+  end
+
+  def assign_opening_to_candidate(opening, candidate)
+    opening_candidate = OpeningCandidate.create! valid_opening_candidate(opening, candidate)
+  end
+
+  def schedule_opening_interview_to_candidate(candidate, opening)
+    opening_candidate = create_opening_candidate(opening, candidate)
+    interview = Interview.create! valid_interview(opening_candidate)
+
+  end
+
+  def assign_interview_to_user(interview, user)
+    interview.user_id = user.id
+  end
+
   before :each  do
-    request.env["devise.mapping"] = Devise.mappings[:user]
-    sign_in_as_admin
+    request.env['devise.mapping'] = Devise.mappings[:user]
+    @user = sign_in_as_admin
+    @hiring_manager = create_user(:hiring_manager)
+    @recruiter = create_user(:recruiter)
+    @candidate = Candidate.create! valid_candidate
+    @opening = create_opening(@hiring_manager, @recruiter, @hiring_manager)
   end
 
   describe "GET 'overview'" do
-    it "returns http success" do
+    it 'returns http success' do
       get 'overview'
       response.should be_success
     end
 
-    it "assign all candidates as @candidates" do
-      candidate = Candidate.create! valid_candidate
+    it 'assign active openings to @active_openings' do
+      sign_in @hiring_manager
       get 'overview'
-      assigns(:candidates).should include(candidate)
+      assigns(:active_openings).should include(@opening)
+      @opening.status = -1
+      @opening.save!
+      get 'overview'
+      assigns(:active_openings).should_not include(@opening)
     end
 
-    it "assign all openings as @openings" do
-      @hiring_manager1 = create_user(:hiring_manager)
-      @recruiter1 = create_user(:recruiter)
-      @user1 = create_user(:user)
-      Opening.any_instance.stub(:select_valid_owners_if_active).and_return(true)
-
-      opening = Opening.create! valid_opening
+    it 'assign openings without candidate to @openings_without_candidate' do
+      sign_in @hiring_manager
       get 'overview'
-      assigns(:openings).should_not include(opening)
+      assigns(:openings_without_candidate).should include(@opening)
+      assign_opening_to_candidate @opening, @candidate
+      get 'overview'
+      assigns(:openings_without_candidate).should_not include(@opening)
+    end
+
+    it 'assign candidate without opening to @candidates_without_opening' do
+      sign_in @recruiter
+      get 'overview'
+      assigns(:candidates_without_opening).should include(@candidate)
+      assign_opening_to_candidate @opening, @candidate
+      get 'overview'
+      assigns(:candidates_without_opening).should_not include(@candidate)
+    end
+
+    it 'assign candidate without interview to @candidates_without_interview' do
+      opening_candidate = assign_opening_to_candidate @opening, @candidate
+      sign_in @recruiter
+      get 'overview'
+      assigns(:candidates_without_interview).should include(@candidate)
+      Interview.create! valid_interview(opening_candidate)
+      get 'overview'
+      assigns(:candidates_without_interview).should_not include(@candidate)
+    end
+
+    it 'assign candidate with final assessment to @candidates_with_assessment' do
+      sign_in @hiring_manager
+      get 'overview'
+      assigns(:candidates_with_assessment).should_not include(@candidate)
+    end
+
+    it 'assign interviewed candidate without final assessment to @candidates_without_assessment' do
+      pending('no implementation')
+    end
+
+    it 'assign upcoming interviews owned by me to @upcoming_interviews_owned_by_me' do
+      sign_in @recruiter
+      get 'overview'
+      assigns(:upcoming_interviews_owned_by_me).size.should be 0
+      interview = schedule_opening_interview_to_candidate @candidate, @opening
+      assign_interview_to_user(interview, @recruiter)
+      get 'overview'
+      assigns(:upcoming_interviews_owned_by_me).should include(interview)
+    end
+
+    it 'assign upcoming interviews interviewed by me to @upcoming_interviews_interviewed_by_me' do
+      sign_in @recruiter
+      get 'overview'
+      assigns(:upcoming_interviews_interviewed_by_me).size.should be 0
+      interview = schedule_opening_interview_to_candidate @candidate, @opening
+      assign_interview_to_user(interview, @recruiter)
+      get 'overview'
+      assigns(:upcoming_interviews_interviewed_by_me).should include(interview)
+    end
+
+    it 'assign interviews without feedback to @interviews_without_feedback' do
+      pending('no implementation')
     end
   end
 

@@ -31,6 +31,8 @@ class Interview < ActiveRecord::Base
   validates :modality, :inclusion => MODALITIES
   validates :status, :inclusion => STATUS
 
+  scope :upcoming, where('scheduled_at > ?', Time.zone.now)
+
   def self.overall_status(interviews)
     interview_counts = interviews.group(:status).count
     (interview_counts.collect { | key, value | "#{value} #{key} interviews" }).join(",")
@@ -56,4 +58,29 @@ class Interview < ActiveRecord::Base
     self.scheduled_at = Time.parse val
   rescue
   end
+
+  def interviewed_by?(user_id)
+    flag = false
+    interviewers.each do |interviewer|
+       flag = true if interviewer.user_id == user_id
+    end
+    flag
+  end
+
+  def self.interviewed_by_me(user_id)
+    interviews = Interview.upcoming
+    my_interviews = interviews.inject([]) do |ret, interview|
+      ret << interview if interview.interviewed_by?(user_id)
+    end
+    my_interviews
+  end
+
+  def self.owned_by(user_id)
+    interviews = Interview.upcoming
+    owned_interviews = interviews.inject([]) do |ret, interview|
+      ret << interview if interview.user_ids.include?(user_id)
+    end
+    owned_interviews
+  end
+
 end

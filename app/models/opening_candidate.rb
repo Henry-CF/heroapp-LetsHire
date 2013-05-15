@@ -1,8 +1,8 @@
 class OpeningCandidate < ActiveRecord::Base
   attr_accessible :candidate, :candidate_id, :opening, :opening_id, :status
 
-  belongs_to :candidate
-  belongs_to :opening
+  belongs_to :candidate, :counter_cache => true
+  belongs_to :opening, :counter_cache => true
 
   has_many :interviews, :dependent => :destroy
   
@@ -11,7 +11,6 @@ class OpeningCandidate < ActiveRecord::Base
   validates :candidate_id, :opening_id, :presence => true
 
   validates :candidate_id, :uniqueness => { :scope => :opening_id }
-
 
   def status_str
     if status.nil?
