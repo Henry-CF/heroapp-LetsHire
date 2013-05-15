@@ -13,6 +13,8 @@ class OpeningsController < ApplicationController
     else
       if params.has_key?(:all)
         @openings = Opening.paginate(:page => params[:page], :order => 'updated_at DESC')
+      elsif params.has_key? :no_candidates
+        @openings = Opening.without_candidates.owned_by(current_user.id).paginate(:page => params[:page])
       else
         if can? :manage, Opening
           @openings = Opening.owned_by(current_user.id).paginate(:page => params[:page])

@@ -2,20 +2,37 @@ class DashboardController < ApplicationController
   before_filter :require_login
 
   def overview
-    @openings = []
-    @candidates = []
-    @interviews = []
+    # opening related action items data providers
+    @active_openings = []
+    @openings_without_candidate = []
+
+    # candidates related action items data providers
+    @candidates_without_opening = []
+    @candidates_without_interview = []
+    @candidates_without_assessment = []
+    @candidates_with_assessment = []
+
+    # interviews related action items data providers
+    @interviews_owned_by_me = []
+    @interviews_interviewed_by_me = []
+    @interviews_without_feedback = []
 
     if can? :manage, Opening
-      @openings = Opening.owned_by(current_user.id)
+      @active_openings = Opening.published.owned_by(current_user.id)
+      @openings_without_candidate = Opening.without_candidates.owned_by(current_user.id)
     end
 
     if can? :manage, Candidate
-      @candidates = Candidate.all
+      @candidates_without_opening = Candidate.without_opening
+      @candidates_without_interview = Candidate.without_interview
+      @candidates_with_assessment = Candidate.all # TODO
+      @candidates_without_assessment = Candidate.all # TODO
     end
 
     if can? :manage, Interview
-      @interviews = Interview.all
+      @interviews_owned_by_me = Interview.owned_by(current_user.id)
+      @interviews_interviewed_by_me = Interview.interviewed_by_me(current_user.id)
+      @interviews_without_feedback = Interview.where(:assessment => nil)
     end
 
     # data displayed in charts
