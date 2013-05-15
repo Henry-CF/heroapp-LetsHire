@@ -1,0 +1,18 @@
+br
+.container-fluid
+  .row-fluid
+    .action_items.span9
+      = render partial: 'dashboard/action_items'
+    .bird_sight.span3
+      = render partial: 'dashboard/recent_status'
+
+.container
+  h4.lightyellow_background Recruiting Progress
+  .container
+    .opening_chart.span5
+      = render partial: 'dashboard/openings_chart'
+    .interviews_chart.span5
+      = render partial: 'dashboard/interviews_chart'
+    .offers_chart
+      = render partial: 'dashboard/offers_chart'
+

@@ -2,7 +2,6 @@ FactoryGirl.define do
   factory :interview do
     opening_candidate_id 1
     modality     "phone interview"
-    title        "phone interview for Raymond Williamson"
     description  Faker::Lorem.paragraph
     status       "scheduled"
     score        9.2

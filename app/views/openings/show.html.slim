@@ -15,10 +15,10 @@ br
     .control-group
       label.control-label
         b Status:
-      .controls
-        = "#{@opening.status_str}, with "
+      .controls.capitalized-text
+        = "#{@opening.status_str} ("
         span = link_to "#{pluralize(@opening.candidates.count, 'candidate')}", candidates_path(:opening_id => @opening.id )
-        span =  " assigned"
+        span =  ")"
   - elsif @opening.recruiter
     .control-group
       label.control-label
@@ -43,11 +43,6 @@ br
       .controls
         - if @opening.hiring_manager
           = link_to @opening.hiring_manager.name, @opening.hiring_manager
-    #potential_interviewers.control-group
-      label.control-label
-        b Potential Interviewers:
-      .controls
-        = (@opening.participants.map { | user | link_to user.name, user}).join(', ').html_safe
   .control-group
     label.control-label
       b Address:
@@ -57,4 +52,4 @@ br
     label.control-label
       b Description:
     .controls
-      = simple_format(@opening.description)
+      = simple_format h(@opening.description)

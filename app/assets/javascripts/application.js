@@ -15,5 +15,6 @@
 //= require jquery.ui.all
 //= require jquery-ui-timepicker-addon
 //= require jquery.tokeninput
-//= require bootstrap
+//= require jquery.jcarousel
+//= require bootstrap/js/bootstrap.min
 //= require_tree .

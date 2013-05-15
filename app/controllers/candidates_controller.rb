@@ -1,6 +1,8 @@
 class CandidatesController < AuthenticatedController
   load_and_authorize_resource :except => [:create, :update]
 
+  MAX_FILE_SIZE = 10 * 1024 * 1024
+
   def index
     opening = nil
     if (params[:opening_id])
@@ -44,7 +46,7 @@ class CandidatesController < AuthenticatedController
       params[:candidate].delete(:resume)
     end
 
-    params[:candidate].delete(:department_ids)
+    params[:candidate].delete(:department_id)
     opening_id = params[:candidate][:opening_ids]
     params[:candidate].delete(:opening_ids)
     @candidate = Candidate.new params[:candidate]
@@ -55,6 +57,11 @@ class CandidatesController < AuthenticatedController
 
       #TODO: async large file upload
       unless tempio.nil?
+        if tempio.size > MAX_FILE_SIZE
+          render :status => 400, :json => {:message => 'File size cannot be larger than 10M.'}
+          return
+        end
+
         @resume = @candidate.build_resume
         @resume.savefile(tempio.original_filename, tempio)
       end
@@ -85,8 +92,6 @@ class CandidatesController < AuthenticatedController
     if @candidate.opening_candidates.create(:opening_id => new_opening_id)
       redirect_to @candidate, :notice => "Opening was successfully assigned."
     else
-      @departments = Department.with_at_least_n_openings
-      @selected_department_id = params[:candidate][:department_ids]
       redirect_to @candidate, :notice => "Opening was already assigned or not given."
     end
   rescue ActiveRecord::RecordNotFound
@@ -101,7 +106,7 @@ class CandidatesController < AuthenticatedController
       redirect_to @candidate, notice: 'Invalid parameters'
       return
     end
-    params[:candidate].delete(:department_ids)
+    params[:candidate].delete(:department_id)
     params[:candidate].delete(:opening_ids)
 
     tempio = nil
@@ -112,6 +117,11 @@ class CandidatesController < AuthenticatedController
 
     if @candidate.update_attributes(params[:candidate])
       unless tempio.nil?
+        if tempio.size > MAX_FILE_SIZE
+          render :status => 400, :json => {:message => 'File size cannot be larger than 10M.'}
+          return
+        end
+
         #TODO: async large file upload
         if @candidate.resume.nil?
           @resume = @candidate.build_resume
@@ -147,13 +157,12 @@ class CandidatesController < AuthenticatedController
     @resume = @candidate.resume
 
     unless @resume.nil?
-      path = File.join(download_folder, "#{@candidate.name}.#{@resume.resume_name}")
+      path = File.join(download_folder, "#{Time.now.to_s}.#{@resume.resume_name}")
       fp = File.new(path, 'wb')
       @resume.readfile(fp)
       fp.close
       download_file(path)
     end
-    #NOTE: We need an async job to delete the temporary file.
   end
 
 private
@@ -177,7 +186,10 @@ private
   def download_file(filepath)
     mimetype = MIME::Types.type_for(filepath)
     filename = File.basename(filepath)
-    send_file(filepath, :filename => filename, :type => "#{mimetype[0]}", :disposition => "inline")
+    File.open(filepath) do |fp|
+      send_data(fp.read, :filename => filename, :type => "#{mimetype[0]}", :disposition => "inline")
+    end
+    File.delete(filepath)
   end
 
 end

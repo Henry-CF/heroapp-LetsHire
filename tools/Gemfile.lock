@@ -1,0 +1,14 @@
+GEM
+  remote: http://ruby.taobao.org/
+  specs:
+    mime-types (1.21)
+    pg (0.15.1)
+    rest-client (1.6.7)
+      mime-types (>= 1.16)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  pg (= 0.15.1)
+  rest-client (= 1.6.7)

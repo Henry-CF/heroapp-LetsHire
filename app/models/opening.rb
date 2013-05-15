@@ -4,10 +4,7 @@ class Opening < ActiveRecord::Base
   include Carmen
 
   attr_accessible :title, :description,:department_id, :status, :country, :province, :city, :total_no, :filled_no
-  attr_accessible :hiring_manager_id, :recruiter_id, :participants, :participant_ids
-
-  attr_accessible :participant_tokens
-  attr_reader :participant_tokens
+  attr_accessible :hiring_manager_id, :recruiter_id, :department, :creator_id
 
   belongs_to :department, :counter_cache => true
   belongs_to :hiring_manager, :class_name => "User", :foreign_key => :hiring_manager_id, :readonly => true
@@ -21,6 +18,7 @@ class Opening < ActiveRecord::Base
   has_many :candidates, :class_name => "Candidate", :through => :opening_candidates
 
   validates :title, :presence => true
+  validates :department_id, :hiring_manager_id, :creator, :total_no, :presence => true
 
   validate :select_valid_owners_if_active,
            :total_no_should_ge_than_filled_no
@@ -54,10 +52,6 @@ class Opening < ActiveRecord::Base
     items.join(', ')
   end
 
-  def participant_tokens=(ids)
-    self.participant_ids = ids.split(',')
-  end
-
   def published?
     status == STATUS_LIST[:published]
   end
@@ -70,12 +64,27 @@ class Opening < ActiveRecord::Base
     total_no - filled_no
   end
 
+  def self.openings_created_by_me(user_id)
+    openings = Opening.where("creator_id = %d", user_id)
+    openings
+  end
+
+  def self.openings_assigned_to_me(user_id)
+    openings = Opening.where("hiring_manager_id = %d OR recruiter_id = %d", user_id, user_id)
+    openings
+  end
+
+  def self.openings_without_interviewers
+    openings = Opening.where("id NOT IN (SELECT opening_id FROM opening_candidates)")
+    openings
+  end
+
   private
   def select_valid_owners_if_active
     if status != STATUS_LIST[:closed]
       if hiring_manager_id && hiring_manager_id.to_i > 0
         begin
-          user = User.active.find(hiring_manager_id)
+          user = User.find(hiring_manager_id)
           valid = user && user.has_role?(:hiring_manager)
         rescue
         end
@@ -84,7 +93,7 @@ class Opening < ActiveRecord::Base
       if recruiter_id && recruiter_id.to_i > 0
         valid = nil
         begin
-          user = User.active.find(recruiter_id)
+          user = User.find(recruiter_id)
           valid = user && user.has_role?(:recruiter)
         rescue
         end
@@ -95,7 +104,7 @@ class Opening < ActiveRecord::Base
 
 
   def total_no_should_ge_than_filled_no
-    errors.add(:filled_no, "is larger than total no.") if filled_no > total_no
+    errors.add(:total_no, "is smaller than filled seat number.") if filled_no > total_no
   end
 
 

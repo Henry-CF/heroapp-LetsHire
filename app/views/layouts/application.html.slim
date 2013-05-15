@@ -4,27 +4,36 @@ html
     title = full_title(yield(:title))
     = stylesheet_link_tag "application", meida: "all"
     = javascript_include_tag "application"
+    = javascript_include_tag "jqplot"
+    = javascript_include_tag "jqplot/plugins/trendline"
+    = javascript_include_tag "jqplot/plugins/pointLabels"
+    = javascript_include_tag "jqplot/plugins/pieRenderer"
+    = javascript_include_tag "jqplot/plugins/donutRenderer"
+    = javascript_include_tag "jqplot/plugins/dateAxisRenderer"
+    = javascript_include_tag "jqplot/plugins/canvasTextRenderer"
+    = javascript_include_tag "jqplot/plugins/canvasAxisTickRenderer"
+    = javascript_include_tag "jqplot/plugins/canvasAxisLabelRenderer"
+    = javascript_include_tag "jqplot/plugins/categoryAxisRenderer"
+    = javascript_include_tag "jqplot/plugins/barRenderer"
     = csrf_meta_tags
     = render 'layouts/shim'
     == yield :password_validation
   body
     = render 'layouts/header'
     .container
+      - if user_signed_in?
+        .navbar
+          .navbar-inner
+            ul.nav
+              li = link_to 'Dashboard', dashboard_overview_path
+              li = link_to 'Job Openings', openings_path
+              li = link_to 'Candidates', candidates_path
+              li = link_to 'Interviews', interviews_path
+              - if current_user.admin?
+                li = link_to 'Settings', settings_path
+                li.lastli = link_to 'Users + Roles', users_path
       - flash.each do |name, msg|
         = content_tag :div, msg, :id => "flash_#{name}", :class => "alert flash-#{name}" if msg.is_a?(String)
-      - if user_signed_in?
-          .row-fluid
-            .span2
-              ul.nav.nav-list.nav-list-no-padding
-                li = link_to 'Job Openings', openings_path
-                li = link_to 'Candidates', candidates_path
-                li = link_to 'Interviews', interviews_path
-                - if current_user.admin?
-                  li = link_to 'Settings', settings_path
-                  li.lastli = link_to 'Users + Roles', users_path
 
-            .span10
-              == yield
-      - else
-        ==yield
+      == yield
       = render 'layouts/footer'

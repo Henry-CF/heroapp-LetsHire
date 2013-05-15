@@ -1,8 +1,14 @@
 require 'spec_helper'
 
 describe Opening do
+  before :all do
+    @hiring_manager1 = create_user(:hiring_manager)
+  end
+
   it 'has a valid factory' do
-    FactoryGirl.create(:opening).should be_valid
+    Opening.create!(FactoryGirl.attributes_for(:opening).merge({:department_id => @hiring_manager1.department_id,
+                                                                :creator_id => @hiring_manager1.id,
+                                                                :hiring_manager_id => @hiring_manager1.id})).should be_valid
   end
 
   it 'requires a title' do

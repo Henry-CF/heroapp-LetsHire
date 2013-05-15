@@ -1,5 +1,11 @@
-h3
-  = 'Edit Interview for '
-  span =link_to @candidate.name , @candidate
+- opening = @opening_candidate.opening
+- candidate = @opening_candidate.candidate
 
-== render 'form'
+h3
+  = 'Schedule Interview: '
+  =link_to candidate.name , candidate
+  span= " for "
+  =link_to opening.title , opening
+  span
+
+== render 'form', { :candidate => candidate, :opening => opening }

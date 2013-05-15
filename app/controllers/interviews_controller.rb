@@ -12,17 +12,21 @@ class InterviewsController < AuthorizedController
   def show
     @interview = Interview.find params[:id]
     authorize! :read, @interview
-    @candidate = @interview.opening_candidate.candidate
     @opening_candidate = @interview.opening_candidate
+    @candidate = @interview.opening_candidate.candidate
   end
 
   def new
     authorize! :manage, Interview
-    @candidate = Candidate.find params[:candidate_id]
     @opening_candidate = OpeningCandidate.find params[:opening_candidate_id] if params[:opening_candidate_id]
-    load_openings
+    if @opening_candidate.nil?
+      return redirect_to interviews_url, :notice  => "Invalid Parameter"
+    end
+    unless @opening_candidate.in_interview_loop?
+      return redirect_to :back, :notice  => "Candidate isn't in interview status for this Job opening"
+    end
     @interview = Interview.new
-    @interview.errors.add(:opening_candidate_id, "isn't in interview status") if @opening_candidates.size == 0
+    render :action => 'edit'
   end
 
   def edit
@@ -33,11 +37,11 @@ class InterviewsController < AuthorizedController
 
   def create
     authorize! :manage, Interview
-    if params[:opening_candidate_id].nil?
+    if params[:interview][:opening_candidate_id].nil?
       redirect_to candidates_path, :notice => "No opening is selected for the candidate"
       return
     end
-    @opening_candidate = OpeningCandidate.find params[:opening_candidate_id]
+    @opening_candidate = OpeningCandidate.find params[:interview][:opening_candidate_id]
     if @opening_candidate.nil?
       redirect_to candidates_path, :notice => "No opening is selected for the candidate"
       return
@@ -47,8 +51,10 @@ class InterviewsController < AuthorizedController
       return
     end
     params[:interview].merge! :status => Interview::STATUS_NEW
+    params[:interview].delete :opening_id
     @interview = @opening_candidate.interviews.build params[:interview]
     if @interview.save
+      update_favorite_interviewers params[:interview][:user_id]
       redirect_to @interview, :notice => "Interview was successfully created"
     else
       prepare_edit
@@ -59,7 +65,9 @@ class InterviewsController < AuthorizedController
   def update
     @interview = Interview.find params[:id]
     authorize! :update, @interview
+    @opening_candidate = @interview.opening_candidate
     if @interview.update_attributes(params[:interview])
+      update_favorite_interviewers params[:interview][:user_id]
       redirect_to interview_path(@interview), :notice => "Interview updated"
     else
       prepare_edit
@@ -87,31 +95,28 @@ class InterviewsController < AuthorizedController
     redirect_to interviews_url, notice: 'Invalid interview'
   end
 
+  def update_favorite_interviewers(user_ids)
+    user_ids = user_ids.split(',') if user_ids.is_a? String
+    if user_ids && user_ids.any?
+      opening = @opening_candidate.opening
+      user_ids.each do | id |
+        op = opening.opening_participants.build
+        op.user_id = id
+        op.save
+      end
+    end
+
+  end
+
+
+
+
   private
 
   def prepare_edit
     @opening_candidate = @interview.opening_candidate
     @candidate = @opening_candidate.candidate
-    load_openings unless @candidate.nil?
+    @opening = @opening_candidate.opening
   end
 
-  def load_openings
-    @opening_candidates = @candidate.opening_candidates.select { |item| item.in_interview_loop? }
-    interviewers_hash = {}
-    @opening_candidates.each do |opening_candidate|
-      opening = opening_candidate.opening
-      if can? :manage, opening
-        opening_interviewers = []
-        opening.participants.each do |participant|
-          opening_interviewers << {
-              id: participant.id,
-              name: participant.name,
-              email: participant.email
-          }
-        end
-        interviewers_hash[opening_candidate.id] = opening_interviewers
-      end
-    end
-    @interviewers_json = interviewers_hash.to_json
-  end
 end

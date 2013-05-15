@@ -1,0 +1,20 @@
+- magicnum = [@openings_created_by_me, @openings_assigned_to_me, @openings_without_interviewers].max + 1
+- data = [@openings_created_by_me, @openings_assigned_to_me, @openings_without_interviewers, magicnum]
+= jqplot 300, 300, [data], { \
+    seriesDefaults: { \
+      renderer: "$.jqplot.BarRenderer", \
+      pointLabels: { show: true, label: data }, \
+      rendererOptions: { varyBarColor: true } \
+    }, \
+    series: [{pointLabels: { \
+      show: true, \
+      label: data \
+    }}], \
+    axes:{ \
+      xaxis:{ \
+        renderer: "$.jqplot.CategoryAxisRenderer", \
+        ticks: ["Created by you", "Assigned to you", "No interviewers"] \
+      }, \
+      yaxis:{ padMax:2 } \
+    } \
+  }

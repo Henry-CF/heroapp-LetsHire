@@ -5,17 +5,18 @@ source 'https://rubygems.org'
 gem 'mime-types', '1.21'
 gem 'rails', '3.2.12'
 gem 'slim-rails', '0.2.0'
-gem 'bootstrap-sass', '2.1'
 gem 'devise', '2.2.3'
 gem 'cancan', '1.6.9'
 gem 'will_paginate', '3.0.4'
 gem 'validates_email_format_of', '1.5.3'
 gem 'dynamic_form', '1.1.4'
 gem 'binding_of_caller', '0.7.1'
-gem 'pg', '0.12.2'
+gem 'pg', '0.15.1'
 gem 'carmen-rails', '1.0.0.beta3'
 gem 'jquery-tokeninput-rails', '1.6.0'
 gem 'ransack', '0.7.2'
+gem 'rake', '10.0.4'
+gem "jqplot-rails", "~> 0.3"
 
 group :development, :test do
   gem 'sqlite3', '1.3.5'
@@ -52,3 +53,4 @@ group :test, :ci do
   gem 'libnotify', '0.8.0'
   gem 'uuidtools', '2.1.3'
 end
+

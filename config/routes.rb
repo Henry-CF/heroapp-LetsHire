@@ -1,5 +1,5 @@
 LetsHire::Application.routes.draw do
-  get "stub_dashboard/overview"
+  get "dashboard/overview"
   resources :AssessmentsController
 
   # all V1 rest api (for mobile) should be below
@@ -16,6 +16,11 @@ LetsHire::Application.routes.draw do
 
       resources :interviews, :only => [:index, :show, :update]
 
+      post 'photo/upload' => 'photos#upload_file'
+      get 'photo/enum' => 'photos#list_files'
+      get 'photo/download' => 'photos#get_file'
+
+      match 'mappings' => 'misc#mappings'
     end
   end
 
@@ -24,7 +29,7 @@ LetsHire::Application.routes.draw do
 
   # all V1 rest api (for mobile) should be above
 
-  root to: 'static_pages#home'
+  root to: 'dashboard#overview'
   match '/help', to: 'static_pages#help'
   match '/contact', to: 'static_pages#contact'
 
@@ -53,6 +58,7 @@ LetsHire::Application.routes.draw do
 
   get '/departments/:id/user_select' => 'departments#user_select'
   resources :departments
+  get '/openings/:id/interviewers_select' => 'openings#interviewers_select'
   resources :openings
   resources :candidates do
     resources :interviews

@@ -11,16 +11,9 @@ User.delete_all
 Department.delete_all
 
 
-Department.create([ { name: 'Administration', description: 'Administration & Facility Department'},
-                    { name: 'Facility', description: 'Facility'},
-                    { name: 'Finance', description: 'Finanace'},
-                    { name: 'HR', description: 'Human Resource'},
-                    { name: 'Marketing', description: 'Marketing'},
-                    { name: 'R&D', description: 'Rearch and Development'},
-                  ])
+Department.create(Department::DEFAULT_SET)
 
-
-it = Department.create({ name: 'IT', description: 'IT'})
+it = Department.find_by_name 'IT'
 
 long_password = '123456789'
 
@@ -28,18 +21,3 @@ User.new_admin(:email => 'admin@local.com',
                :password => long_password,
                :name => 'System Administrator',
                :department_id => it.id).save
-
-# For test convinience temporarily
-user = User.new({ :email => 'i1@local.com', :password => long_password, :name => 'interviewer1', :department_id => 4 })
-user.roles = ['interviewer']
-user.save
-user = User.new({ :email => 'r1@local.com', :password => long_password, :name => 'recruiter1', :department_id => 4 })
-user.roles = ['recruiter']
-user.save
-user = User.new({ :email => 'h1@local.com', :password => long_password, :name => 'recruiting hiring manager 1', :department_id => 4 })
-user.roles = ['hiring_manager','recruiter']
-user.save
-
-
-Candidate.create({ :name => 'Jason', :email => 'jason@local.com', :phone => '021-111', :source => 'internal referral', :description => 'xxx' })
-Candidate.create({ :name => 'Tom', :email => 'tom@local.com', :phone => '021-222', :source => 'internal referral', :description => 'xxx' })

@@ -1,6 +1,6 @@
 class Api::V1::InterviewsController < Api::V1::ApiController
 
-  before_filter :authenticate_user!
+  before_filter :verify_current_user, :authenticate_user!
 
   INTERVAL_MAPPINGS = {
     '1d' => 1.day,
@@ -27,26 +27,36 @@ class Api::V1::InterviewsController < Api::V1::ApiController
 
     @interview = Interview.find(params['id'])
     @candidate = nil
+    @opening = nil
     if requested_attrs.include? 'candidate'
       candidate_id = @interview.opening_candidate.candidate_id
       @candidate = Candidate.find(candidate_id)
+      opening_candidate = OpeningCandidate.where(:candidate_id => candidate_id).first
+      @opening = Opening.find(opening_candidate.opening_id)
     end
     @attachment = nil
-    render :json => {:ret => OK, :interviews => @interviews, :candidate => @candidate, :attachment => @attachment}
+
+    render :json => {:ret => OK, :interview => @interview, :candidate => @candidate, :attachment => @attachment, :opening => @opening}
   rescue ActiveRecord::RecordNotFound
     return unavailable_instance
   end
 
   def update
-    return missing_params unless params[:id]
-    @interview = Interview.find(params[:id])
-
-    if @interview.update_attributes(params[:interview])
-      render :json => {:ret => OK, :interview => @interviews }, :status => 200
+    return missing_params unless params['id']
+    return missing_params unless params['interview']
+    @interview = Interview.find(params['id'])
+    @candidate = nil
+    @opening = nil
+    if @interview.update_attributes(params['interview'])
+      candidate_id = @interview.opening_candidate.candidate
+      @candidate = Candidate.find(candidate_id)
+      opening_candidate = OpeningCandidate.where(:candidate_id => candidate_id).first
+      @opening = Opening.find(opening_candidate.opening_id)
+      render :json => {:interview => @interview, :candidate => @candidate, :opening => @opening }, :status => 200
     else
-      render :json => {:ret => ERROR, :message => 'Error update interview'}, :status => 500
+      render :json => {:ret => ERROR, :message => 'internal error'}, :status => 500
     end
-  rescue ActiveRecord::RecordNotFound
+  rescue
     return unavailable_instance
   end
 

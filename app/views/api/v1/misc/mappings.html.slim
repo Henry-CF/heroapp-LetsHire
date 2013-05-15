@@ -1,0 +1,14 @@
+h1 list all interview-photo mappings
+
+table class='table table-hover'
+  tr
+    th Interview Id
+    th Photo Id
+    th URI
+
+  - @mappings.each do |mapping|
+    tr
+      td= mapping.interview_id
+      td= mapping.photo_id
+      td= mapping.photo_uri
+br

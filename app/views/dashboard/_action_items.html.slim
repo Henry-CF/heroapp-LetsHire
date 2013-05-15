@@ -1,0 +1,65 @@
+div.action-item-title
+  h4
+    i.icon-dashboard.icon-large
+    span = 'Action Items'
+
+div.carousel-wrapper
+  div.carousel data-jcarousel='true'
+    ul
+      li
+        div.action-item-wrapper
+          div.action-item
+            h2 = @openings.size
+            h5 = 'active job openings'
+            =link_to 'Create', new_opening_path
+      li
+        div.action-item-wrapper
+          div.action-item
+            h2 = @openings.size
+            h5 = "job openings don't have candidates"
+            =link_to 'Assign', openings_path
+      li
+        div.action-item-wrapper
+          div.action-item
+            h2 = @candidates.size
+            h5 = 'candidates are not assigned to job openings'
+            =link_to 'Assign', candidates_path
+      li
+        div.action-item-wrapper
+          div.action-item
+            h2 = @candidates.size
+            h5 = "active candidates haven't been scheduled for interviews"
+            =link_to 'Schedule', candidates_path
+      li
+        div.action-item-wrapper
+          div.action-item
+            h2 = @interviews.size
+            h5 = 'upcoming interviews for my owned job openings'
+            =link_to 'View', interviews_path
+      li
+        div.action-item-wrapper
+          div.action-item
+            h2 = @interviews.size
+            h5 = 'upcomming interviews for me as an nterviewer'
+            =link_to 'View', interviews_path
+      li
+        div.action-item-wrapper
+          div.action-item
+            h2 = @interviews.size
+            h5 = 'interviews were not given feedback'
+            =link_to 'Give Feedback', interviews_path
+      li
+        div.action-item-wrapper
+          div.action-item
+            h2 = @candidates.size
+            h5 = 'interviews candidates were not given final assessment'
+            =link_to 'Assess', candidates_path
+      li
+        div.action-item-wrapper
+          div.action-item
+            h2 = @candidates.size
+            h5 = 'candidates have been given final assessments'
+            =link_to 'View', candidates_path
+
+  a.carousel-control-prev href='#' data-jcarousel-control='true' data-target='-=1' ‹
+  a.carousel-control-next href='#' data-jcarousel-control='true' data-target='+=1' ›

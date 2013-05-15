@@ -16,6 +16,12 @@ development:
   <<: *localcommon
   database: db/development.sqlite3
 
+#NOTE:The following config is for file upload/download. If you do not touch them
+#during daily development, just keep them unchanged.
+#development:
+#  <<: *common
+#  database: letshire_development
+
 ci:
   <<: *common
   database: letshire_ci

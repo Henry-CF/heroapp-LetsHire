@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe StubDashboardController do
+describe DashboardController do
 
   def valid_opening
     {
@@ -8,7 +8,8 @@ describe StubDashboardController do
       :department_id => 1,
       :hiring_manager_id => @hiring_manager1.id,
       :recruiter_id => @recruiter1.id,
-      :status => 1
+      :status => 1,
+      :creator_id => @hiring_manager1.id
     }
   end
 

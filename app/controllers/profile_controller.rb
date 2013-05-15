@@ -6,7 +6,7 @@ class ProfileController < AuthenticatedController
   end
 
   def update
-    @user = User.active.find(current_user.id)
+    @user = User.find(current_user.id)
 
     safe_params = {}
     [:current_password, :password, :password_confirmation].each do | key |

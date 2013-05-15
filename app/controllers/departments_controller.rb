@@ -1,5 +1,5 @@
 class DepartmentsController < AuthenticatedController
-  before_filter :require_admin
+  before_filter :require_admin, :except => [:user_select]
   # GET /departments
   def index
     @departments = Department.all
@@ -23,7 +23,13 @@ class DepartmentsController < AuthenticatedController
   end
 
   def user_select
-    render :partial => 'users/user_select', :locals => { :selected_department_id => params[:id] }
+    @department = Department.find(params[:id])
+    users = @department.users
+    role = params[:role] || 'interviewer'
+    users.select! { |user| (user.has_role?(role)) }
+    render :partial => 'users/user_select', :locals => { :users => users}
+  rescue
+    render :partial => 'users/user_select', :locals => { :users => [] }
   end
 
   # POST /departments

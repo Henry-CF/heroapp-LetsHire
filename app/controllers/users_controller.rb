@@ -3,7 +3,7 @@ class UsersController < AuthenticatedController
   before_filter :require_admin, :except => [:index_for_tokens]
 
   def index
-    @users = User.paginate(:page => params[:page], :per_page => 20)
+    @users = User.include_deleted_in { User.paginate(:page => params[:page], :per_page => 20) }
   end
 
   def index_for_tokens
@@ -11,9 +11,9 @@ class UsersController < AuthenticatedController
       redirect_to new_user_session_path, :notice => REQUIRE_LOGIN
     end
     if params[:all]
-      @participants = User.select("id, name, email").where("name like ?", "%#{params[:q]}%")
+      @participants = User.include_deleted_in { select("id, name, email").where("name like ?", "%#{params[:q]}%") }
     else
-      @participants = User.active.select("id, name, email").where("name like ?", "%#{params[:q]}%")
+      @participants = User.select("id, name, email").where("name like ?", "%#{params[:q]}%")
     end
     respond_to do |format|
       format.json { render :json => @participants.map(&:attributes) }
@@ -90,7 +90,6 @@ class UsersController < AuthenticatedController
   end
 
   def reactivate
-    @user = User.find(params[:id])
     toggle(params, true)
   rescue
     redirect_to users_url, notice: 'Invalid user'
@@ -99,7 +98,7 @@ class UsersController < AuthenticatedController
   private
 
   def toggle(params, active)
-    @user = User.find(params[:id])
+    @user = User.include_deleted_in { User.find(params[:id]) }
     option = {:deleted_at => (active ? nil : Time.current)}
     if @user.update_without_password(option) && @user.save
       redirect_to users_url

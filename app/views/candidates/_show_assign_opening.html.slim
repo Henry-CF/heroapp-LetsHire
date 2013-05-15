@@ -20,7 +20,7 @@ h5 Interviews
 .pull-right
   -if can? :manage, Interview
     -if opening_candidate.in_interview_loop?
-      = link_to 'New Interview', new_candidate_interview_path(candidate, :opening_candidate_id => opening_candidate)
+      = link_to 'Schedule Interview', new_candidate_interview_path(candidate, :opening_candidate_id => opening_candidate)
 br
 table class='table table-hover'
   tr

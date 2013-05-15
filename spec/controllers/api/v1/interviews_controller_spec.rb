@@ -18,23 +18,16 @@ describe Api::V1::InterviewsController do
   end
 
   def valid_interview(users = nil)
-    hash = {
-        :opening_candidate_id => @opening.id,
-        :modality     => Interview::MODALITY_PHONE,
-        :title        => "interview for David",
-        :description  => "30 minutes discussion",
-        :status       => Interview::STATUS_NEW,
-        :phone        => Faker::PhoneNumber.phone_number,
-        :scheduled_at => (DateTime.now + 1.hour).to_s,
-        :duration     => 1,
-        :location     => Faker::Address.building_number,
-        :interviewer_ids => [@user_ids[0]]
-    }
-    hash = hash.merge :interviewer_ids => users.map { |user| user.id } if users.is_a?(Array)
+    hash = FactoryGirl.attributes_for(:interview).merge({
+              :opening_candidate_id => @opening.id,
+              :scheduled_at => (DateTime.now + 1.hour).to_s
+          })
+    hash = hash.merge :user_ids => users.map { |user| user.id } if users.is_a?(Array)
     hash
   end
 
   before :all do
+    @hiring_manager1 = create_user(:hiring_manager)
     @users = []
     user_password = '12345678'
     3.times do
@@ -52,36 +45,37 @@ describe Api::V1::InterviewsController do
   describe 'RESTful API' do
 
     before :each do
-      sign_in_as_admin
+      user = sign_in_as_admin
+      @token = user[:authentication_token]
     end
 
     it 'can fetch all interviews in one interval' do
       interview = Interview.create! valid_interview(@users)
 
-      get :index, {}
+      get :index, :auth_token => @token
       assigns(:interviews).should eq([interview])
 
-      get :index, {'interval' => '1w'}
+      get :index, :auth_token => @token, :interval => '1w'
       assigns(:interviews).should eq([interview])
 
-      get :index, {'interval' => '1m'}
+      get :index, :auth_token => @token, :interval => '1m'
       assigns(:interviews).should eq([interview])
     end
 
     it 'can not fetch any interviews if interval params invalid' do
       interview = Interview.create! valid_interview(@users)
-      get :index, {'interval' => 'other'}
+      get :index, :auth_token => @token, :interval => 'other'
       assigns(:interviews).should be_nil
     end
 
     it 'can fetch specific interview details' do
       interview = Interview.create! valid_interview(@users)
 
-      get :show, {:id => interview.id, 'candidate' => '0'}
+      get :show, :auth_token => @token, :id => interview.id, :candidate => '0'
       assigns(:interview).should be_a(Interview)
       assigns(:candidate).should be_nil
 
-      get :show, {:id => interview.id ,'candidate' => '1'}
+      get :show, :auth_token => @token, :id => interview.id, :candidate => '1'
       assigns(:interview).should be_a(Interview)
       assigns(:candidate).should be_a(Candidate)
     end
@@ -89,7 +83,7 @@ describe Api::V1::InterviewsController do
     it 'can update specific interview' do
       interview = Interview.create! valid_interview(@users)
       interview.status = Interview::STATUS_CLOSED
-      post :update, {:id => interview.id, :interview => {:status => Interview::STATUS_CLOSED } }
+      post :update, :auth_token => @token, :id => interview.id, :interview => {:status => Interview::STATUS_CLOSED }
       assigns(:interview).should eq(interview)
     end
 

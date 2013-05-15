@@ -1,22 +1,8 @@
-- role ||= params[:role]
-- active ||= params[:all_users]
-- user_id ||= nil
-div id="#{role}_id_select_wrapper"
-  -if !selected_department_id.nil? && selected_department_id.to_i > 0
-    -department = Department.find(selected_department_id.to_i)
-    -if department.nil?
-      em Please select a department
-    -else
-      -if department.users.count > 0
-        select id="#{role}_id" name="opening[#{role}_id]"
-          -department.users.each do |user|
-            - next if (active && user.deleted_at)
-            - next unless (user.has_role?(role))
-            -if (selected_department_id.nil? && (!user_id.nil? && user_id == user.id))
-              option selected=true value="#{user.id}" ="#{user.name}"
-            -else
-              option value="#{user.id}" ="#{user.name}"
-      -else
-        em = "No #{role} in the department"
-  -else
-    em Please select a department
+- empty_msg ||= 'No users'
+- multiple ||= false
+-if users && users.count > 0
+  select multiple=multiple
+    -users.each do |user|
+      option value="#{user.id}" ="#{user.name}"
+-else
+  em = empty_msg

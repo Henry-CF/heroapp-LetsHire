@@ -2,12 +2,14 @@ class Interview < ActiveRecord::Base
   belongs_to :opening_candidate
   has_many :interviewers, :dependent => :destroy
   has_many :users, :through => :interviewers
+  has_many :photos, :dependent => :destroy
 
   accepts_nested_attributes_for :interviewers, :allow_destroy => true, :reject_if => proc { |interviewers| interviewers.empty? }
 
+  attr_accessible :user_id, :user_ids
+
   attr_accessible :opening_candidate, :opening_candidate_id
-  attr_accessible :interviewer_ids
-  attr_accessible :title, :modality, :scheduled_at, :scheduled_at_iso, :duration, :phone, :location, :description
+  attr_accessible :modality, :scheduled_at, :scheduled_at_iso, :duration, :phone, :location, :description
   attr_accessible :status, :score, :assessment
   attr_accessible :created_at, :updated_at
 
@@ -25,7 +27,7 @@ class Interview < ActiveRecord::Base
   STATUS = [STATUS_NEW, STATUS_PROGRESS, STATUS_CLOSED]
 
   validates :opening_candidate_id, :presence => true
-  validates :modality, :title, :scheduled_at, :presence => true
+  validates :modality, :scheduled_at, :presence => true
   validates :modality, :inclusion => MODALITIES
   validates :status, :inclusion => STATUS
 
@@ -42,24 +44,16 @@ class Interview < ActiveRecord::Base
     end
   end
 
+  def user_id
+    user_ids.try(:first)
+  end
+
+  def user_id=(id)
+    self.user_ids = [id]
+  end
+
   def scheduled_at_iso=(val)
     self.scheduled_at = Time.parse val
   rescue
-  end
-
-  def interviewer_ids=(ids)
-    ids.map! { |id| id.to_i }
-    removes = []
-    interviewers.each do |interviewer|
-      removes << interviewer if ids.delete(interviewer.user_id).nil?
-    end
-    transaction do
-      removes.each do |interviewer|
-        interviewers.delete interviewer
-      end
-      ids.each do |id|
-        interviewers << Interviewer.new(:user_id => id)
-      end
-    end
   end
 end

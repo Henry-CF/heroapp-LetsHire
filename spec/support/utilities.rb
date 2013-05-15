@@ -12,4 +12,5 @@ end
 def sign_in_as_admin
   user = User.find_by_admin true
   sign_in user
+  user
 end

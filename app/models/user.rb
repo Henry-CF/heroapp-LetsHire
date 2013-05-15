@@ -1,4 +1,6 @@
 class User < ActiveRecord::Base
+  validates :name,  :presence => true
+
   # Include default devise modules. Others available are:
   # :registerable, :recoverable, :rememberable, :trackable, :validatable
   # :token_authenticatable, :confirmable,
@@ -12,11 +14,7 @@ class User < ActiveRecord::Base
 
   ROLES = %w[interviewer recruiter hiring_manager]
 
-  validates :name,  :presence => true
-  validates :email, :presence => true, :uniqueness => true
-  validates :email, :email_format => { :message => 'format error'}, :if => :email?
-
-  scope :active, where(:deleted_at => nil)
+  default_scope where(:deleted_at => nil).order('name ASC')
 
   belongs_to :department
   has_many :openings_to_be_interviewed, :through => :opening_participants
@@ -60,7 +58,7 @@ class User < ActiveRecord::Base
   end
 
   def roles_string
-    roles.join(',')
+    roles.join(', ')
   end
 
   def add_role(role)
@@ -84,6 +82,10 @@ class User < ActiveRecord::Base
     else
       []
     end
+  end
+
+  def self.include_deleted_in
+    User.with_exclusive_scope { yield }
   end
 
 end

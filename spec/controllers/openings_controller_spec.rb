@@ -26,6 +26,7 @@ describe OpeningsController do
   def valid_attributes
     FactoryGirl.attributes_for(:opening).merge({:hiring_manager_id => @hiring_manager1.id,
       :recruiter_id => @recruiter1.id,
+      :creator_id => @recruiter1.id,
       :department_id => @hiring_manager1.department_id,
       :status => 1})
   end

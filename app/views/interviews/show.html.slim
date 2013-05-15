@@ -28,7 +28,7 @@ dl.dl-horizontal.clear-both
           span.name= interviewer.user.name
     span &nbsp;
   dt Description
-  dd = simple_format(@interview.description)
+  dd = simple_format h(@interview.description)
   .pull-right
     - if is_interviewer? @interview.interviewers
       = link_to 'Update Feedback', edit_interview_path(@interview, :anchor => 'interview_assessment')

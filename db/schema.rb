@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130428012939) do
+ActiveRecord::Schema.define(:version => 20130507030219) do
 
   create_table "assessments", :force => true do |t|
     t.integer  "opening_candidate_id"
@@ -44,11 +44,6 @@ ActiveRecord::Schema.define(:version => 20130428012939) do
 
   add_index "departments", ["name"], :name => "index_departments_on_name", :unique => true
 
-  create_table "fake_data", :id => false, :force => true do |t|
-    t.integer "id",      :null => false
-    t.binary  "content"
-  end
-
   create_table "interviewers", :force => true do |t|
     t.integer  "interview_id"
     t.integer  "user_id"
@@ -61,7 +56,6 @@ ActiveRecord::Schema.define(:version => 20130428012939) do
   create_table "interviews", :force => true do |t|
     t.integer  "opening_candidate_id"
     t.string   "modality",                                      :null => false
-    t.string   "title",                                         :null => false
     t.text     "description"
     t.string   "status",               :default => "scheduled"
     t.float    "score"
@@ -113,6 +107,15 @@ ActiveRecord::Schema.define(:version => 20130428012939) do
   add_index "openings", ["department_id"], :name => "index_openings_on_department_id"
   add_index "openings", ["hiring_manager_id"], :name => "index_openings_on_hiring_manager_id"
   add_index "openings", ["recruiter_id"], :name => "index_openings_on_recruiter_id"
+
+  create_table "photos", :force => true do |t|
+    t.integer  "interview_id"
+    t.string   "photo_name"
+    t.string   "photo_path"
+    t.text     "description"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
 
   create_table "resumes", :force => true do |t|
     t.integer  "candidate_id"
