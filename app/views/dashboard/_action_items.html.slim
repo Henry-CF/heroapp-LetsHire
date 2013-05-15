@@ -38,14 +38,14 @@ div.carousel-wrapper
         li
           div.action-item-wrapper
             div.action-item
-              h2 = @upcoming_interviews_owned_by_me.size
+              h2 = @interviews_owned_by_me.size
               h5 = 'upcoming interviews for my owned job openings'
               =link_to 'View', interviews_path(:owned_by_me => 1)
       - if can? :manage, Interview
         li
           div.action-item-wrapper
             div.action-item
-              h2 = @upcoming_interviews_interviewed_by_me.size
+              h2 = @interviews_interviewed_by_me.size
               h5 = 'upcoming interviews for me as an interviewer'
               =link_to 'View', interviews_path(:interviewed_by_me => 1)
       - if can? :manage, Interview

@@ -129,24 +129,24 @@ describe DashboardController do
       pending('no implementation')
     end
 
-    it 'assign upcoming interviews owned by me to @upcoming_interviews_owned_by_me' do
+    it 'assign upcoming interviews owned by me to @interviews_owned_by_me' do
       sign_in @recruiter
       get 'overview'
-      assigns(:upcoming_interviews_owned_by_me).size.should be 0
+      assigns(:interviews_owned_by_me).size.should be 0
       interview = schedule_opening_interview_to_candidate @candidate, @opening
       assign_interview_to_user(interview, @recruiter)
       get 'overview'
-      assigns(:upcoming_interviews_owned_by_me).should include(interview)
+      assigns(:interviews_owned_by_me).should include(interview)
     end
 
-    it 'assign upcoming interviews interviewed by me to @upcoming_interviews_interviewed_by_me' do
+    it 'assign upcoming interviews interviewed by me to @interviews_interviewed_by_me' do
       sign_in @recruiter
       get 'overview'
-      assigns(:upcoming_interviews_interviewed_by_me).size.should be 0
+      assigns(:interviews_interviewed_by_me).size.should be 0
       interview = schedule_opening_interview_to_candidate @candidate, @opening
       assign_interview_to_user(interview, @recruiter)
       get 'overview'
-      assigns(:upcoming_interviews_interviewed_by_me).should include(interview)
+      assigns(:interviews_interviewed_by_me).should include(interview)
     end
 
     it 'assign interviews without feedback to @interviews_without_feedback' do
