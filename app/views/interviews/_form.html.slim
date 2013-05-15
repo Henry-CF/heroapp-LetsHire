@@ -7,6 +7,7 @@
           li= msg
 
   = hidden_field_tag nil, opening.id, :id => 'opening_id'
+  =hidden_field_tag :opening_candidate_id, @opening_candidate.id
   .control-group
     = f.label :modality, 'Interview Type', :class => 'control-label'
     .controls

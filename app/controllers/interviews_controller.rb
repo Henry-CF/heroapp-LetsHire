@@ -79,6 +79,10 @@ class InterviewsController < AuthorizedController
       redirect_to candidates_path, :notice => "No opening is selected for the candidate"
       return
     end
+    if params[:interview].nil?
+      redirect_to candidates_path, :notice => "Invalid parameter"
+      return
+    end
     @opening_candidate = OpeningCandidate.find params[:opening_candidate_id]
     if @opening_candidate.nil?
       redirect_to candidates_path, :notice => "No opening is selected for the candidate"

@@ -1,7 +1,7 @@
 tr
   td.first.hide = interview.id
   - if interview.editable?
-    td = text_field_tag "#{interview.id}_scheduled_at", nil, :class => 'datetimepicker', :data => {:iso => interview.scheduled_at_iso}
+    td = text_field_tag :scheduled_at, nil, :class => 'datetimepicker', :id => nil, :data => {:iso => interview.scheduled_at_iso}
     td = number_field_tag :duration, interview.duration, :in => 30..180, :step => 10
     td = select_tag :modality, options_for_select(Interview::MODALITIES.collect { |x| [x,x] }, interview.modality)
     td = text_field_tag :location, interview.location

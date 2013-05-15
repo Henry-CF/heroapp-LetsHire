@@ -1,15 +1,23 @@
 $(function () {
     $(".datetimepicker").datetimepicker().each(function (index, elem) {
         var isoTime = new Date($(elem).data('iso'));
-        var iso_elem = $("#" + elem.id.replace("scheduled_at", "scheduled_at_iso"));
-        if (iso_elem) {
-            iso_elem.val(isoTime.toISOString());
+        var new_id = elem.id.replace("scheduled_at", "scheduled_at_iso");
+        if (new_id != elem.id) {
+            var iso_elem = $("#" +  new_id);
+            if (iso_elem) {
+                iso_elem.val($(elem).data('iso'));
+            }
         }
         $(elem).datetimepicker("setDate", isoTime);
     }).change(function () {
-        var iso_elem = $("#" + this.id.replace("scheduled_at", "scheduled_at_iso"));
-        if (iso_elem) {
-            iso_elem.val(new Date(this.value).toISOString());
+        var isoVal = new Date(this.value).toISOString();
+        $(this).data('iso', isoVal);
+        var new_id = this.id.replace("scheduled_at", "scheduled_at_iso");
+        if (new_id != this.id) {
+            var iso_elem = $("#" + new_id);
+            if (iso_elem) {
+                iso_elem.val(isoVal);
+            }
         }
     });
 
@@ -88,7 +96,7 @@ $(function () {
             interview.id = row.find('td:eq(0)').text();
             interview.status = row.find('#status').val();
             if (row.find('.icon-remove').length > 0) {
-                interview.scheduled_at_iso = new Date(row.find('td:eq(1) input').val()).toISOString();
+                interview.scheduled_at_iso = row.find('td:eq(1) input').data('iso');
                 interview.duration = row.find('#duration').val();
                 interview.modality = row.find('#modality').val();
             } else {
@@ -112,10 +120,13 @@ $(function () {
             }
             $.get("/interviews/interview_lineitem", function(data, status) {
                 if (status == 'success') {
-                    tbody.append(data);
-                    var timePicker = tbody.find("tr:last .datetimepicker");
-                    timePicker.datetimepicker();
-                    timePicker.val(timePicker.data('iso'));
+                    var newElem = $(data).appendTo('table.schedule_interviews tbody');
+                    var timePicker = newElem.find("td .datetimepicker")
+                    var isoTime = new Date(timePicker.data('iso'));
+                    timePicker.datetimepicker().change(function() {
+                        var isoVal = new Date(this.value).toISOString();
+                        $(this).data('iso', isoVal)
+                    }).datetimepicker("setDate", isoTime);
                 }
             });
         });
@@ -134,9 +145,10 @@ $(function () {
                 }
                 else {
                     var url = $('#previous_url').data('value');
-                    if (url) {
-                        window.location = url;
+                    if (!url) {
+                        url = "/interviews"
                     }
+                    window.location = url;
                 }
             })
             .fail(function(jqXHR, textStatus, errorThrown) {
