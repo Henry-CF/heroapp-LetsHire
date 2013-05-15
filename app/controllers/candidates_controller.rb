@@ -23,7 +23,7 @@ class CandidatesController < AuthenticatedController
 
   def show
     @candidate = Candidate.find params[:id]
-    @resume = @candidate.resume.resume_name unless @candidate.resume.nil?
+    @resume = @candidate.resume.name unless @candidate.resume.nil?
   end
 
   def new
@@ -33,7 +33,7 @@ class CandidatesController < AuthenticatedController
 
   def edit
     @candidate = Candidate.find params[:id]
-    @resume = @candidate.resume.resume_name unless @candidate.resume.nil?
+    @resume = @candidate.resume.name unless @candidate.resume.nil?
   end
 
   def new_opening
@@ -137,7 +137,7 @@ class CandidatesController < AuthenticatedController
       end
       redirect_to @candidate, :notice => "Candidate \"#{@candidate.name}\" (#{@candidate.email}) was successfully updated."
     else
-      @resume = @candidate.resume.resume_name unless @candidate.resume.nil?
+      @resume = @candidate.resume.name unless @candidate.resume.nil?
       render :action => 'edit'
     end
   rescue ActiveRecord::RecordNotFound
@@ -162,7 +162,7 @@ class CandidatesController < AuthenticatedController
     @resume = @candidate.resume
 
     unless @resume.nil?
-      path = File.join(download_folder, "#{Time.now.to_s}.#{@resume.resume_name}")
+      path = File.join(download_folder, "#{Time.now.to_s}.#{@resume.name}")
       fp = File.new(path, 'wb')
       @resume.readfile(fp)
       fp.close
