@@ -1,6 +1,6 @@
 h4 Offers
 hr width="300"
-- value = [@interviews_rejected, @interviews_notconfirmed, @interviews_accepted]
+- value = [@offers_rejected, @offers_notconfirmed, @offers_accepted]
 - label = ["Rejected", "Not confirmed", "Accepted"]
 - data = label.map {|key| [key, value[label.index(key)]]}
 = jqplot 300, 300, [data], {seriesDefaults: {  \

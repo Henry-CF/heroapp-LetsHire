@@ -38,33 +38,36 @@ class OpeningCandidate < ActiveRecord::Base
     status.nil? || (status == OpeningCandidate::STATUS_LIST[OpeningCandidate::INTERVIEW_LOOP])
   end
 
+  # find all 'rejected' records belong to recruiter user
   def self.rejected?(user_id)
     records = OpeningCandidate.find(:all, \
-                          :conditions=>["opening_candidates.id=interviews.opening_candidate_id and \
-                                       interviews.id=interviewers.interview_id and \
-                                       interviewers.user_id = #{user_id} and \
-                                       opening_candidates.status = 9"], \
-                          :include=>[:interviews=>[:interviewers]])
+                          :conditions=>["opening_candidates.opening_id=openings.id and \
+                                       openings.recruiter_id = users.id and \
+                                       users.id = #{user_id} and \
+                                       opening_candidates.status = #{STATUS_LIST['Offer Declined']}"], \
+                          :include=>[:opening=>[:recruiter]])
     records
   end
 
+  # find all 'notconfirmed' records belong to recruiter user
   def self.notconfirmed?(user_id)
     records = OpeningCandidate.find(:all, \
-                          :conditions=>["opening_candidates.id=interviews.opening_candidate_id and \
-                                       interviews.id=interviewers.interview_id and \
-                                       interviewers.user_id = #{user_id} and \
-                                       opening_candidates.status = 8"], \
-                          :include=>[:interviews=>[:interviewers]])
+                          :conditions=>["opening_candidates.opening_id=openings.id and \
+                                       openings.recruiter_id = users.id and \
+                                       users.id = #{user_id} and \
+                                       opening_candidates.status = #{STATUS_LIST['Offer Pending']}"], \
+                          :include=>[:opening=>[:recruiter]])
     records
   end
 
+  # find all 'accepted' records belong to recruiter user
   def self.accepted?(user_id)
     records = OpeningCandidate.find(:all, \
-                          :conditions=>["opening_candidates.id=interviews.opening_candidate_id and \
-                                       interviews.id=interviewers.interview_id and \
-                                       interviewers.user_id = #{user_id} and \
-                                       opening_candidates.status = 10"], \
-                          :include=>[:interviews=>[:interviewers]])
+                          :conditions=>["opening_candidates.opening_id=openings.id and \
+                                       openings.recruiter_id = users.id and \
+                                       users.id = #{user_id} and \
+                                       opening_candidates.status = #{STATUS_LIST['Offer Accepted']}"], \
+                          :include=>[:opening=>[:recruiter]])
     records
   end
 
