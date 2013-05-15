@@ -4,14 +4,20 @@ class CandidatesController < AuthenticatedController
   MAX_FILE_SIZE = 10 * 1024 * 1024
 
   def index
-    opening = nil
-    if (params[:opening_id])
-      opening = Opening.find(params[:opening_id])
-    end
-    if opening
-      @candidates = opening.candidates.paginate(:page => params[:page])
+    if params.has_key? :no_openings
+      @candidates = Candidate.without_opening.paginate(:page => params[:page])
+    elsif params.has_key? :no_interviews
+      @candidates = Candidate.without_interview.paginate(:page => params[:page])
     else
-      @candidates = Candidate.paginate(:page => params[:page])
+      opening = nil
+      if (params[:opening_id])
+        opening = Opening.find(params[:opening_id])
+      end
+      if opening
+        @candidates = opening.candidates.paginate(:page => params[:page])
+      else
+        @candidates = Candidate.paginate(:page => params[:page])
+      end
     end
   end
 
@@ -29,7 +35,6 @@ class CandidatesController < AuthenticatedController
     @candidate = Candidate.find params[:id]
     @resume = @candidate.resume.resume_name unless @candidate.resume.nil?
   end
-
 
   def new_opening
     @candidate = Candidate.find params[:id]
