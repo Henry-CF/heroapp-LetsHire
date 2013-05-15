@@ -8,7 +8,7 @@ class Department < ActiveRecord::Base
 
   has_many :users, :dependent => :destroy
 
-  scope :with_at_least_n_openings, ->(n = 1) { where('openings_count >= ?', n)}
+  scope :with_openings, joins(:openings).uniq
 
 
   DEFAULT_SET = [ { name: 'Admin', description: 'Administrative' },

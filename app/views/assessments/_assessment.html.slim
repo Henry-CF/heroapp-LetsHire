@@ -2,5 +2,5 @@ div
   = assessment.creator.try(:name)
   = ' '
   = assessment.updated_at
-  = simple_format assessment.comment
+  = simple_format h(assessment.comment)
 p

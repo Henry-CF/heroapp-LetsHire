@@ -1,5 +1,5 @@
 class OpeningCandidate < ActiveRecord::Base
-  attr_accessible :candidate, :candidate_id, :opening, :opening_id, :status
+  attr_accessible :candidate_id, :opening_id, :status, :interviews_attributes
 
   belongs_to :candidate, :counter_cache => true
   belongs_to :opening, :counter_cache => true
@@ -11,6 +11,8 @@ class OpeningCandidate < ActiveRecord::Base
   validates :candidate_id, :opening_id, :presence => true
 
   validates :candidate_id, :uniqueness => { :scope => :opening_id }
+
+  accepts_nested_attributes_for :interviews, :allow_destroy => true, :reject_if => proc { |interview| interview.empty? }
 
   def status_str
     if status.nil?

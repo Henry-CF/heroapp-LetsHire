@@ -9,15 +9,15 @@ class OpeningsController < ApplicationController
     unless user_signed_in?
       #published openings are returned only
       #TODO: need exclude certain fields from anonymous access, such as 'Hiring Manager'
-      @openings = Opening.published.paginate(:page => params[:page], :order => 'title ASC')
+      @openings = Opening.published.paginate(:page => params[:page])
     else
       if params.has_key?(:all)
-        @openings = Opening.paginate(:page => params[:page], :order => 'title ASC')
+        @openings = Opening.paginate(:page => params[:page], :order => 'updated_at DESC')
       else
         if can? :manage, Opening
-          @openings = Opening.owned_by(current_user.id).paginate(:page => params[:page], :order => 'title ASC')
+          @openings = Opening.owned_by(current_user.id).paginate(:page => params[:page])
         else
-          @openings = current_user.openings.order('title ASC')
+          @openings = current_user.openings
         end
       end
     end

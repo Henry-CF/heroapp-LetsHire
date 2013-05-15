@@ -23,7 +23,7 @@ table class='table table-hover'
               =link_to 'Deactivate',  disable_user_path(user), :confirm => 'Are you sure?', :class => 'btn btn-danger'
             -else
               =link_to 'Reactivate',  enable_user_path(user), :class => 'btn'
-          a.btn href=edit_user_path(user.id) Edit
+          = link_to '', edit_user_path(user.id), :class => 'icon-file-alt icon-large action-icon'
 
 div.digg_pagination
   = will_paginate @users, :class => "digg-paginate"

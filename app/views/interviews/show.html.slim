@@ -10,8 +10,8 @@ dl.dl-horizontal.clear-both
   dd =@interview.modality
   dt Scheduled At
   dd.iso-time= @interview.scheduled_at_iso
-  dt Duration
-  dd= @interview.duration.to_s + " min"
+  dt Duration(min)
+  dd= @interview.duration.to_s
   - if @interview.modality.include?("phone")
     dt Phone
     dd= @interview.phone
@@ -21,12 +21,7 @@ dl.dl-horizontal.clear-both
   dt Status
   dd= @interview.status
   dt Interviewers
-  dd
-    div
-      - @interview.interviewers.each do |interviewer|
-        .interviewer-line
-          span.name= interviewer.user.name
-    span &nbsp;
+  dd= @interview.users.collect { |user| user.name}.join(', ')
   dt Description
   dd = simple_format h(@interview.description)
   .pull-right

@@ -1,10 +1,11 @@
 tr
+  td.iso-time= interview.scheduled_at_iso
+  td.capitalized-text= interview.modality
   -unless opening_candidate
     td= link_to interview.opening_candidate.candidate.name + " for " + interview.opening_candidate.opening.title, interview
-  else
-    td.capitalized-text = link_to interview.modality, interview
-  td.iso-time= interview.scheduled_at_iso
   td= interview.duration
+  td= (interview.users.collect { |user| user.name}).join(', ')
+  td= interview.status
   td.actions
-    = link_to 'Edit', edit_interview_path(interview), :class => 'btn'
-    = link_to 'Delete', interview, :confirm => 'Are you sure?', :method => :delete, :class => 'btn btn-danger'
+    = link_to '', edit_interview_path(interview), :class => 'icon-file-alt icon-large action-icon'
+    = link_to '', interview, :confirm => 'Are you sure?', :method => :delete, :class => 'icon-remove icon-large action-icon'

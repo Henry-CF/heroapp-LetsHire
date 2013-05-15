@@ -1,14 +1,17 @@
 class Interview < ActiveRecord::Base
+
+  default_scope order('scheduled_at ASC')
+
   belongs_to :opening_candidate
   has_many :interviewers, :dependent => :destroy
   has_many :users, :through => :interviewers
   has_many :photos, :dependent => :destroy
 
-  accepts_nested_attributes_for :interviewers, :allow_destroy => true, :reject_if => proc { |interviewers| interviewers.empty? }
+  accepts_nested_attributes_for :users, :allow_destroy => true, :reject_if => proc { |user| user.empty? }
 
   attr_accessible :user_id, :user_ids
 
-  attr_accessible :opening_candidate, :opening_candidate_id
+  attr_accessible :opening_candidate_id
   attr_accessible :modality, :scheduled_at, :scheduled_at_iso, :duration, :phone, :location, :description
   attr_accessible :status, :score, :assessment
   attr_accessible :created_at, :updated_at
@@ -83,4 +86,8 @@ class Interview < ActiveRecord::Base
     owned_interviews
   end
 
+  def editable?
+    status != STATUS_CLOSED
+
+  end
 end

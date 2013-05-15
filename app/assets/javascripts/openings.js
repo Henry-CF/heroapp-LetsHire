@@ -19,7 +19,7 @@ $(function() {
 
         var role_id = $( '#opening_' + role + '_id');
         $('select', role_id).attr('disabled', true);
-        var old_value = role_id.data('value');
+        var old_value = role_id.val();
         var url = "/departments/" + department_id + "/user_select?role=" + role;
         return role_id.load(url, function() {
             var role_id = $( '#opening_' + role + '_id');

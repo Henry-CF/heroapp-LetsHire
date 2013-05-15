@@ -39,6 +39,6 @@ class ApplicationController < ActionController::Base
   end
 
   def after_sign_in_path_for(resource)
-    dashboard_overview_path
+    root_path
   end
 end

@@ -20,7 +20,7 @@ table class='table table-hover'
         a href="mailto:#{candidate.email}" = candidate.email
       td= candidate.phone
       td.actions
-        =link_to 'Edit', edit_candidate_path(candidate) , :class => 'btn'
-        =link_to 'Delete', candidate, :confirm => 'Are you sure?', :method => :delete, :class => 'btn btn-danger'
+        =link_to '', edit_candidate_path(candidate) , :class => 'icon-file-alt icon-large action-icon'
+        =link_to '', candidate, :confirm => 'Are you sure?', :method => :delete, :class => 'icon-remove icon-large action-icon'
 
 = will_paginate @candidates, :class => "digg-paginate"
