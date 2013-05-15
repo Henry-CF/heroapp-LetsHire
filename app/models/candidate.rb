@@ -1,4 +1,6 @@
 class Candidate < ActiveRecord::Base
+  default_scope order('name ASC')
+
   attr_accessible :name, :email, :phone, :source, :description
 
   # valid phone number examples

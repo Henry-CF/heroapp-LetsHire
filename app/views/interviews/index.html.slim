@@ -1,11 +1,20 @@
 h3.pull-left Interviews
+.pull-right.align-to-title
+  = link_to 'Schedule Interviews', edit_multiple_interviews_path, :class => 'btn btn-primary'
+
+- opening_candidate ||= nil
 
 table class='table table-hover'
-  tr
-    th Interview
-    th Interview Type
-    th Scheduled At
-    th Duration(min)
-    th
+  thead
+    tr
+      th Scheduled At
+      th Interview Type
+      -unless opening_candidate
+        th Interview
+      th Duration(min)
+      th Interviewers
+      th Status
+      th
 
-  =render @interviews, :opening_candidate => false
+  tbody
+    =render @interviews, :opening_candidate => false

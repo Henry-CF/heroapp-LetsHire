@@ -1,8 +1,9 @@
 - empty_msg ||= 'No users'
 - multiple ||= false
+- selected ||= nil
+- name ||= :user_id
 -if users && users.count > 0
-  select multiple=multiple
-    -users.each do |user|
-      option value="#{user.id}" ="#{user.name}"
+  = select_tag name, options_for_select( users.map { |user| [user.name, user.id] }, selected), :multiple => multiple
 -else
-  em = empty_msg
+  = select_tag name, {}
+

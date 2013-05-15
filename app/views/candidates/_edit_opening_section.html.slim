@@ -1,14 +1,9 @@
 .control-group
   = f.label :opening, "Department", :class => "control-label"
   .controls
+
     - if (not @departments.nil?) and @departments.size > 0
-      select id="candidate_department_id" name="candidate[department_id]"
-        option value="0" ="Assign to department..."
-        - @departments.each do |department|
-          -if @selected_department_id == department.id
-            option selected=true value="#{department.id}" ="#{department.name}"
-          -else
-            option value="#{department.id}" ="#{department.name}"
+      = select_tag :candidate_department_id, options_for_select(@departments.map { |d| [d.name, d.id]}, @selected_department_id), :prompt => 'Select a department...', :name => nil
     - else
       label No openings
 .control-group

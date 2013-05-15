@@ -126,10 +126,6 @@ describe OpeningsController do
           assigns(:opening).should be_persisted
         end
 
-        it "redirects to the created opening" do
-          post :create, {:opening => valid_attributes}
-          response.should redirect_to(Opening.last)
-        end
       end
 
       describe "with invalid params" do

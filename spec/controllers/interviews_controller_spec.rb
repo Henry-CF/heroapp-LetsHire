@@ -2,9 +2,7 @@ require 'spec_helper'
 
 describe InterviewsController do
   def valid_interview(users = nil)
-    hash = FactoryGirl.attributes_for(:interview).merge(
-      :opening_candidate_id => @opening_candidate.id
-    )
+    hash = FactoryGirl.attributes_for(:interview)
     hash = hash.merge :user_ids => users.map { |user| user.id } if users.is_a?(Array)
     hash
   end
@@ -74,12 +72,12 @@ describe InterviewsController do
       describe "with valid params" do
         it "creates a new Interview" do
           expect do
-            post :create, { :interview => valid_interview }
+            post :create, { :interview => valid_interview, :opening_candidate_id => @opening_candidate.id }
           end.to change(Interview, :count).by(1)
         end
 
         it "assigns a newly created interview as @interview" do
-          post :create, { :interview => valid_interview }
+          post :create, { :interview => valid_interview, :opening_candidate_id => @opening_candidate.id }
           assigns(:interview).should be_a(Interview)
           assigns(:interview).should be_persisted
         end
@@ -88,13 +86,13 @@ describe InterviewsController do
       describe "with invalid params" do
         it "assigns a newly created but unsaved interview as @interview" do
           Interview.any_instance.stub(:save).and_return(false)
-          post :create, { :interview => {:opening_candidate_id => @opening_candidate.id} }
+          post :create, { :opening_candidate_id => @opening_candidate.id }
           assigns(:interview).should be_a_new(Interview)
         end
 
         it "re-renders the 'edit' template" do
           Interview.any_instance.stub(:save).and_return(false)
-          post :create, { :interview => {:opening_candidate_id => @opening_candidate.id} }
+          post :create, { :interview => valid_interview, :opening_candidate_id => @opening_candidate.id }
           response.should render_template("edit")
         end
       end

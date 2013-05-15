@@ -9,9 +9,9 @@ class CandidatesController < AuthenticatedController
       opening = Opening.find(params[:opening_id])
     end
     if opening
-      @candidates = opening.candidates.paginate(:page => params[:page], :order => 'name ASC')
+      @candidates = opening.candidates.paginate(:page => params[:page])
     else
-      @candidates = Candidate.paginate(:page => params[:page], :order => 'name ASC')
+      @candidates = Candidate.paginate(:page => params[:page])
     end
   end
 
@@ -22,7 +22,7 @@ class CandidatesController < AuthenticatedController
 
   def new
     @candidate = Candidate.new
-    @departments = Department.with_at_least_n_openings
+    @departments = Department.with_openings
   end
 
   def edit
@@ -33,7 +33,7 @@ class CandidatesController < AuthenticatedController
 
   def new_opening
     @candidate = Candidate.find params[:id]
-    @departments = Department.with_at_least_n_openings
+    @departments = Department.with_openings
     assigned_departments = get_assigned_departments(@candidate)
     @selected_department_id = assigned_departments[0].try(:id)
     render :action => :new_opening
@@ -68,7 +68,7 @@ class CandidatesController < AuthenticatedController
 
       redirect_to @candidate, :notice => "Candidate \"#{@candidate.name}\" (#{@candidate.email}) was successfully created."
     else
-      @departments = Department.with_at_least_n_openings
+      @departments = Department.with_openings
       render :action => 'new'
     end
   end
