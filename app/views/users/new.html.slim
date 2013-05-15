@@ -1,15 +1,3 @@
-= content_for :password_validation do
-  javascript:
-    $(function () {
-        $("[type=submit]").click(function () {
-            var p = $("[type=password]");
-            if (p.val().length === 0) {
-                $('.alert-error').remove();
-                p.after("<span class='alert-error'>    Required</span>");
-                return false;
-            }
-        });
-    });
 h3 Add a User
 == render 'form'
 
