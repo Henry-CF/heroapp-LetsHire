@@ -1,3 +1,10 @@
-h3 Offers Chart
-
-
+h4 Offers
+hr width="300"
+- value = [@offers_rejected, @offers_notconfirmed, @offers_accepted]
+- label = ["Rejected", "Not confirmed", "Accepted"]
+- data = label.map {|key| [key, value[label.index(key)]]}
+= jqplot 300, 300, [data], {seriesDefaults: {  \
+    renderer: "$.jqplot.DonutRenderer", \
+    rendererOptions: { showDataLabels: true }}, \
+    legend: { show: true, location: 'n', rendererOptions:{numberRows: 1, placement: "insideGrid"} } \
+  }

@@ -64,4 +64,23 @@ class Interview < ActiveRecord::Base
     status != STATUS_CLOSED
   end
 
+  def self.assigned_to_me(user_id, date)
+    date = DateTime.parse(date).to_time
+    start_time = date.at_beginning_of_day
+    end_time = date.end_of_day
+    interviews = Interview.joins(:interviewers).where("interviewers.user_id = %d and \
+                                                      interviews.updated_at >= '%s' and \
+                                                      interviews.updated_at <= '%s'", user_id, start_time, end_time)
+    interviews
+  end
+
+  def self.upcoming_today(user_id, date)
+    date = DateTime.parse(date).to_time
+    start_time = date.at_beginning_of_day
+    end_time = date.end_of_day
+    interviews = Interview.joins(:interviewers).where("interviewers.user_id = %d and \
+                                                      interviews.scheduled_at >= '%s' and \
+                                                      interviews.scheduled_at <= '%s'", user_id, start_time, end_time)
+    interviews
+  end
 end
