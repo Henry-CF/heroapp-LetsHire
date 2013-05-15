@@ -34,8 +34,6 @@ describe "openings/index" do
     sign_in_as_admin
     render
     expect(rendered).to include "Add a Job Opening"
-    expect(rendered).to include "Edit"
-    expect(rendered).to include "Delete"
   end
 
   it "switch between view-all and view-mine" do
