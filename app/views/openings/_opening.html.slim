@@ -10,5 +10,5 @@ tr
 
   td.actions
     - if can? :update, opening
-      a.btn href=edit_opening_path(opening) Edit
-      = link_to 'Delete', opening, :confirm => 'Are you sure?', :method => :delete, :class => 'btn btn-danger'
+      = link_to '', edit_opening_path(opening), class: 'icon-file-alt icon-large action-icon'
+      = link_to '', opening, :confirm => 'Are you sure?', :method => :delete, :class => 'icon-remove icon-large action-icon'
