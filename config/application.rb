@@ -62,6 +62,9 @@ module LetsHire
     # Enable the asset pipeline
     config.assets.enabled = true
 
+    # Config assets path
+    config.assets.paths << Rails.root.join('vendor', 'assets', 'font')
+
     # Faster asset precompiles. Heroku requires this to be false.
     config.assets.initialize_on_precompile = false
 
