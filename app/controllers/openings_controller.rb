@@ -114,7 +114,7 @@ class OpeningsController < ApplicationController
 
 
   def opening_options
-    render :partial => 'openings/opening_select', :locals => {:selected_department_id => params[:selected_department_id] }
+    render :partial => 'openings/opening_selection_combox', :locals => {:selected_department_id => params[:selected_department_id] }
   end
 
 

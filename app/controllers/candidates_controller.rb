@@ -33,10 +33,9 @@ class CandidatesController < AuthenticatedController
 
   def new_opening
     @candidate = Candidate.find params[:id]
-    @departments = Department.with_openings
     assigned_departments = get_assigned_departments(@candidate)
     @selected_department_id = assigned_departments[0].try(:id)
-    render :action => :new_opening
+    render :action => :new_opening, :layout => false
   end
 
   def create

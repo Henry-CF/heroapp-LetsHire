@@ -3,12 +3,31 @@
 // You can also rename this file to openings.js.coffee, and only keep the coffee script
 
 $(function() {
-    $('select#candidate_department_id').change(function(event) {
-        var select_wrapper = $('#openingid_select_wrapper');
+    $('body').delegate('select#department_id', 'change', function(event) {
+        var select_wrapper = $('#candidate_openingid_select_wrapper');
         $('select', select_wrapper).attr('disabled', true);
         var department_id = $(this).val();
-        var url = "/positions/opening_options?selected_department_id=" + department_id;
-        return select_wrapper.load(url);
+        var url = '/positions/opening_options?selected_department_id=' + department_id;
+        return select_wrapper.load(url, function() {
+            $('select#opening_id').attr('name', 'candidate[opening_ids]');
+        });
+    });
+
+    $('.new_opening').click(function(event) {
+        var candidate_id = $('#candidate_id').val();
+        if (candidate_id) {
+            $('#opening_selection').load('/candidates/' + candidate_id + '/new_opening', function(response, status) {
+                if (status == 'success') {
+                    $(this).find('select#department_id').attr('name', null);
+                    $(this).find('#openingid_select_wrapper').attr('id', 'candidate_openingid_select_wrapper');
+                    $(this).find('select#opening_id').attr('name', 'candidate[opening_ids]');
+                    $(this).dialog({
+                        modal: true,
+                        title: "Assign Opening",
+                        width : '500px'});
+                }
+            });
+        }
     });
 
     $('#candidate_resume').change(function(event) {

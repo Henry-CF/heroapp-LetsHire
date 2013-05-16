@@ -1,0 +1,18 @@
+- selected ||= {}
+- departments ||= Department.with_openings
+- selected_department_id = selected[:department]
+.control-group
+  = label_tag :opening, "Department", :class => "control-label"
+  .controls
+    - if departments.size > 0
+      - selected_department_id ||= departments.first.id
+      = collection_select(nil, :department_id, departments, :id, :name, { :selected => selected_department_id }, { :prompt => 'Select a department...', :id => :department_id })
+    - else
+      label No openings
+.control-group
+  = label_tag :opening, "Job Opening", :class => "control-label"
+  .controls
+    #openingid_select_wrapper
+      = render 'openings/opening_selection_combox', { :selected_department_id => selected_department_id, :opening_id => selected[:opening] }
+
+

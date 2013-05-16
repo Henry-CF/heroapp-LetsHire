@@ -7,5 +7,4 @@ tr
   td= (interview.users.collect { |user| user.name}).join(', ')
   td= interview.status
   td.actions
-    = link_to '', edit_interview_path(interview), :class => 'icon-file-alt icon-large action-icon'
     = link_to '', interview, :confirm => 'Are you sure?', :method => :delete, :class => 'icon-remove icon-large action-icon'
