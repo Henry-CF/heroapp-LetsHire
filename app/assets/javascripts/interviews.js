@@ -1,33 +1,35 @@
 $(function () {
-    $('.flexible_schedule_interviews').click(function(event) {
-        var opening_candidate_id = $('#opening_candidate_id').val();
-        if (opening_candidate_id) {
-            window.location = '/interviews/edit_multiple?opening_candidate_id=' + opening_candidate_id;
-        } else {
-            $('#opening_selection').load('/interviews/schedule_opening_selection', function(response, status) {
-                if (status == 'success') {
-                    $(this).find('select#department_id').attr('name', null);
-                    $(this).find('#openingid_select_wrapper').attr('id', 'interview_openingid_select_wrapper');
-                    $(this).find('select#opening_id').attr('name', 'opening_id');
-                    $(this).dialog({
-                        modal: true,
-                        title: "Select Opening",
-                        width : '400px'});
-                }
-            });
-        }
-    });
-
-
-    $('body').delegate('select#department_id', 'change', function(event) {
-        var select_wrapper = $('#interview_openingid_select_wrapper');
-        $('select', select_wrapper).attr('disabled', true);
-        var department_id = $(this).val();
-        var url = '/positions/opening_options?selected_department_id=' + department_id;
-        return select_wrapper.load(url, function() {
-            $('select#opening_id').attr('name', 'opening_id');
+    if ($('.flexible_schedule_interviews').length > 0) {
+        $('.flexible_schedule_interviews').click(function(event) {
+            var opening_candidate_id = $('#opening_candidate_id').val();
+            if (opening_candidate_id) {
+                window.location = '/interviews/edit_multiple?opening_candidate_id=' + opening_candidate_id;
+            } else {
+                $('#opening_selection').load('/interviews/schedule_opening_selection', function(response, status) {
+                    if (status == 'success') {
+                        $(this).find('select#department_id').attr('name', null);
+                        $(this).find('#openingid_select_wrapper').attr('id', 'interview_openingid_select_wrapper');
+                        $(this).find('select#opening_id').attr('name', 'opening_id');
+                        $(this).dialog({
+                            modal: true,
+                            title: "Select Opening",
+                            width : '400px'});
+                    }
+                });
+            }
         });
-    });
+
+
+        $('body').delegate('select#department_id', 'change', function(event) {
+            var select_wrapper = $('#interview_openingid_select_wrapper');
+            $('select', select_wrapper).attr('disabled', true);
+            var department_id = $(this).val();
+            var url = '/positions/opening_options?selected_department_id=' + department_id;
+            return select_wrapper.load(url, function() {
+                $('select#opening_id').attr('name', 'opening_id');
+            });
+        });
+    }
 
     function setup_datetimepicker(elements) {
         elements.datetimepicker().each(function(index, elem) {
