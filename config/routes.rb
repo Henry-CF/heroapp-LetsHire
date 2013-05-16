@@ -67,7 +67,9 @@ LetsHire::Application.routes.draw do
     end
   end
 
-  get 'interviews/interview_lineitem'
+  get 'interviews/schedule_opening_selection'
+  get 'interviews/schedule_interviews_collection'
+  get 'interviews/schedule_interviews_lineitem'
   resources :interviews   do
     collection do
       get 'edit_multiple'

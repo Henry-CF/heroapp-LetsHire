@@ -26,28 +26,47 @@ class InterviewsController < AuthorizedController
   end
 
 
+  def schedule_opening_selection
+    authorize! :manage, Interview
+    render :action => :schedule_opening_selection, :layout => false
+  end
+
+
   def edit_multiple
     authorize! :manage, Interview
-    @opening_candidate = OpeningCandidate.first
-    return redirect_to :back, :notice  => "No Candidate to schedule interviews" if @opening_candidate.nil?
-    return redirect_to :back, :notice  => "Candidate isn't in interview status for this Job opening" unless @opening_candidate.in_interview_loop?
-    #Temporarily fill in fake data
-    #@opening_candidate.interviews.create! :scheduled_at => Time.now, :duration => 30, :modality => Interview::MODALITY_ONSITE, :status => Interview::STATUS_CLOSED
-    @interviews = @opening_candidate.interviews
+    @opening_candidate = OpeningCandidate.find(params[:opening_candidate_id]) unless params[:opening_candidate_id].nil?
+    if @opening_candidate.nil?
+      @opening = Opening.find(params[:opening_id]) unless params[:opening_id].nil?
+      return redirect_to :back, :notice  => "No Candidate to schedule interviews" if @opening.nil?
+      @interviews = []
+    else
+      return redirect_to :back, :notice  => "Candidate isn't in interview status for this Job opening" unless @opening_candidate.in_interview_loop?
+      @opening = @opening_candidate.opening
+      @interviews = @opening_candidate.interviews
+    end
   end
 
   def update_multiple
     authorize! :manage, Interview
-    @opening_candidate = OpeningCandidate.find params[:opening_candidate_id]
-    params.delete :opening_candidate_id
-    params.delete :action
-    params.delete :controller
+
+    render :json => { :success => false, :messages => ["Invalid object"] } if params[:interviews].nil?
+    new_interviews = params[:interviews]
+
+    return render :json => { :success => true }  if new_interviews[:interviews_attributes].nil?
+    @opening_candidate = OpeningCandidate.find new_interviews[:opening_candidate_id] unless new_interviews[:opening_candidate_id].nil?
+    if @opening_candidate.nil?
+      @opening_candidate = OpeningCandidate.find_by_opening_id_and_candidate_id(new_interviews[:opening_id], new_interviews[:candidate_id])
+    end
+
+    new_interviews.delete :opening_candidate_id
+    new_interviews.delete :opening_id
+    new_interviews.delete :candidate_id
     interview_ids = []
-    params[:interviews_attributes].each { |key, val| interview_ids << val[:id].to_i }
+    new_interviews[:interviews_attributes].each { |key, val| interview_ids << val[:id].to_i }
     removed_interview_ids = @opening_candidate.interview_ids - interview_ids
     OpeningCandidate.transaction do
       Interview.delete removed_interview_ids
-      if @opening_candidate.update_attributes params
+      if @opening_candidate.update_attributes new_interviews
         render :json => { :success => true }
       else
         puts  @opening_candidate.errors.inspect
@@ -58,13 +77,27 @@ class InterviewsController < AuthorizedController
     render :json => { :success => false, :messages => ["Invalid object"] }
   end
 
-  def interview_lineitem
+  def schedule_interviews_lineitem
     authorize! :manage, Interview
     interview = Interview.new({ :modality => Interview::MODALITY_PHONE,
                                 :duration => 30,
-                                :scheduled_at => Time.now + 1.hour,
+                                :scheduled_at => Time.now.beginning_of_hour + 1.hour,
                                 :status => Interview::STATUS_NEW})
-    render :partial => "interviews/interview_line", :locals => { :interview => interview }
+    render :partial => "interviews/schedule_interviews_lineitem", :locals => { :interview => interview }
+  end
+
+
+  def schedule_interviews_collection
+    authorize! :manage, Interview
+    @opening_candidate = OpeningCandidate.find(params[:opening_candidate_id]) unless params[:opening_candidate_id].nil?
+    if @opening_candidate.nil?
+      if !params[:opening_id].nil? && !params[:candidate_id].nil?
+        @opening_candidate = OpeningCandidate.find_by_opening_id_and_candidate_id(params[:opening_id], params[:candidate_id])
+      end
+    end
+    return :text => '' if @opening_candidate.nil?
+    @interviews = @opening_candidate.interviews
+    render :partial => "interviews/schedule_interviews_lineitem", :collection => @interviews, :as => :interview, :layout => false
   end
 
   def new

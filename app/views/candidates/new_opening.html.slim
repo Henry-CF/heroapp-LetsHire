@@ -1,10 +1,5 @@
-h3 Assign Opening
-
-.pull-right
-  = link_to 'Back', :back
-br
 = form_for @candidate, {:html => { :class => 'form-horizontal'}, :url => {:action => 'create_opening' }}  do |f|
-  = render 'edit_opening_section', :f => f
+  = render :partial => 'openings/opening_selection', :locals => { :selected => { :opening => @candidate.openings[0].try(:id), :department => @selected_department_id} }
   .control-group
     .controls
       .actions

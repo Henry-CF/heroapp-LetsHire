@@ -3,7 +3,7 @@ h3 Add a Candidate
 br
 = form_for @candidate, :html => { :class => 'form-horizontal' }  do |f|
   = render 'form', :f => f
-  = render 'edit_opening_section', :f => f
+  = render 'openings/opening_selection'
   .control-group
         .controls
           .actions

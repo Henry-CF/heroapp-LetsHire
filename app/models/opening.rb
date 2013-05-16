@@ -55,6 +55,11 @@ class Opening < ActiveRecord::Base
     items.join(', ')
   end
 
+
+  def title_with_department
+    "#{title} (Department: #{department.name})"
+  end
+
   def published?
     status == STATUS_LIST[:published]
   end
