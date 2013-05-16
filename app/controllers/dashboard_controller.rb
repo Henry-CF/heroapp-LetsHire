@@ -36,9 +36,9 @@ class DashboardController < ApplicationController
     end
 
     # data displayed in charts
-    @openings_created_by_me = Opening.openings_created_by_me(current_user.id).length
-    @openings_assigned_to_me = Opening.openings_assigned_to_me(current_user.id).length
-    @openings_without_interviewers = Opening.openings_without_interviewers.length
+    @openings_created_by_me = Opening.created_by(current_user.id).length
+    @openings_assigned_to_me = Opening.owned_by(current_user.id).length
+    @openings_without_interviewers = Opening.without_interviewers.length
 
     # FIXME: Do we arrange interview on Sunday and Saturday ?
     @dates = []
