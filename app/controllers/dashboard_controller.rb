@@ -30,8 +30,8 @@ class DashboardController < ApplicationController
     end
 
     if can? :manage, Interview
-      @interviews_owned_by_me = Interview.owned_by(current_user.id)
-      @interviews_interviewed_by_me = Interview.interviewed_by_me(current_user.id)
+      @interviews_owned_by_me = Interview.owned_by(current_user.id).upcoming
+      @interviews_interviewed_by_me = Interview.interviewed_by(current_user.id).upcoming
       @interviews_without_feedback = Interview.where(:assessment => nil)
     end
 
@@ -47,8 +47,8 @@ class DashboardController < ApplicationController
     (0..6).reverse_each do |i|
       date = (Time.now - i.days).to_date
       @dates << "#{date.month}-#{date.day}"
-      @interviews_assigned_to_me << Interview.assigned_to_me(current_user.id, date.to_s).length
-      @interviews_upcoming_today << Interview.upcoming_today(current_user.id, date.to_s).length
+      @interviews_assigned_to_me << Interview.owned_by(current_user.id).during(date).length
+      @interviews_upcoming_today << Interview.interviewed_by(current_user.id).during(date).length
     end
 
     @offers_rejected = OpeningCandidate.rejected?(current_user.id).length

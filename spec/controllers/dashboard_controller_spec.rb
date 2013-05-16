@@ -148,10 +148,6 @@ describe DashboardController do
       get 'overview'
       assigns(:interviews_interviewed_by_me).should include(interview)
     end
-
-    it 'assign interviews without feedback to @interviews_without_feedback' do
-      pending('no implementation')
-    end
   end
 
 end

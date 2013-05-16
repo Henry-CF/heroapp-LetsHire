@@ -18,29 +18,18 @@ class Candidate < ActiveRecord::Base
 
   self.per_page = 20
 
-  has_many :opening_candidates, :class_name => "OpeningCandidate", :dependent => :destroy
-  has_many :openings, :class_name => "Opening", :through => :opening_candidates
-  has_one  :resume, :class_name => "Resume", :dependent => :destroy
+  has_many :opening_candidates, :class_name => 'OpeningCandidate', :dependent => :destroy
+  has_many :openings, :class_name => 'Opening', :through => :opening_candidates
+  has_one  :resume, :class_name => 'Resume', :dependent => :destroy
 
   scope :without_opening, where('id NOT IN (SELECT candidate_id FROM opening_candidates)')
   scope :with_opening, joins(:opening_candidates).uniq
   scope :with_interview, joins(:opening_candidates => :interviews).uniq
-  scope :without_interview, where('id NOT IN (?)', Candidate.with_interview.collect{|candidate| candidate.id})
+  #scope :without_interview, lambda { where('id NOT IN ?', Candidate.with_interview.collect{|candidate| candidate.id})}
+  scope :without_interview, where('id NOT in ( SELECT DISTINCT "candidates"."id" FROM "candidates" INNER JOIN "opening_candidates" ON "opening_candidates"."candidate_id" = "candidates"."id" INNER JOIN "interviews" ON "interviews"."opening_candidate_id" = "opening_candidates"."id" )')
 
   def opening(index)
     opening_candidates[index].opening if opening_candidates.size > index
-  end
-
-  def self.without_interview
-    candidates = Candidate.with_opening
-    candidates_without_interview = candidates.select do |candidate|
-      flag = false
-      candidate.opening_candidates.each do |opening_candidate|
-        flag = true if opening_candidate.interviews.length == 0
-      end
-      flag
-    end
-    candidates_without_interview
   end
 
 end

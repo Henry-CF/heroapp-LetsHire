@@ -5,7 +5,7 @@ class InterviewsController < AuthorizedController
     if params.has_key? :owned_by_me
       @interviews = Interview.owned_by(current_user.id)
     elsif params.has_key? :interviewed_by_me
-      @interviews = Interview.interviewed_by_me(current_user.id)
+      @interviews = Interview.interviewed_by(current_user.id)
     elsif params.has_key? :no_feedback
       @interviews = Interview.where(:assessment => nil)
     else
@@ -37,7 +37,7 @@ class InterviewsController < AuthorizedController
     @opening_candidate = OpeningCandidate.find(params[:opening_candidate_id]) unless params[:opening_candidate_id].nil?
     if @opening_candidate.nil?
       @opening = Opening.find(params[:opening_id]) unless params[:opening_id].nil?
-      return redirect_to :back, :notice  => "No Candidate to schedule interviews" if @opening.nil?
+      return redirect_to :back, :notice  => 'No Candidate to schedule interviews' if @opening.nil?
       @interviews = []
     else
       return redirect_to :back, :notice  => "Candidate isn't in interview status for this Job opening" unless @opening_candidate.in_interview_loop?
@@ -49,7 +49,7 @@ class InterviewsController < AuthorizedController
   def update_multiple
     authorize! :manage, Interview
 
-    render :json => { :success => false, :messages => ["Invalid object"] } if params[:interviews].nil?
+    render :json => { :success => false, :messages => ['Invalid object'] } if params[:interviews].nil?
     new_interviews = params[:interviews]
 
     return render :json => { :success => true }  if new_interviews[:interviews_attributes].nil?
@@ -74,7 +74,7 @@ class InterviewsController < AuthorizedController
       end
     end
   rescue ActiveRecord::RecordNotFound
-    render :json => { :success => false, :messages => ["Invalid object"] }
+    render :json => { :success => false, :messages => ['Invalid object'] }
   end
 
   def schedule_interviews_lineitem
@@ -83,7 +83,7 @@ class InterviewsController < AuthorizedController
                                 :duration => 30,
                                 :scheduled_at => Time.now.beginning_of_hour + 1.hour,
                                 :status => Interview::STATUS_NEW})
-    render :partial => "interviews/schedule_interviews_lineitem", :locals => { :interview => interview }
+    render :partial => 'interviews/schedule_interviews_lineitem', :locals => { :interview => interview }
   end
 
 
@@ -97,13 +97,13 @@ class InterviewsController < AuthorizedController
     end
     return :text => '' if @opening_candidate.nil?
     @interviews = @opening_candidate.interviews
-    render :partial => "interviews/schedule_interviews_lineitem", :collection => @interviews, :as => :interview, :layout => false
+    render :partial => 'interviews/schedule_interviews_lineitem', :collection => @interviews, :as => :interview, :layout => false
   end
 
   def new
     authorize! :manage, Interview
     @opening_candidate = OpeningCandidate.find params[:opening_candidate_id] if params[:opening_candidate_id]
-    return redirect_to interviews_url, :notice  => "No Candidates to schedule interviews" if @opening_candidate.nil?
+    return redirect_to interviews_url, :notice  => 'No Candidates to schedule interviews' if @opening_candidate.nil?
     return redirect_to :back, :notice  => "Candidate isn't in interview status for this Job opening" unless @opening_candidate.in_interview_loop?
     @interview = Interview.new
     render :action => 'edit'
@@ -118,16 +118,16 @@ class InterviewsController < AuthorizedController
   def create
     authorize! :manage, Interview
     if params[:opening_candidate_id].nil?
-      redirect_to candidates_path, :notice => "No opening is selected for the candidate"
+      redirect_to candidates_path, :notice => 'No opening is selected for the candidate'
       return
     end
     if params[:interview].nil?
-      redirect_to candidates_path, :notice => "Invalid parameter"
+      redirect_to candidates_path, :notice => 'Invalid parameter'
       return
     end
     @opening_candidate = OpeningCandidate.find params[:opening_candidate_id]
     if @opening_candidate.nil?
-      redirect_to candidates_path, :notice => "No opening is selected for the candidate"
+      redirect_to candidates_path, :notice => 'No opening is selected for the candidate'
       return
     end
     unless @opening_candidate.in_interview_loop?
@@ -139,7 +139,7 @@ class InterviewsController < AuthorizedController
     @interview = @opening_candidate.interviews.build params[:interview]
     if @interview.save
       update_favorite_interviewers params[:interview][:user_id]
-      redirect_to @interview, :notice => "Interview was successfully created"
+      redirect_to @interview, :notice => 'Interview was successfully created'
     else
       prepare_edit
       render :action => 'edit'
@@ -152,7 +152,7 @@ class InterviewsController < AuthorizedController
     @opening_candidate = @interview.opening_candidate
     if @interview.update_attributes(params[:interview])
       update_favorite_interviewers params[:interview][:user_id]
-      redirect_to interview_path(@interview), :notice => "Interview updated"
+      redirect_to interview_path(@interview), :notice => 'Interview updated'
     else
       prepare_edit
       render :action => 'edit'
@@ -169,9 +169,9 @@ class InterviewsController < AuthorizedController
     respond_to do |format|
       format.html do
         if request.referrer == interview_path(@interview)
-          redirect_to interviews_url, :notice => "Interview deleted"
+          redirect_to interviews_url, :notice => 'Interview deleted'
         else
-          redirect_to :back, :notice => "Interview deleted"
+          redirect_to :back, :notice => 'Interview deleted'
         end
       end
     end
