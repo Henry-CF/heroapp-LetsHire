@@ -13,7 +13,7 @@ $(function () {
                         $(this).dialog({
                             modal: true,
                             title: "Select Opening",
-                            width : '400px'});
+                            width : '450px'});
                     }
                 });
             }
@@ -32,7 +32,7 @@ $(function () {
     }
 
     function setup_datetimepicker(elements) {
-        elements.datetimepicker().each(function(index, elem) {
+        $(elements).datetimepicker().each(function(index, elem) {
             var isoTime = new Date($(elem).data('iso'));
             var new_id = elem.id.replace("scheduled_at", "scheduled_at_iso");
             if (new_id != elem.id) {
@@ -162,7 +162,7 @@ $(function () {
                 $('table.schedule_interviews tbody').load(url, function(data, status) {
                     if (status == 'success') {
                         $(this).find('td .datetimepicker').each(function(index, elem) {
-                            setup_datetimepicker_elem(elem);
+                            setup_datetimepicker(elem);
                         });
                     }
                 });

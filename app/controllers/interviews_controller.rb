@@ -81,7 +81,7 @@ class InterviewsController < AuthorizedController
     authorize! :manage, Interview
     interview = Interview.new({ :modality => Interview::MODALITY_PHONE,
                                 :duration => 30,
-                                :scheduled_at => Time.now + 1.hour,
+                                :scheduled_at => Time.now.beginning_of_hour + 1.hour,
                                 :status => Interview::STATUS_NEW})
     render :partial => "interviews/schedule_interviews_lineitem", :locals => { :interview => interview }
   end
