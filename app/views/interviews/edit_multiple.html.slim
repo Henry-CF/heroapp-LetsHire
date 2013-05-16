@@ -1,19 +1,12 @@
-- opening = @opening_candidate.opening
-- candidate = @opening_candidate.candidate
-
-
-
 h3 Schedule Interviews
 
 #previous_url.hide data-value=request.referer
-dl.dl-horizontal.clear-both
-  dt Candidate
-  dd =link_to candidate.name , candidate
-  dt Job Opening
-  dd =link_to opening.title , opening
-=hidden_field_tag :opening_candidate_id, @opening_candidate.id
+-if @opening_candidate
+  = render :partial => "interviews/fixed_opening_candidate", :locals => { :opening_candidate => @opening_candidate}
+-else
+  = render :partial => "interviews/flexible_opening_candidate"
 .pull-right
-  a.add_new_interview Add New Interview
+  = button_tag 'Add New Interview', :class => 'add_new_interview'
 .hide
   p#error_messages
 
@@ -28,7 +21,8 @@ table.table.table-hover.schedule_interviews
       th Status
       th
   tbody
-    = render :partial => "interviews/interview_line", :collection => @interviews, :as => :interview
+    -if @opening_candidate
+      = render :partial => "interviews/schedule_interviews_lineitem", :collection => @interviews, :as => :interview
 
 
 p

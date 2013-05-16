@@ -1,8 +1,9 @@
 h3.pull-left Interviews
-.pull-right.align-to-title
-  = link_to 'Schedule Interviews', edit_multiple_interviews_path, :class => 'btn btn-primary'
-
+#opening_selection
 - opening_candidate ||= nil
+=hidden_field_tag :opening_candidate_id, opening_candidate.try(:id)
+.pull-right.align-to-title
+  = button_tag 'Schedule Interviews', :class => 'flexible_schedule_interviews'
 
 table class='table table-hover'
   thead
@@ -18,3 +19,6 @@ table class='table table-hover'
 
   tbody
     =render @interviews, :opening_candidate => false
+
+
+

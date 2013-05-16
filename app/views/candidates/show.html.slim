@@ -29,12 +29,14 @@ br
       - if not @resume.nil?
         = link_to "#{@resume}", resume_candidate_path({:id => @candidate.id})
 
+= hidden_field_tag nil, @candidate.id, :id => 'candidate_id'
 br
 h4 Assigned Job Openings
 
 .pull-right
   -if can? :manage, @candidate
-    = link_to 'Assign Opening', :controller => "candidates", :action => "new_opening", :id=> @candidate
+    #opening_selection
+    = button_tag 'Assign Opening', :class => 'candidate_new_opening'
 
 br
 
