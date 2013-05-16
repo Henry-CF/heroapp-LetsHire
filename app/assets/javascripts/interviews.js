@@ -12,7 +12,7 @@ $(function () {
                     $(this).dialog({
                         modal: true,
                         title: "Select Opening",
-                        width : '500px'});
+                        width : '400px'});
                 }
             });
         }
