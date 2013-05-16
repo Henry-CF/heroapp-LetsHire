@@ -1,7 +1,5 @@
 class Interview < ActiveRecord::Base
 
-  default_scope order('scheduled_at ASC')
-
   belongs_to :opening_candidate
   has_many :interviewers, :dependent => :destroy
   has_many :users, :through => :interviewers
