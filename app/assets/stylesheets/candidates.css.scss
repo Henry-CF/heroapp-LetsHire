@@ -1,3 +1,18 @@
 // Place all the styles related to the candidates controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+.interviewline li {
+    display: inline;
+    list-style-type: none;
+    padding: 10px;
+}
+
+div.feedbackborder {
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    padding: 3px;
+    border-color: #D3D3D3; //LightGrey
+    background-color: #A9A9A9; //DarkGray
+}
