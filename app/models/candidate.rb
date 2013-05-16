@@ -22,8 +22,10 @@ class Candidate < ActiveRecord::Base
   has_many :openings, :class_name => "Opening", :through => :opening_candidates
   has_one  :resume, :class_name => "Resume", :dependent => :destroy
 
-  scope :without_opening, where(:opening_candidates_count => 0)
-  scope :with_opening, where("opening_candidates_count > '0'")
+  scope :without_opening, where('id NOT IN (SELECT candidate_id FROM opening_candidates)')
+  scope :with_opening, joins(:opening_candidates).uniq
+  scope :with_interview, joins(:opening_candidates => :interviews).uniq
+  scope :without_interview, where('id NOT IN (?)', Candidate.with_interview.collect{|candidate| candidate.id})
 
   def opening(index)
     opening_candidates[index].opening if opening_candidates.size > index
@@ -40,4 +42,5 @@ class Candidate < ActiveRecord::Base
     end
     candidates_without_interview
   end
+
 end

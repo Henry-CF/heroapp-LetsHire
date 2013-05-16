@@ -70,16 +70,18 @@ class Interview < ActiveRecord::Base
 
   def self.interviewed_by_me(user_id)
     interviews = Interview.upcoming
-    my_interviews = interviews.inject([]) do |ret, interview|
-      ret << interview if interview.interviewed_by?(user_id)
+    my_interviews = []
+    my_interviews = interviews.select do |interview|
+      interview.interviewed_by?(user_id)
     end
     my_interviews
   end
 
   def self.owned_by(user_id)
     interviews = Interview.upcoming
-    owned_interviews = interviews.inject([]) do |ret, interview|
-      ret << interview if interview.user_ids.include?(user_id)
+    owned_interviews = []
+    owned_interviews = interviews.select do |interview|
+      interview.user_ids.include?(user_id)
     end
     owned_interviews
   end
