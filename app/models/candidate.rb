@@ -22,8 +22,22 @@ class Candidate < ActiveRecord::Base
   has_many :openings, :class_name => "Opening", :through => :opening_candidates
   has_one  :resume, :class_name => "Resume", :dependent => :destroy
 
+  scope :without_opening, where(:opening_candidates_count => 0)
+  scope :with_opening, where("opening_candidates_count > '0'")
+
   def opening(index)
     opening_candidates[index].opening if opening_candidates.size > index
   end
 
+  def self.without_interview
+    candidates = Candidate.with_opening
+    candidates_without_interview = candidates.select do |candidate|
+      flag = false
+      candidate.opening_candidates.each do |opening_candidate|
+        flag = true if opening_candidate.interviews.length == 0
+      end
+      flag
+    end
+    candidates_without_interview
+  end
 end

@@ -34,6 +34,8 @@ class Interview < ActiveRecord::Base
   validates :modality, :inclusion => MODALITIES
   validates :status, :inclusion => STATUS
 
+  scope :upcoming, where('scheduled_at > ?', Time.zone.now)
+
   def self.overall_status(interviews)
     interview_counts = interviews.group(:status).count
     (interview_counts.collect { | key, value | "#{value} #{key} interviews" }).join(",")
@@ -60,8 +62,51 @@ class Interview < ActiveRecord::Base
   rescue
   end
 
+  def interviewed_by?(user_id)
+    flag = false
+    interviewers.each do |interviewer|
+       flag = true if interviewer.user_id == user_id
+    end
+    flag
+  end
+
+  def self.interviewed_by_me(user_id)
+    interviews = Interview.upcoming
+    my_interviews = interviews.inject([]) do |ret, interview|
+      ret << interview if interview.interviewed_by?(user_id)
+    end
+    my_interviews
+  end
+
+  def self.owned_by(user_id)
+    interviews = Interview.upcoming
+    owned_interviews = interviews.inject([]) do |ret, interview|
+      ret << interview if interview.user_ids.include?(user_id)
+    end
+    owned_interviews
+  end
+
   def editable?
     status != STATUS_CLOSED
   end
 
+  def self.assigned_to_me(user_id, date)
+    date = DateTime.parse(date).to_time
+    start_time = date.at_beginning_of_day
+    end_time = date.end_of_day
+    interviews = Interview.joins(:interviewers).where("interviewers.user_id = %d and \
+                                                      interviews.updated_at >= '%s' and \
+                                                      interviews.updated_at <= '%s'", user_id, start_time, end_time)
+    interviews
+  end
+
+  def self.upcoming_today(user_id, date)
+    date = DateTime.parse(date).to_time
+    start_time = date.at_beginning_of_day
+    end_time = date.end_of_day
+    interviews = Interview.joins(:interviewers).where("interviewers.user_id = %d and \
+                                                      interviews.scheduled_at >= '%s' and \
+                                                      interviews.scheduled_at <= '%s'", user_id, start_time, end_time)
+    interviews
+  end
 end

@@ -2,10 +2,10 @@ div.well
   div.status-board
     div.top-part
       h4 Current Active
-      h3 = @openings.size
+      h3 = @active_openings.size
       h4 Job Openings
     hr
     div.bottom-part
       h4 Upcomming Today
-      h3 = @interviews.size
+      h3 = @interviews_owned_by_me.size
       h4 Interviews

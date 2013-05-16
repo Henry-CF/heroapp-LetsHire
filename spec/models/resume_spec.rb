@@ -12,10 +12,10 @@ describe Resume do
   end
 
   it 'requires resume_name to be present' do
-    FactoryGirl.build(:resume, :resume_name => nil).should_not be_valid
+    FactoryGirl.build(:resume, :name => nil).should_not be_valid
   end
 
   it 'requires resume_path to be present' do
-    FactoryGirl.build(:resume, :resume_path => nil).should_not be_valid
+    FactoryGirl.build(:resume, :path => nil).should_not be_valid
   end
 end

@@ -1,10 +1,19 @@
 class InterviewsController < AuthorizedController
   def index
     authorize! :read, Interview
-    @interviews = Interview.all
-    unless can? :create, Interview
-      @interviews.reject! do |interview|
-        not interview.interviewers.any? { |interviewer| interviewer.user_id == current_user.id }
+
+    if params.has_key? :owned_by_me
+      @interviews = Interview.owned_by(current_user.id)
+    elsif params.has_key? :interviewed_by_me
+      @interviews = Interview.interviewed_by_me(current_user.id)
+    elsif params.has_key? :no_feedback
+      @interviews = Interview.where(:assessment => nil)
+    else
+      @interviews = Interview.all
+      unless can? :create, Interview
+        @interviews.reject! do |interview|
+          not interview.interviewers.any? { |interviewer| interviewer.user_id == current_user.id }
+        end
       end
     end
   end

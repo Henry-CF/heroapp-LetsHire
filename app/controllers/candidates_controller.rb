@@ -4,20 +4,26 @@ class CandidatesController < AuthenticatedController
   MAX_FILE_SIZE = 10 * 1024 * 1024
 
   def index
-    opening = nil
-    if (params[:opening_id])
-      opening = Opening.find(params[:opening_id])
-    end
-    if opening
-      @candidates = opening.candidates.paginate(:page => params[:page])
+    if params.has_key? :no_openings
+      @candidates = Candidate.without_opening.paginate(:page => params[:page])
+    elsif params.has_key? :no_interviews
+      @candidates = Candidate.without_interview.paginate(:page => params[:page])
     else
-      @candidates = Candidate.paginate(:page => params[:page])
+      opening = nil
+      if (params[:opening_id])
+        opening = Opening.find(params[:opening_id])
+      end
+      if opening
+        @candidates = opening.candidates.paginate(:page => params[:page])
+      else
+        @candidates = Candidate.paginate(:page => params[:page])
+      end
     end
   end
 
   def show
     @candidate = Candidate.find params[:id]
-    @resume = @candidate.resume.resume_name unless @candidate.resume.nil?
+    @resume = @candidate.resume.name unless @candidate.resume.nil?
   end
 
   def new
@@ -27,9 +33,8 @@ class CandidatesController < AuthenticatedController
 
   def edit
     @candidate = Candidate.find params[:id]
-    @resume = @candidate.resume.resume_name unless @candidate.resume.nil?
+    @resume = @candidate.resume.name unless @candidate.resume.nil?
   end
-
 
   def new_opening
     @candidate = Candidate.find params[:id]
@@ -131,7 +136,7 @@ class CandidatesController < AuthenticatedController
       end
       redirect_to @candidate, :notice => "Candidate \"#{@candidate.name}\" (#{@candidate.email}) was successfully updated."
     else
-      @resume = @candidate.resume.resume_name unless @candidate.resume.nil?
+      @resume = @candidate.resume.name unless @candidate.resume.nil?
       render :action => 'edit'
     end
   rescue ActiveRecord::RecordNotFound
@@ -156,7 +161,7 @@ class CandidatesController < AuthenticatedController
     @resume = @candidate.resume
 
     unless @resume.nil?
-      path = File.join(download_folder, "#{Time.now.to_s}.#{@resume.resume_name}")
+      path = File.join(download_folder, "#{Time.now.to_s}.#{@resume.name}")
       fp = File.new(path, 'wb')
       @resume.readfile(fp)
       fp.close
