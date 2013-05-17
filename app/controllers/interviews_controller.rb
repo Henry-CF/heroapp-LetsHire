@@ -31,7 +31,6 @@ class InterviewsController < AuthorizedController
     render :action => :schedule_opening_selection, :layout => false
   end
 
-
   def edit_multiple
     authorize! :manage, Interview
     @opening_candidate = OpeningCandidate.find(params[:opening_candidate_id]) unless params[:opening_candidate_id].nil?

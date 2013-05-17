@@ -1,7 +1,8 @@
 =hidden_field_tag :opening_candidate_id
+=hidden_field_tag :opening_id, @opening.id
 dl.dl-horizontal.clear-both
   dt Job Opening
-  dd =link_to @opening.title_with_department , @opening, :data => { :value => @opening.id } , :id => :opening_id
+  dd =link_to @opening.title_with_department , @opening
   dt Candidate
   dd = collection_select(nil, :candidate_id, @opening.candidates, :id, :name, { :prompt => 'Please select a candidate'}, { :id => :candidate_id, :name => nil })
 

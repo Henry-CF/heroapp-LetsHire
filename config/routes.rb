@@ -87,7 +87,7 @@ LetsHire::Application.routes.draw do
 
   get '/addresses/subregion_options' => 'openings#subregion_options'
   get '/positions/opening_options' => 'openings#opening_options'
-  get '/participants' => 'users#index_for_tokens'
+  get '/participants' => 'users#index_for_selection'
 
   # Sample resource route with options:
   #   resources :products do

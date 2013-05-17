@@ -4,7 +4,8 @@ tr
   -unless opening_candidate
     td= link_to interview.opening_candidate.candidate.name + " for " + interview.opening_candidate.opening.title, interview
   td= interview.duration
-  td= (interview.users.collect { |user| user.name}).join(', ')
+  td= interview.interviewers_str
   td= interview.status
   td.actions
+    = link_to '', edit_multiple_interviews_path(:opening_candidate_id => interview.opening_candidate_id), :class => 'icon-file-alt icon-large action-icon'
     = link_to '', interview, :confirm => 'Are you sure?', :method => :delete, :class => 'icon-remove icon-large action-icon'

@@ -1,23 +1,13 @@
 class UsersController < AuthenticatedController
-
-  before_filter :require_admin, :except => [:index_for_tokens]
+  before_filter :require_admin, :except => [:index_for_selection]
 
   def index
-    @users = User.include_deleted_in { User.paginate(:page => params[:page], :per_page => 20) }
+    @users = User.include_deleted_in { User.name_order.paginate(:page => params[:page]) }
   end
 
-  def index_for_tokens
-    unless user_signed_in?
-      redirect_to new_user_session_path, :notice => REQUIRE_LOGIN
-    end
-    if params[:all]
-      @participants = User.include_deleted_in { select("id, name, email").where("name like ?", "%#{params[:q]}%") }
-    else
-      @participants = User.select("id, name, email").where("name like ?", "%#{params[:q]}%")
-    end
-    respond_to do |format|
-      format.json { render :json => @participants.map(&:attributes) }
-    end
+  def index_for_selection
+    @users = User.name_order.select("id, name, email").where("name like ?", "%#{params[:q]}%").paginate(:page => params[:page])
+    render :action => 'index_for_selection', :layout => false
   end
 
   def create
@@ -36,7 +26,7 @@ class UsersController < AuthenticatedController
   def show
     @user = User.find(params[:id])
   rescue ActiveRecord::RecordNotFound
-    redirect_to users_url, notice: 'Invalid user'
+    redirect_to users_url, :notice => 'Invalid user'
   end
 
   def update

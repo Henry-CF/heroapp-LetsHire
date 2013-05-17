@@ -1,0 +1,7 @@
+- users.each do |user|
+  div
+    = check_box_tag nil, user.id, false,  { :id => nil }
+    span = user.name
+
+.pull-right
+  = will_paginate users

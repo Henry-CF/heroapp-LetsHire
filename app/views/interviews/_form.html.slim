@@ -35,10 +35,11 @@
   .control-group
     = label 'interviewers-text', 'Interviewers', :class => 'control-label'
     .controls
-      = f.select :user_id,  opening.participants.map { |user| [ user.name, user.id ] }
+      = collection_select(nil, :interviewer_id, User.all, :id, :name, { :selected => interview.user_ids.try(:first) }, { :id => :interviewer_id })
       p
-      = check_box_tag nil, '1', true, :id=> "only_favorite_interviewers"
+      = check_box_tag nil, '1', false, :id=> "only_favorite_interviewers"
       span Show only favorite interviewers
+      = hidden_field_tag :interviewers_attributes, [{:user_id => interview.user_ids.try(:first) }]
 
   - if @interview.id
     .control-group

@@ -21,7 +21,7 @@ dl.dl-horizontal.clear-both
   dt Status
   dd= @interview.status
   dt Interviewers
-  dd= @interview.users.collect { |user| user.name}.join(', ')
+  dd= @interview.interviewers_str
   dt Description
   dd = simple_format h(@interview.description)
   .pull-right
