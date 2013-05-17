@@ -192,9 +192,6 @@ class InterviewsController < AuthorizedController
 
   end
 
-
-
-
   private
 
   def prepare_edit
