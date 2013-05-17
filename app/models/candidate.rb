@@ -26,9 +26,29 @@ class Candidate < ActiveRecord::Base
   scope :with_opening, joins(:opening_candidates).uniq
   scope :with_interview, joins(:opening_candidates => :interviews).uniq
   scope :without_interview, where('id NOT in ( SELECT DISTINCT "candidates"."id" FROM "candidates" INNER JOIN "opening_candidates" ON "opening_candidates"."candidate_id" = "candidates"."id" INNER JOIN "interviews" ON "interviews"."opening_candidate_id" = "opening_candidates"."id" )')
+  scope :with_assessment, joins(:opening_candidates => :assessments).uniq
 
   def opening(index)
     opening_candidates[index].opening if opening_candidates.size > index
+  end
+
+  def interviews_finished_no_assess?
+    opening_candidates = OpeningCandidate.where(:candidate_id => id)
+    opening_candidates.each do |opening_candidate|
+      if opening_candidate.all_interviews_finished?
+        assessments = Assessment.where(:opening_candidate_id => opening_candidate.id)
+        return true if assessments.empty?
+      end
+    end
+    false
+  end
+
+  def self.without_assessment
+    candidates = Candidate.with_interview
+    candidates.select! do |candidate|
+      candidate.interviews_finished_no_assess?
+    end
+    candidates
   end
 
 end

@@ -25,8 +25,8 @@ class DashboardController < ApplicationController
     if can? :manage, Candidate
       @candidates_without_opening = Candidate.without_opening
       @candidates_without_interview = Candidate.without_interview
-      @candidates_with_assessment = Candidate.all # TODO
-      @candidates_without_assessment = Candidate.all # TODO
+      @candidates_with_assessment = Candidate.with_assessment
+      @candidates_without_assessment = Candidate.without_assessment
     end
 
     if can? :manage, Interview

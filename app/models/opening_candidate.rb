@@ -32,6 +32,13 @@ class OpeningCandidate < ActiveRecord::Base
     STATUS_LIST
   end
 
+  def all_interviews_finished?
+    return false if interviews.empty?
+    interviews.each do |interview|
+      return false unless interview.finished?
+    end
+    true
+  end
 
   def in_interview_loop?
     status.nil? || (status == OpeningCandidate::STATUS_LIST[OpeningCandidate::INTERVIEW_LOOP])

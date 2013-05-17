@@ -68,4 +68,8 @@ class Interview < ActiveRecord::Base
     status != STATUS_CLOSED
   end
 
+  def finished?
+    status == STATUS_CLOSED
+  end
+
 end
