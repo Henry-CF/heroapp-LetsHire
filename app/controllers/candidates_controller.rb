@@ -28,8 +28,24 @@ class CandidatesController < AuthenticatedController
   def show
     @candidate = Candidate.find params[:id]
     @latest_applying_job = @candidate.opening_candidates.last
-    @opening = @latest_applying_job.opening
-    @interviews = @latest_applying_job.interviews
+    @opening = nil
+    @interviews = []
+    unless @latest_applying_job.nil?
+      @opening = @latest_applying_job.opening
+      @interviews = @latest_applying_job.interviews
+    end
+
+    @applying_jobs = nil
+    unless @latest_applying_job.nil?
+      @applying_jobs = @candidate.opening_candidates.where("opening_candidates.id != #{@latest_applying_job.id}")
+    end
+
+    @resume = @candidate.resume.name unless @candidate.resume.nil?
+  end
+
+  #NOTE: This is the legacy 'Candidate Detail' action, it will be removed before release.
+  def legacy_show
+    @candidate = Candidate.find params[:id]
     @resume = @candidate.resume.name unless @candidate.resume.nil?
   end
 

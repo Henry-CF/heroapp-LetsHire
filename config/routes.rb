@@ -61,6 +61,7 @@ LetsHire::Application.routes.draw do
   resources :openings
   resources :candidates do
     member do
+      get 'legacy_show'
       get 'resume'
       get 'new_opening'
       put 'create_opening'
