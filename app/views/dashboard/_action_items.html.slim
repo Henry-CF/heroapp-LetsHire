@@ -61,14 +61,14 @@ div.carousel-wrapper
             div.action-item
               h2 = @candidates_without_assessment.size
               h5 = 'interviews candidates were not given final assessment'
-              =link_to 'Assess', candidates_path(:filter => 'no_assessment')
+              =link_to 'Assess', candidates_path(:without_assessment => 1)
       - if can? :manage, Candidate
         li
           div.action-item-wrapper
             div.action-item
               h2 = @candidates_with_assessment.size
               h5 = 'candidates have been given final assessments'
-              =link_to 'View', candidates_path(:filter => 'has_assessment')
+              =link_to 'View', candidates_path(:with_assessment => 1)
 
   a.carousel-control-prev href='#' data-jcarousel-control='true' data-target='-=1' ‹
   a.carousel-control-next href='#' data-jcarousel-control='true' data-target='+=1' ›

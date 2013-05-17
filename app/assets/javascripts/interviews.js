@@ -94,7 +94,7 @@ $(function () {
             $('table.schedule_interviews tbody tr').each(function (index, value)
             {
                 var row = GetRow(index);
-                if (!row) {
+                if (row == false) {
                     return false;
                 }
                 interviews.push(row);
@@ -117,49 +117,20 @@ $(function () {
                 interview.duration = row.find('#duration').val();
                 interview.modality = row.find('#modality').val();
                 var interviewer_td = row.find('td:eq(5)');
-                if (interviewer_td.data('user_ids').length == 0) {
+                var user_ids = interviewer_td.data('user_ids');
+                if (user_ids.length == 0) {
                     alert('No interviewers configured for row ' + (rowNum + 1));
                     return false;
                 }
-                var interviewers = GetRowInterviewers(interviewer_td);
-                if (interviewers && interviewers.length > 0) {
-                    interview.interviewers_attributes = interviewers;
+                var origin_user_ids = interviewer_td.data('origin_user_ids');
+                if (origin_user_ids) {
+                    //We have change
+                    interview.user_ids = user_ids;
                 }
+
             }
             return interview;
         }
-
-
-        function GetRowInterviewers(interviewer_td) {
-            var origin_user_ids = interviewer_td.data('origin_user_ids');
-            if (!origin_user_ids) {
-                return null;
-            }
-
-            var user_ids = interviewer_td.data('user_ids');
-            var old_interviewers = interviewer_td.data('interviewers');
-            var interviewers_to_be_deleted = [];
-            var added_user_ids = [];
-            for (var i_i = 0; i_i < old_interviewers.length; i_i ++ ) {
-                if (user_ids.indexOf(old_interviewers[i_i][1]) < 0) {
-                    interviewers_to_be_deleted.push(old_interviewers[i_i][0]);
-                }
-            }
-            for (var u_i = 0; u_i < user_ids.length; u_i ++ ) {
-                if (origin_user_ids.indexOf(user_ids[u_i]) < 0) {
-                    added_user_ids.push(user_ids[u_i]);
-                }
-            }
-            var interviewers = [];
-            for (var i = 0; i < interviewers_to_be_deleted.length; i ++) {
-                interviewers.push({id: interviewers_to_be_deleted[i], _destroy: true});
-            }
-            for (var j = 0; j < added_user_ids.length; j ++) {
-                interviewers.push({user_id: added_user_ids[j]});
-            }
-            return interviewers;
-        }
-
 
         function update_schedule_interviews_table() {
             var opening_id = $('#opening_id').val();
@@ -227,6 +198,7 @@ $(function () {
             return true;
         }
 
+
         function calculate_interviewers_change(interviewer_td) {
             var interviewers_selection_container = $("#interviewers_selection_container");
             var new_user_ids = interviewers_selection_container.data('user_ids');
@@ -260,7 +232,8 @@ $(function () {
                 if (status == 'success') {
                     select_existing_interviewers(this);
                     $("#interviewers_selection_container").show().dialog({
-                        height: 300,
+                        width : 400,
+                        height: 500,
                         modal: true,
                         buttons: {
                             "OK": function() {
@@ -316,7 +289,7 @@ $(function () {
         $('.submit_interviews').click(function() {
             var interviews = GetAllInterviews();
             if (interviews == false) {
-                return;
+                return false;
             }
             $.post('/interviews/update_multiple',
                 {

@@ -22,13 +22,13 @@ class DashboardController < ApplicationController
     if can? :manage, Candidate
       @candidates_without_opening = Candidate.without_opening
       @candidates_without_interview = Candidate.without_interview
-      @candidates_with_assessment = Candidate.all # TODO
-      @candidates_without_assessment = Candidate.all # TODO
+      @candidates_with_assessment = Candidate.with_assessment
+      @candidates_without_assessment = Candidate.without_assessment
     end
 
     if can? :manage, Interview
-      @interviews_owned_by_me = Interview.owned_by(current_user.id)
-      @interviews_interviewed_by_me = Interview.interviewed_by_me(current_user.id)
+      @interviews_owned_by_me = Interview.owned_by(current_user.id).upcoming
+      @interviews_interviewed_by_me = Interview.interviewed_by(current_user.id).upcoming
       @interviews_without_feedback = Interview.where(:assessment => nil)
     end
     @interviews_owned_by_me ||= []
@@ -37,9 +37,9 @@ class DashboardController < ApplicationController
 
 
     # data displayed in charts
-    @openings_created_by_me = Opening.openings_created_by_me(current_user.id).length
-    @openings_assigned_to_me = Opening.openings_assigned_to_me(current_user.id).length
-    @openings_without_interviewers = Opening.openings_without_interviewers.length
+    @openings_created_by_me = Opening.created_by(current_user.id).length
+    @openings_assigned_to_me = Opening.owned_by(current_user.id).length
+    @openings_without_interviewers = Opening.without_interviewers.length
 
     # FIXME: Do we arrange interview on Sunday and Saturday ?
     @dates = []
@@ -48,8 +48,8 @@ class DashboardController < ApplicationController
     (0..6).reverse_each do |i|
       date = (Time.now - i.days).to_date
       @dates << "#{date.month}-#{date.day}"
-      @interviews_assigned_to_me << Interview.assigned_to_me(current_user.id, date.to_s).length
-      @interviews_upcoming_today << Interview.upcoming_today(current_user.id, date.to_s).length
+      @interviews_assigned_to_me << Interview.owned_by(current_user.id).during(date).length
+      @interviews_upcoming_today << Interview.interviewed_by(current_user.id).during(date).length
     end
 
     @offers_rejected = OpeningCandidate.rejected?(current_user.id).length

@@ -75,11 +75,8 @@ LetsHire::Application.routes.draw do
       get 'edit_multiple'
       post 'update_multiple'
     end
-    member do
-      get 'edit_feedback'
-      put 'update_feedback'
-    end
   end
+
   resources :opening_candidates do
     resource :assessments
     resources :interviews

@@ -9,15 +9,15 @@ class Opening < ActiveRecord::Base
   attr_accessible :hiring_manager_id, :recruiter_id, :department, :creator_id
 
   belongs_to :department
-  belongs_to :hiring_manager, :class_name => "User", :foreign_key => :hiring_manager_id, :readonly => true
-  belongs_to :recruiter, :class_name => "User", :foreign_key => :recruiter_id, :readonly => true
-  belongs_to :creator, :class_name => "User", :foreign_key => :creator_id, :readonly => true
+  belongs_to :hiring_manager, :class_name => 'User', :foreign_key => :hiring_manager_id, :readonly => true
+  belongs_to :recruiter, :class_name => 'User', :foreign_key => :recruiter_id, :readonly => true
+  belongs_to :creator, :class_name => 'User', :foreign_key => :creator_id, :readonly => true
 
-  has_many :opening_participants, :class_name => "OpeningParticipant", :dependent => :destroy
-  has_many :participants, :class_name => "User", :through => :opening_participants
+  has_many :opening_participants, :class_name => 'OpeningParticipant', :dependent => :destroy
+  has_many :participants, :class_name => 'User', :through => :opening_participants
 
-  has_many :opening_candidates, :class_name => "OpeningCandidate", :dependent => :destroy
-  has_many :candidates, :class_name => "Candidate", :through => :opening_candidates
+  has_many :opening_candidates, :class_name => 'OpeningCandidate', :dependent => :destroy
+  has_many :candidates, :class_name => 'Candidate', :through => :opening_candidates
 
   validates :title, :presence => true
   validates :department_id, :hiring_manager_id, :creator, :total_no, :presence => true
@@ -30,7 +30,9 @@ class Opening < ActiveRecord::Base
   STATUS_LIST = { :draft => 0, :published => 1, :closed => -1 }
   scope :published, where(:status => 1)
   scope :owned_by,  ->(user_id) { where('hiring_manager_id = ? OR recruiter_id = ? OR creator_id = ?', user_id, user_id, user_id) }
+  scope :created_by, ->(user_id) { where('creator_id = ?', user_id)}
   scope :without_candidates, where(:opening_candidates_count => 0)
+  scope :without_interviewers, where('id NOT IN (SELECT opening_id FROM opening_candidates)')
 
   def status_str
     STATUS_STRINGS[status]
@@ -72,21 +74,6 @@ class Opening < ActiveRecord::Base
     total_no - filled_no
   end
 
-  def self.openings_created_by_me(user_id)
-    openings = Opening.where("creator_id = %d", user_id)
-    openings
-  end
-
-  def self.openings_assigned_to_me(user_id)
-    openings = Opening.where("hiring_manager_id = %d OR recruiter_id = %d", user_id, user_id)
-    openings
-  end
-
-  def self.openings_without_interviewers
-    openings = Opening.where("id NOT IN (SELECT opening_id FROM opening_candidates)")
-    openings
-  end
-
   private
   def select_valid_owners_if_active
     if status != STATUS_LIST[:closed]
@@ -112,7 +99,7 @@ class Opening < ActiveRecord::Base
 
 
   def total_no_should_ge_than_filled_no
-    errors.add(:total_no, "is smaller than filled seat number.") if filled_no > total_no
+    errors.add(:total_no, 'is smaller than filled seat number.') if filled_no > total_no
   end
 
 
