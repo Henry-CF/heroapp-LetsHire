@@ -23,6 +23,9 @@ class CandidatesController < AuthenticatedController
 
   def show
     @candidate = Candidate.find params[:id]
+    @latest_applying_job = @candidate.opening_candidates.last
+    @opening = @latest_applying_job.opening
+    @interviews = @latest_applying_job.interviews
     @resume = @candidate.resume.name unless @candidate.resume.nil?
   end
 
