@@ -6,6 +6,29 @@ describe CandidatesController do
     FactoryGirl.attributes_for(:candidate)
   end
 
+  before :all do
+    @hiring_manager1 = create_user(:hiring_manager)
+    @recruiter1 = create_user(:recruiter)
+
+    @users = []
+    3.times { @users << create_user(:user) }
+
+    Opening.delete_all
+    Candidate.delete_all
+    OpeningCandidate.delete_all
+    Interview.delete_all
+
+    @opening = Opening.create! FactoryGirl.attributes_for(:opening).merge(:creator_id => @users[0].id,
+                                                                          :hiring_manager_id => @hiring_manager1.id,
+                                                                          :department_id => @hiring_manager1.department_id)
+    @candidate = Candidate.create! FactoryGirl.attributes_for(:candidate)
+    @candidate.should be_valid
+    @opening_candidate = OpeningCandidate.create!(:opening_id => @opening.id, :candidate_id => @candidate.id)
+    @opening_candidate.should be_valid
+    @interview = Interview.create! FactoryGirl.attributes_for(:interview).merge(:opening_candidate_id => @opening_candidate.id)
+    @interview.should be_valid
+  end
+
   before :each  do
     request.env["devise.mapping"] = Devise.mappings[:user]
     sign_in_as_admin
@@ -21,10 +44,12 @@ describe CandidatesController do
   end
 
   describe "GET show" do
-    it "assigns the requested candidate as @candidate" do
-      candidate = Candidate.create! valid_candidate
-      get :show, { :id => candidate.to_param }
-      assigns(:candidate).should eq(candidate)
+    it "should see correct user details" do
+      get :show, { :id => @candidate.to_param}
+      assigns(:candidate).should eq(@candidate)
+      assigns(:latest_applying_job).should eq(@opening_candidate)
+      assigns(:opening).should eq(@opening)
+      assigns(:interviews).should eq([@interview])
     end
   end
 
