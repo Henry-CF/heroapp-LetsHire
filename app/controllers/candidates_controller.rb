@@ -8,6 +8,10 @@ class CandidatesController < AuthenticatedController
       @candidates = Candidate.without_opening.paginate(:page => params[:page])
     elsif params.has_key? :no_interviews
       @candidates = Candidate.without_interview.paginate(:page => params[:page])
+    elsif params.has_key? :with_assessment
+      @candidates = Candidate.with_assessment.paginate(:page => params[:page])
+    elsif params.has_key? :without_assessment
+      @candidates = Candidate.without_assessment.paginate(:page => params[:page])
     else
       opening = nil
       if (params[:opening_id])
