@@ -67,13 +67,17 @@ LetsHire::Application.routes.draw do
     end
   end
 
-  get 'interviews/schedule_opening_selection'
-  get 'interviews/schedule_interviews_collection'
-  get 'interviews/schedule_interviews_lineitem'
   resources :interviews   do
     collection do
+      get 'schedule_opening_selection'
+      get 'schedule_reload'
+      get 'schedule_add'
       get 'edit_multiple'
       post 'update_multiple'
+    end
+    member do
+      get 'edit_feedback'
+      put 'update_feedback'
     end
   end
   resources :opening_candidates do

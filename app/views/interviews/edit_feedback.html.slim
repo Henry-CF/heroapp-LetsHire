@@ -1,0 +1,25 @@
+h3 Edit Feedback
+
+= form_for @interview, :url => update_feedback_interview_path, :html => { :class => 'form-horizontal'} do |f|
+  - f.error_messages
+
+  dl.dl-horizontal.clear-both
+    dt Interview Type
+    dd =@interview.modality
+    dt Scheduled At
+    dd.iso-time= @interview.scheduled_at_iso
+
+    dt Updated by Interviewer
+    dd= current_user.name
+
+
+  =hidden_field_tag :opening_candidate_id, @opening_candidate.id
+
+  .control-group
+    = label_tag :assessment, 'Feedback', :class => 'control-label'
+    .controls
+      = f.text_area :assessment, :class => 'span9'
+  .control-group
+    .controls
+      .actions
+        = f.submit 'Save', :class => 'btn'

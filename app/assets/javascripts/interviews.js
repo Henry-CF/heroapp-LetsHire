@@ -85,6 +85,7 @@ $(function () {
 
     if ($('table.schedule_interviews').length > 0) {
 
+
         // Read all rows and return an array of objects
         function GetAllInterviews()
         {
@@ -93,6 +94,9 @@ $(function () {
             $('table.schedule_interviews tbody tr').each(function (index, value)
             {
                 var row = GetRow(index);
+                if (!row) {
+                    return false;
+                }
                 interviews.push(row);
             });
 
@@ -112,7 +116,12 @@ $(function () {
                 interview.scheduled_at_iso = row.find('td:eq(1) input').data('iso');
                 interview.duration = row.find('#duration').val();
                 interview.modality = row.find('#modality').val();
-                var interviewers = GetRowInterviewers(row.find('td:eq(5)'));
+                var interviewer_td = row.find('td:eq(5)');
+                if (interviewer_td.data('user_ids').length == 0) {
+                    alert('No interviewers configured for row ' + (rowNum + 1));
+                    return false;
+                }
+                var interviewers = GetRowInterviewers(interviewer_td);
                 if (interviewers && interviewers.length > 0) {
                     interview.interviewers_attributes = interviewers;
                 }
@@ -160,7 +169,7 @@ $(function () {
             if (active) {
                 $('.submit_interviews').show();
                 $('.add_new_interview').show();
-                var url = '/interviews/schedule_interviews_collection?opening_id=' + opening_id + '&candidate_id=' + candidate_id;
+                var url = '/interviews/schedule_reload?opening_id=' + opening_id + '&candidate_id=' + candidate_id;
                 $('table.schedule_interviews tbody').load(url, function(data, status) {
                     if (status == 'success') {
                         $(this).find('td .datetimepicker').each(function(index, elem) {
@@ -296,7 +305,7 @@ $(function () {
                 alert('Too many interviews added.');
                 return;
             }
-            $.get("/interviews/schedule_interviews_lineitem", function(data, status) {
+            $.get("/interviews/schedule_add", function(data, status) {
                 if (status == 'success') {
                     var newElem = $(data).appendTo('table.schedule_interviews tbody');
                     setup_datetimepicker(newElem.find("td .datetimepicker"));
@@ -306,6 +315,9 @@ $(function () {
 
         $('.submit_interviews').click(function() {
             var interviews = GetAllInterviews();
+            if (interviews == false) {
+                return;
+            }
             $.post('/interviews/update_multiple',
                 {
                     interviews: {

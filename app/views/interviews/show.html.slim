@@ -3,8 +3,12 @@ h3.pull-left
   span= " for "
   span= link_to @opening_candidate.opening.title, opening_path(@opening_candidate.opening)
 .pull-right.align-to-title
- - if can? :update, Interview
-   = link_to 'Edit', edit_interview_path(@interview), :class => 'btn btn-primary'
+  - if can? :update, Interview
+    = link_to 'Schedule Interviews', edit_multiple_interviews_path(:opening_candidate_id => @opening_candidate.id), :class => 'button'
+  span
+    - if is_interviewer? @interview.interviewers
+      = ' | '
+      = link_to 'Update Feedback', edit_feedback_interview_path(@interview)
 dl.dl-horizontal.clear-both
   dt Interview Type
   dd =@interview.modality
@@ -24,11 +28,8 @@ dl.dl-horizontal.clear-both
   dd= @interview.interviewers_str
   dt Description
   dd = simple_format h(@interview.description)
-  .pull-right
-    - if is_interviewer? @interview.interviewers
-      = link_to 'Update Feedback', edit_interview_path(@interview, :anchor => 'interview_assessment')
   dt Feedback
-  dd= simple_format(@interview.assessment)
+  dd= simple_format h(@interview.assessment)
 
 
 

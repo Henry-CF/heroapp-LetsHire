@@ -52,6 +52,7 @@ class Ability
   def hiring_manager(user)
     can :create, Opening
     can :manage, Opening, :hiring_manager_id => user.id
+    can :create, Candidate
     can :create, Interview
     can :update, Interview
   end

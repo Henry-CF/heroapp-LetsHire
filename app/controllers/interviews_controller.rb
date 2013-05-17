@@ -1,4 +1,5 @@
 class InterviewsController < AuthorizedController
+  include InterviewsHelper
   def index
     authorize! :read, Interview
 
@@ -66,6 +67,9 @@ class InterviewsController < AuthorizedController
     OpeningCandidate.transaction do
       Interview.delete removed_interview_ids
       if @opening_candidate.update_attributes new_interviews
+        interviewers = []
+        new_interviews[:interviews_attributes].each { |key, val| interviewers << val[:interviewers_attributes]}
+        update_favorite_interviewers interviewers
         render :json => { :success => true }
       else
         puts  @opening_candidate.errors.inspect
@@ -76,7 +80,7 @@ class InterviewsController < AuthorizedController
     render :json => { :success => false, :messages => ["Invalid object"] }
   end
 
-  def schedule_interviews_lineitem
+  def schedule_add
     authorize! :manage, Interview
     interview = Interview.new({ :modality => Interview::MODALITY_PHONE,
                                 :duration => 30,
@@ -86,7 +90,7 @@ class InterviewsController < AuthorizedController
   end
 
 
-  def schedule_interviews_collection
+  def schedule_reload
     authorize! :manage, Interview
     @opening_candidate = OpeningCandidate.find(params[:opening_candidate_id]) unless params[:opening_candidate_id].nil?
     if @opening_candidate.nil?
@@ -99,62 +103,29 @@ class InterviewsController < AuthorizedController
     render :partial => "interviews/schedule_interviews_lineitem", :collection => @interviews, :as => :interview, :layout => false
   end
 
-  def new
-    authorize! :manage, Interview
-    @opening_candidate = OpeningCandidate.find params[:opening_candidate_id] if params[:opening_candidate_id]
-    return redirect_to interviews_url, :notice  => "No Candidates to schedule interviews" if @opening_candidate.nil?
-    return redirect_to :back, :notice  => "Candidate isn't in interview status for this Job opening" unless @opening_candidate.in_interview_loop?
-    @interview = Interview.new
-    render :action => 'edit'
-  end
-
-  def edit
+  def edit_feedback
     @interview = Interview.find params[:id]
     authorize! :update, @interview
     prepare_edit
-  end
-
-  def create
-    authorize! :manage, Interview
-    if params[:opening_candidate_id].nil?
-      redirect_to candidates_path, :notice => "No opening is selected for the candidate"
-      return
-    end
-    if params[:interview].nil?
-      redirect_to candidates_path, :notice => "Invalid parameter"
-      return
-    end
-    @opening_candidate = OpeningCandidate.find params[:opening_candidate_id]
-    if @opening_candidate.nil?
-      redirect_to candidates_path, :notice => "No opening is selected for the candidate"
-      return
-    end
-    unless @opening_candidate.in_interview_loop?
-      redirect_to @opening.candidate, :notice => "The candidate isn't pending for interview."
-      return
-    end
-    params[:interview].merge! :status => Interview::STATUS_NEW
-    params[:interview].delete :opening_id
-    @interview = @opening_candidate.interviews.build params[:interview]
-    if @interview.save
-      update_favorite_interviewers params[:interview][:user_id]
-      redirect_to @interview, :notice => "Interview was successfully created"
-    else
-      prepare_edit
-      render :action => 'edit'
+    unless is_interviewer? @interview.interviewers
+      redirect_to :back, :notice => 'Not an interviewer'
     end
   end
 
-  def update
+
+  def update_feedback
     @interview = Interview.find params[:id]
     authorize! :update, @interview
-    @opening_candidate = @interview.opening_candidate
-    if @interview.update_attributes(params[:interview])
-      update_favorite_interviewers params[:interview][:user_id]
-      redirect_to interview_path(@interview), :notice => "Interview updated"
+    unless is_interviewer? @interview.interviewers
+      redirect_to :back, :notice => 'Not an interviewer'
+    end
+
+    @interview.assessment = params[:interview][:assessment]
+    if @interview.save
+      redirect_to interview_path(@interview), :notice => "Feedback updated"
     else
       prepare_edit
-      render :action => 'edit'
+      render :action => 'edit_feedback'
     end
   end
 
@@ -178,21 +149,23 @@ class InterviewsController < AuthorizedController
     redirect_to interviews_url, notice: 'Invalid interview'
   end
 
-  def update_favorite_interviewers(user_ids)
-    user_ids = user_ids.split(',') if user_ids.is_a? String
-    if user_ids && user_ids.any?
+  def update_favorite_interviewers(new_interviewers)
+    if new_interviewers && new_interviewers.any?
       opening = @opening_candidate.opening
-      user_ids.each do | id |
-        op = opening.opening_participants.build
-        op.user_id = id
-        op.save
+      new_interviewers.each do |item|
+        unless item.nil?
+          item.each do |key, val|
+            if val[:user_id].to_i > 0
+              puts "Code go here #{val[:user_id]}"
+              op = opening.opening_participants.build
+              op.user_id = val[:user_id].to_i
+              op.save
+            end
+          end
+        end
       end
     end
-
   end
-
-
-
 
   private
 
