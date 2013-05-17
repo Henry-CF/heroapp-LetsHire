@@ -25,7 +25,6 @@ class Candidate < ActiveRecord::Base
   scope :without_opening, where('id NOT IN (SELECT candidate_id FROM opening_candidates)')
   scope :with_opening, joins(:opening_candidates).uniq
   scope :with_interview, joins(:opening_candidates => :interviews).uniq
-  #scope :without_interview, lambda { where('id NOT IN ?', Candidate.with_interview.collect{|candidate| candidate.id})}
   scope :without_interview, where('id NOT in ( SELECT DISTINCT "candidates"."id" FROM "candidates" INNER JOIN "opening_candidates" ON "opening_candidates"."candidate_id" = "candidates"."id" INNER JOIN "interviews" ON "interviews"."opening_candidate_id" = "opening_candidates"."id" )')
 
   def opening(index)
