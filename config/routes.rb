@@ -61,21 +61,23 @@ LetsHire::Application.routes.draw do
   resources :openings
   resources :candidates do
     member do
+      get 'legacy_show'
       get 'resume'
       get 'new_opening'
       put 'create_opening'
     end
   end
 
-  get 'interviews/schedule_opening_selection'
-  get 'interviews/schedule_interviews_collection'
-  get 'interviews/schedule_interviews_lineitem'
   resources :interviews   do
     collection do
+      get 'schedule_opening_selection'
+      get 'schedule_reload'
+      get 'schedule_add'
       get 'edit_multiple'
       post 'update_multiple'
     end
   end
+
   resources :opening_candidates do
     resource :assessments
     resources :interviews
@@ -87,7 +89,7 @@ LetsHire::Application.routes.draw do
 
   get '/addresses/subregion_options' => 'openings#subregion_options'
   get '/positions/opening_options' => 'openings#opening_options'
-  get '/participants' => 'users#index_for_tokens'
+  get '/participants' => 'users#index_for_selection'
 
   # Sample resource route with options:
   #   resources :products do

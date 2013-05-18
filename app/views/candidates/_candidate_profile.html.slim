@@ -1,0 +1,39 @@
+- unless @candidate.nil?
+  div
+    .form-horizontal.clear-both
+      .control-group
+        label.control-label
+          h4 Profile
+        .controls
+          - if can? :manage, @candidate
+            = link_to 'Edit', edit_candidate_path(@candidate), :class => "btn btn-primary"
+      .control-group
+        label.control-label
+          span Email
+        .controls
+          a href="mailto:#{@candidate.email}" = @candidate.email
+      .control-group
+        label.control-label
+          span Phone
+        .controls = @candidate.phone
+      .control-group
+        label.control-label
+          span Sources
+        .controls = @candidate.source
+      .control-group
+        label.control-label
+          span Resume
+        .controls
+          - if not @resume.nil?
+            = link_to "#{@resume}", resume_candidate_path({:id => @candidate.id})
+      .control-group
+        label.control-label
+          span Status
+        .controls.controls-row
+          - if @latest_applying_job.nil?
+            p No job assigned
+          - else
+            - status_list = @latest_applying_job.status_str.split(',')
+            div.span3
+              - status_list.each do |s|
+                label = s

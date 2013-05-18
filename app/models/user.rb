@@ -14,7 +14,11 @@ class User < ActiveRecord::Base
 
   ROLES = %w[interviewer recruiter hiring_manager]
 
-  default_scope where(:deleted_at => nil).order('name ASC')
+  self.per_page = 20
+
+  default_scope where(:deleted_at => nil)
+
+  scope :name_order, order('name ASC')
 
   belongs_to :department
   has_many :openings_to_be_interviewed, :through => :opening_participants

@@ -8,6 +8,10 @@ class CandidatesController < AuthenticatedController
       @candidates = Candidate.without_opening.paginate(:page => params[:page])
     elsif params.has_key? :no_interviews
       @candidates = Candidate.without_interview.paginate(:page => params[:page])
+    elsif params.has_key? :with_assessment
+      @candidates = Candidate.with_assessment.paginate(:page => params[:page])
+    elsif params.has_key? :without_assessment
+      @candidates = Candidate.without_assessment.paginate(:page => params[:page])
     else
       opening = nil
       if (params[:opening_id])
@@ -22,6 +26,25 @@ class CandidatesController < AuthenticatedController
   end
 
   def show
+    @candidate = Candidate.find params[:id]
+    @latest_applying_job = @candidate.opening_candidates.last
+    @opening = nil
+    @interviews = []
+    unless @latest_applying_job.nil?
+      @opening = @latest_applying_job.opening
+      @interviews = @latest_applying_job.interviews
+    end
+
+    @applying_jobs = nil
+    unless @latest_applying_job.nil?
+      @applying_jobs = @candidate.opening_candidates.where("opening_candidates.id != #{@latest_applying_job.id}")
+    end
+
+    @resume = @candidate.resume.name unless @candidate.resume.nil?
+  end
+
+  #NOTE: This is the legacy 'Candidate Detail' action, it will be removed before release.
+  def legacy_show
     @candidate = Candidate.find params[:id]
     @resume = @candidate.resume.name unless @candidate.resume.nil?
   end

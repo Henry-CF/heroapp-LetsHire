@@ -1,4 +1,6 @@
 =hidden_field_tag :opening_candidate_id, opening_candidate.id
+=hidden_field_tag :opening_id, opening_candidate.opening_id
+=hidden_field_tag :candidate_id, opening_candidate.candidate_id
 dl.dl-horizontal.clear-both
   dt Job Opening
   dd =link_to opening_candidate.opening.title_with_department , opening_candidate.opening
