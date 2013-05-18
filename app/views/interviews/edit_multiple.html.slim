@@ -2,13 +2,19 @@ h3 Schedule Interviews
 
 #previous_url.hide data-value=request.referer
 -if @opening_candidate
-  = render :partial => "interviews/fixed_opening_candidate", :locals => { :opening_candidate => @opening_candidate}
+  = render :partial => "fixed_opening_candidate", :locals => { :opening_candidate => @opening_candidate}
 -else
-  = render :partial => "interviews/flexible_opening_candidate"
+  = render :partial => "flexible_opening_candidate"
+.pull-left
+  h4 Interviews
 .pull-right
-  = button_tag 'Add New Interview', :class => 'add_new_interview'
+  = button_tag 'Schedule New', :class => 'add_new_interview'
 .hide
   p#error_messages
+
+#interviewers_selection_container.hide
+  h3 Assign Interviewers
+  #interviewers_selection
 
 table.table.table-hover.schedule_interviews
   thead
@@ -18,6 +24,7 @@ table.table.table-hover.schedule_interviews
       th Duration(min)
       th Interview Type
       th Location
+      th Interviewers
       th Status
       th
   tbody
@@ -29,3 +36,5 @@ p
 .action_container
   = submit_tag 'OK', :class => 'btn btn-primary submit_interviews'
   = link_to 'Cancel', :back, :class => 'btn'
+
+

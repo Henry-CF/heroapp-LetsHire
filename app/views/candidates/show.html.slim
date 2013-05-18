@@ -1,45 +1,8 @@
-.pull-left
-  h3 = "Information for #{@candidate.name}"
-.pull-right.align-to-title
-  -if can? :manage, @candidate
-    = link_to 'Edit', edit_candidate_path(@candidate), :class => "btn btn-primary"
-br
-.form-horizontal.clear-both
-  .control-group 
-    label.control-label
-      b Email:
-    .controls
-      a href="mailto:#{@candidate.email}" = @candidate.email
-  .control-group 
-    label.control-label
-      b Phone:
-    .controls = @candidate.phone
-  .control-group 
-    label.control-label
-      b Sources:
-    .controls = @candidate.source
-  .control-group 
-    label.control-label
-      b Description:
-    .controls = simple_format h(@candidate.description)
-  .control-group 
-    label.control-label
-      b Resume:
-    .controls
-      - if not @resume.nil?
-        = link_to "#{@resume}", resume_candidate_path({:id => @candidate.id})
-
-= hidden_field_tag nil, @candidate.id, :id => 'candidate_id'
-br
-h4 Assigned Job Openings
-
-.pull-right
-  -if can? :manage, @candidate
-    #opening_selection
-    = button_tag 'Assign Opening', :class => 'new_opening'
-
-br
-
--@candidate.opening_candidates.reverse.each do |opening_candidate|
-  =render 'show_assign_opening', { :opening_candidate => opening_candidate }
-
+div.row
+  .span8
+    =link_to 'Link to the old candidate detail page', legacy_show_candidate_path({:id => @candidate.id}), :style => "font-size:20px; color:red"
+    =render 'candidate_description'
+    =render 'show_latest_applying_job'
+    =render 'recruiting_histroy'
+  .span4
+    =render 'candidate_profile'

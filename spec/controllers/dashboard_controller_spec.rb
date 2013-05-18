@@ -38,6 +38,13 @@ describe DashboardController do
     }
   end
 
+  def valid_assessment(opening_candidate, creator)
+    {
+        :opening_candidate_id => opening_candidate.id,
+        :comment => 'Not too bad'
+    }
+  end
+
   def create_user(role)
     attrs = FactoryGirl.attributes_for(role)
     attrs.delete(:admin)
@@ -58,12 +65,11 @@ describe DashboardController do
 
   def schedule_opening_interview_to_candidate(candidate, opening)
     opening_candidate = create_opening_candidate(opening, candidate)
-    interview = Interview.create! valid_interview(opening_candidate)
-
+    Interview.create! valid_interview(opening_candidate)
   end
 
   def assign_interview_to_user(interview, user)
-    interview.user_id = user.id
+    interview.user_ids = [user.id]
   end
 
   before :each  do
@@ -120,13 +126,28 @@ describe DashboardController do
     end
 
     it 'assign candidate with final assessment to @candidates_with_assessment' do
-      sign_in @hiring_manager
+      sign_in @recruiter
       get 'overview'
       assigns(:candidates_with_assessment).should_not include(@candidate)
+      opening_candidate = create_opening_candidate(@opening, @candidate)
+      Assessment.create! valid_assessment(opening_candidate, @hiring_manager)
+      get 'overview'
+      assigns(:candidates_with_assessment).should include(@candidate)
     end
 
     it 'assign interviewed candidate without final assessment to @candidates_without_assessment' do
-      pending('no implementation')
+      sign_in @recruiter
+      get 'overview'
+      assigns(:candidates_without_assessment).should_not include(@candidate)
+      interview = schedule_opening_interview_to_candidate(@candidate, @opening)
+      interview.status = 'started'
+      interview.save!
+      get 'overview'
+      assigns(:candidates_without_assessment).should_not include(@candidate)
+      interview.status = 'finished'
+      interview.save!
+      get 'overview'
+      assigns(:candidates_without_assessment).should include(@candidate)
     end
 
     it 'assign upcoming interviews owned by me to @interviews_owned_by_me' do
@@ -147,10 +168,6 @@ describe DashboardController do
       assign_interview_to_user(interview, @recruiter)
       get 'overview'
       assigns(:interviews_interviewed_by_me).should include(interview)
-    end
-
-    it 'assign interviews without feedback to @interviews_without_feedback' do
-      pending('no implementation')
     end
   end
 

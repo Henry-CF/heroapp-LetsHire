@@ -1,0 +1,45 @@
+- unless @opening.nil?
+  .row-fluid
+    .span5
+      h4 = "Applying for #{@opening.title}"
+    .span7
+      .row-fluid
+        .span6
+          = link_to 'Schedule Interviews', new_opening_candidate_interview_path(@latest_applying_job), :class => "btn btn-primary"
+        .span6
+          = link_to 'Assess Candidate', new_opening_candidate_assessments_path(@latest_applying_job), :class => "btn btn-primary"
+  hr
+  div
+    div.accordion id="accordion2"
+      - i = 0
+      - @interviews.each do |interview|
+        - i += 1
+        div.accordion-group
+          div.accordion-heading
+            a.accordion-toggle.collapsed data-toggle="collapse" data-parent="#accordion2" href="#collapse2-#{i}"
+              ul.interviewline
+                li
+                  = interview.scheduled_at
+                li
+                  = interview.modality
+                li
+                  = interview.duration
+                li
+                  = interview.status
+            - if interview.status == 'finished'
+              div.accordion-body.collapse id="collapse2-#{i}"
+                div.accordion-inner
+                  div.feedbackborder
+                    h5 Feedback from interviews
+                    div.accordion id="accordion2-#{i}-internal"
+                      div.accordion-group
+                        div.accordion-heading
+                          a.accordion-toggle.collapsed data-toggle="collapse" data-parent="#accordion2-#{i}-internal" href="#collapse2-#{i}-internal"
+                            - uids = interview.interviewers.map{|u| u.user_id}
+                            - interviews = User.find(:all, :conditions => ['id in (?)', uids]).map{|u| u.name}
+                            span
+                              = "From #{interviews.join(' ')}"
+                          div.accordion-body.collapse id="collapse2-#{i}-internal"
+                            div.accordion-inner
+                              span
+                                = interview.assessment

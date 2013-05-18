@@ -20,13 +20,17 @@ h5 Interviews
 .pull-right
   -if can? :manage, Interview
     -if opening_candidate.in_interview_loop?
-      = link_to 'Schedule Interview', new_opening_candidate_interview_path(opening_candidate)
+      = link_to 'Schedule Interviews', edit_multiple_interviews_path(:opening_candidate_id => opening_candidate.id)
 br
 table class='table table-hover'
   tr
-    th Interview Type
     th Scheduled At
+    th Interview Type
     th Duration
+    th Interviewers
+    th Status
     th
 
   =render opening_candidate.interviews.order('scheduled_at ASC'), :opening_candidate => true
+
+

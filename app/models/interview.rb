@@ -1,15 +1,11 @@
 class Interview < ActiveRecord::Base
 
-  default_scope order('scheduled_at ASC')
-
   belongs_to :opening_candidate
   has_many :interviewers, :dependent => :destroy
   has_many :users, :through => :interviewers
   has_many :photos, :dependent => :destroy
 
-  accepts_nested_attributes_for :users, :allow_destroy => true, :reject_if => proc { |user| user.empty? }
-
-  attr_accessible :user_id, :user_ids
+  attr_accessible :user_ids
 
   attr_accessible :opening_candidate_id
   attr_accessible :modality, :scheduled_at, :scheduled_at_iso, :duration, :phone, :location, :description
@@ -17,13 +13,13 @@ class Interview < ActiveRecord::Base
   attr_accessible :created_at, :updated_at
 
   # interview status constants
-  STATUS_NEW      = "scheduled"
-  STATUS_PROGRESS = "started"
-  STATUS_CLOSED   = "finished"
+  STATUS_NEW      = 'scheduled'
+  STATUS_PROGRESS = 'started'
+  STATUS_CLOSED   = 'finished'
 
   # interview modality constants
-  MODALITY_PHONE = "phone interview"
-  MODALITY_ONSITE = "onsite interview"
+  MODALITY_PHONE = 'phone interview'
+  MODALITY_ONSITE = 'onsite interview'
 
   MODALITIES = [MODALITY_PHONE, MODALITY_ONSITE]
 
@@ -34,11 +30,15 @@ class Interview < ActiveRecord::Base
   validates :modality, :inclusion => MODALITIES
   validates :status, :inclusion => STATUS
 
-  scope :upcoming, where('scheduled_at > ?', Time.zone.now)
+  scope :upcoming, lambda { where('scheduled_at > ?', Time.zone.now)}
+  scope :during, ->(date) { where('scheduled_at >= ? and scheduled_at <= ?', date.to_time.at_beginning_of_day, date.end_of_day)}
+  scope :interviewed_by, ->(user_id) { joins(:interviewers).where('interviewers.user_id = ? ', user_id)}
+  #TODO: interview -> opening_candidate -> opening -> owned_by
+  scope :owned_by, ->(user_id){ joins(:interviewers).where('interviewers.user_id = ? ', user_id)}
 
   def self.overall_status(interviews)
     interview_counts = interviews.group(:status).count
-    (interview_counts.collect { | key, value | "#{value} #{key} interviews" }).join(",")
+    (interview_counts.collect { | key, value | "#{value} #{key} interviews" }).join(',')
   end
 
   def scheduled_at_iso
@@ -49,64 +49,21 @@ class Interview < ActiveRecord::Base
     end
   end
 
-  def user_id
-    user_ids.try(:first)
-  end
-
-  def user_id=(id)
-    self.user_ids = [id]
-  end
-
   def scheduled_at_iso=(val)
     self.scheduled_at = Time.parse val
   rescue
   end
 
-  def interviewed_by?(user_id)
-    flag = false
-    interviewers.each do |interviewer|
-       flag = true if interviewer.user_id == user_id
-    end
-    flag
-  end
-
-  def self.interviewed_by_me(user_id)
-    interviews = Interview.upcoming
-    my_interviews = interviews.inject([]) do |ret, interview|
-      ret << interview if interview.interviewed_by?(user_id)
-    end
-    my_interviews
-  end
-
-  def self.owned_by(user_id)
-    interviews = Interview.upcoming
-    owned_interviews = interviews.inject([]) do |ret, interview|
-      ret << interview if interview.user_ids.include?(user_id)
-    end
-    owned_interviews
+  def interviewers_str
+    users.collect { |user| user.name}.join(', ')
   end
 
   def editable?
     status != STATUS_CLOSED
   end
 
-  def self.assigned_to_me(user_id, date)
-    date = DateTime.parse(date).to_time
-    start_time = date.at_beginning_of_day
-    end_time = date.end_of_day
-    interviews = Interview.joins(:interviewers).where("interviewers.user_id = %d and \
-                                                      interviews.updated_at >= '%s' and \
-                                                      interviews.updated_at <= '%s'", user_id, start_time, end_time)
-    interviews
+  def finished?
+    status == STATUS_CLOSED
   end
 
-  def self.upcoming_today(user_id, date)
-    date = DateTime.parse(date).to_time
-    start_time = date.at_beginning_of_day
-    end_time = date.end_of_day
-    interviews = Interview.joins(:interviewers).where("interviewers.user_id = %d and \
-                                                      interviews.scheduled_at >= '%s' and \
-                                                      interviews.scheduled_at <= '%s'", user_id, start_time, end_time)
-    interviews
-  end
 end
