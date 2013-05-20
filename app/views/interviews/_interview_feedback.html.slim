@@ -1,0 +1,22 @@
+- opening_candidate = OpeningCandidate.find(interview.opening_candidate_id)
+- candidate = Candidate.find(opening_candidate.candidate_id)
+- opening = Opening.find(opening_candidate.opening_id)
+div.clear-both.form-horizontal.dialog-feedback-div id="interview-feedback-dialog-#{interview.id}"
+  =form_for interview, :html => {:class => 'form-horizontal clear-both'} do |f|
+    .control-group
+      label.control-label
+        b Candidate
+      .controls = candidate.name
+    .control-group
+      label.control-label
+        b Position
+      .controls = opening.title
+    .control-group
+      = f.label :assessment, :class => 'control-label assessment-interview-label'
+      .controls
+        = f.text_area :assessment, :rows => 6, :class => 'span4'
+    .control-group
+      label.control-label
+      .controls
+        .actions
+          = f.submit 'Save', :class => 'btn'
