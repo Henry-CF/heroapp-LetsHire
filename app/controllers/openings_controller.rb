@@ -3,7 +3,7 @@ class OpeningsController < ApplicationController
   before_filter :require_login, :except => [:index, :show]
   load_and_authorize_resource :except => [:index, :show]
 
-  include OpeningsHelper
+  include ApplicationHelper
 
   # GET /openings
   # GET /openings.json
@@ -11,15 +11,15 @@ class OpeningsController < ApplicationController
     unless user_signed_in?
       #published openings are returned only
       #TODO: need exclude certain fields from anonymous access, such as 'Hiring Manager'
-      @openings = Opening.published.order(sort_column + ' ' + sort_direction).paginate(:page => params[:page])
+      @openings = Opening.published.order(sort_column('Opening') + ' ' + sort_direction).paginate(:page => params[:page])
     else
       if params.has_key?(:all)
-        @openings = Opening.order(sort_column + ' ' + sort_direction).paginate(:page => params[:page])
+        @openings = Opening.order(sort_column('Opening') + ' ' + sort_direction).paginate(:page => params[:page])
       elsif params.has_key? :no_candidates
-        @openings = Opening.without_candidates.owned_by(current_user.id).order(sort_column + ' ' + sort_direction).paginate(:page => params[:page])
+        @openings = Opening.without_candidates.owned_by(current_user.id).order(sort_column('Opening') + ' ' + sort_direction).paginate(:page => params[:page])
       else
         if can? :manage, Opening
-          @openings = Opening.owned_by(current_user.id).order(sort_column + ' ' + sort_direction).paginate(:page => params[:page])
+          @openings = Opening.owned_by(current_user.id).order(sort_column('Opening') + ' ' + sort_direction).paginate(:page => params[:page])
         else
           @openings = current_user.openings
         end
