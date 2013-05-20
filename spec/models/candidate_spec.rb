@@ -20,4 +20,10 @@ describe Candidate do
   it 'requires phone number format to be valid' do
     FactoryGirl.build(:candidate, :phone => '123x43y87').should_not be_valid
   end
+
+  it 'status should be inactive after call mark_inactive' do
+    candidate = FactoryGirl.build(:candidate)
+    candidate.mark_inactive
+    candidate.status.should be_equal(1)
+  end
 end
