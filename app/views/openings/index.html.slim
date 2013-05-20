@@ -13,18 +13,18 @@ h3.pull-left Job Openings
 table class='table table-hover'
   thead
     tr
-      th Title
-      th Department
+      th = sortable 'title', 'Title'
+      th = sortable 'department', 'Department'
       -if user_signed_in?
-        th Hiring Manager
-        th Status
-        th Filled/Total
-        th # of Candidates
+        th = sortable 'hiring_manager_id', 'hiring manager'
+        th = sortable 'status', 'Status'
+        th = sortable 'filled_no', 'Filled/Total'
+        th = sortable 'opening_candidates_count', '# of Candidates'
       -else
-        th Recruiter
+        th = sortable 'recruiter', 'Recruiter'
       th
   tbody
     = render @openings
 
-= will_paginate @openings, :class => "digg-paginate"
+= will_paginate @openings, :class => 'digg-paginate'
 
