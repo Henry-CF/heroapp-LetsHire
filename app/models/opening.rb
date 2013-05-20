@@ -1,7 +1,6 @@
 require 'carmen'
 
 class Opening < ActiveRecord::Base
-  default_scope order('title ASC')
 
   include Carmen
 

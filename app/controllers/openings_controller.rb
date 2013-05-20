@@ -3,21 +3,23 @@ class OpeningsController < ApplicationController
   before_filter :require_login, :except => [:index, :show]
   load_and_authorize_resource :except => [:index, :show]
 
+  include OpeningsHelper
+
   # GET /openings
   # GET /openings.json
   def index
     unless user_signed_in?
       #published openings are returned only
       #TODO: need exclude certain fields from anonymous access, such as 'Hiring Manager'
-      @openings = Opening.published.paginate(:page => params[:page])
+      @openings = Opening.published.order(sort_column + ' ' + sort_direction).paginate(:page => params[:page])
     else
       if params.has_key?(:all)
-        @openings = Opening.paginate(:page => params[:page], :order => 'updated_at DESC')
+        @openings = Opening.order(sort_column + ' ' + sort_direction).paginate(:page => params[:page])
       elsif params.has_key? :no_candidates
-        @openings = Opening.without_candidates.owned_by(current_user.id).paginate(:page => params[:page])
+        @openings = Opening.without_candidates.owned_by(current_user.id).order(sort_column + ' ' + sort_direction).paginate(:page => params[:page])
       else
         if can? :manage, Opening
-          @openings = Opening.owned_by(current_user.id).paginate(:page => params[:page])
+          @openings = Opening.owned_by(current_user.id).order(sort_column + ' ' + sort_direction).paginate(:page => params[:page])
         else
           @openings = current_user.openings
         end
@@ -152,8 +154,5 @@ Requirements
 -	condition 2
 
         END_OF_STRING
-      end
-
-
-
+  end
 end
