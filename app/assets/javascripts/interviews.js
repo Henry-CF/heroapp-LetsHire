@@ -31,6 +31,19 @@ $(function () {
         });
     }
 
+    if ($('.interview-feedback-btn').length > 0) {
+        $('.interview-feedback-btn').click(function(event){
+            var interview_id = $(this).attr('data-interview-id');
+            var div_id = "interview-feedback-dialog-" + interview_id;
+            $("div#" + div_id).dialog({
+                height: 500,
+                width: 600,
+                modal: true,
+                title: 'Add Feedback'
+            });
+        });
+    }
+
     function setup_datetimepicker(elements) {
         $(elements).datetimepicker().each(function(index, elem) {
             var isoTime = new Date($(elem).data('iso'));
@@ -43,8 +56,7 @@ $(function () {
             }
             $(elem).datetimepicker("setDate", isoTime);
         });
-    };
-
+    }
 
     setup_datetimepicker($(".datetimepicker"));
 

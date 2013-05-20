@@ -10,7 +10,12 @@ tr
     .dropdown
       a.dropdown-toggle.icon-cog.icon-large.action-icon data-toggle="dropdown" href="#"
       ul.dropdown-menu
+        li = link_to 'View Details', interview_path(interview)
+        li = link_to 'Edit', edit_interview_path(interview)
+        li
+          a.interview-feedback-btn href='#' data-interview-id=interview.id Add Feedback
         li = link_to 'Delete', interview, :confirm => 'Are you sure?', :method => :delete
       = link_to '', edit_multiple_interviews_path(:opening_candidate_id => interview.opening_candidate_id), :class => 'icon-file-alt icon-large action-icon'
       = link_to '', interview, :confirm => 'Are you sure?', :method => :delete, :class => 'icon-remove icon-large action-icon'
+  =render 'interviews/interview_feedback', {:interview => interview }
 

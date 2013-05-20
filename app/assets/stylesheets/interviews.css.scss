@@ -16,6 +16,15 @@
   }
 }
 
+
+.dialog-feedback-div {
+  display: none;
+}
+
+.assessment-interview-label {
+  font-weight: bold;
+}
+
 input#duration, input#interview_duration {
   width: 50px;
 }
@@ -37,5 +46,4 @@ table.schedule_interviews {
     overflow: hidden;
     width: 100px;
   }
-
 }
