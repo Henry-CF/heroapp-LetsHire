@@ -1,4 +1,5 @@
 class InterviewsController < AuthorizedController
+  include InterviewsHelper
   def index
     authorize! :read, Interview
 
@@ -31,7 +32,6 @@ class InterviewsController < AuthorizedController
     render :action => :schedule_opening_selection, :layout => false
   end
 
-
   def edit_multiple
     authorize! :manage, Interview
     @opening_candidate = OpeningCandidate.find(params[:opening_candidate_id]) unless params[:opening_candidate_id].nil?
@@ -61,12 +61,13 @@ class InterviewsController < AuthorizedController
     new_interviews.delete :opening_candidate_id
     new_interviews.delete :opening_id
     new_interviews.delete :candidate_id
-    interview_ids = []
-    new_interviews[:interviews_attributes].each { |key, val| interview_ids << val[:id].to_i }
-    removed_interview_ids = @opening_candidate.interview_ids - interview_ids
     OpeningCandidate.transaction do
-      Interview.delete removed_interview_ids
       if @opening_candidate.update_attributes new_interviews
+        user_ids = []
+        new_interviews[:interviews_attributes].each do |key, val|
+          user_ids.concat val[:user_ids] if val[:user_ids].is_a?(Array)
+        end
+        update_favorite_interviewers user_ids
         render :json => { :success => true }
       else
         puts  @opening_candidate.errors.inspect
@@ -77,7 +78,7 @@ class InterviewsController < AuthorizedController
     render :json => { :success => false, :messages => ['Invalid object'] }
   end
 
-  def schedule_interviews_lineitem
+  def schedule_add
     authorize! :manage, Interview
     interview = Interview.new({ :modality => Interview::MODALITY_PHONE,
                                 :duration => 30,
@@ -87,7 +88,7 @@ class InterviewsController < AuthorizedController
   end
 
 
-  def schedule_interviews_collection
+  def schedule_reload
     authorize! :manage, Interview
     @opening_candidate = OpeningCandidate.find(params[:opening_candidate_id]) unless params[:opening_candidate_id].nil?
     if @opening_candidate.nil?
@@ -100,62 +101,33 @@ class InterviewsController < AuthorizedController
     render :partial => 'interviews/schedule_interviews_lineitem', :collection => @interviews, :as => :interview, :layout => false
   end
 
-  def new
-    authorize! :manage, Interview
-    @opening_candidate = OpeningCandidate.find params[:opening_candidate_id] if params[:opening_candidate_id]
-    return redirect_to interviews_url, :notice  => 'No Candidates to schedule interviews' if @opening_candidate.nil?
-    return redirect_to :back, :notice  => "Candidate isn't in interview status for this Job opening" unless @opening_candidate.in_interview_loop?
-    @interview = Interview.new
-    render :action => 'edit'
-  end
-
   def edit
     @interview = Interview.find params[:id]
     authorize! :update, @interview
     prepare_edit
+    unless is_interviewer? @interview.interviewers
+      redirect_to :back, :notice => 'Not an interviewer'
+    end
   end
 
-  def create
-    authorize! :manage, Interview
-    if params[:opening_candidate_id].nil?
-      redirect_to candidates_path, :notice => 'No opening is selected for the candidate'
-      return
-    end
-    if params[:interview].nil?
-      redirect_to candidates_path, :notice => 'Invalid parameter'
-      return
-    end
-    @opening_candidate = OpeningCandidate.find params[:opening_candidate_id]
-    if @opening_candidate.nil?
-      redirect_to candidates_path, :notice => 'No opening is selected for the candidate'
-      return
-    end
-    unless @opening_candidate.in_interview_loop?
-      redirect_to @opening.candidate, :notice => "The candidate isn't pending for interview."
-      return
-    end
-    params[:interview].merge! :status => Interview::STATUS_NEW
-    params[:interview].delete :opening_id
-    @interview = @opening_candidate.interviews.build params[:interview]
-    if @interview.save
-      update_favorite_interviewers params[:interview][:user_id]
-      redirect_to @interview, :notice => 'Interview was successfully created'
-    else
-      prepare_edit
-      render :action => 'edit'
-    end
-  end
 
   def update
     @interview = Interview.find params[:id]
     authorize! :update, @interview
-    @opening_candidate = @interview.opening_candidate
-    if @interview.update_attributes(params[:interview])
-      update_favorite_interviewers params[:interview][:user_id]
-      redirect_to interview_path(@interview), :notice => 'Interview updated'
+    unless params[:interview][:assessment].nil?
+      unless is_interviewer? @interview.interviewers
+        return render :action => :edit, :notice => 'Not an interviewer'
+      else
+        @interview.assessment = params[:interview][:assessment]
+      end
+    end
+    @interview.status = params[:interview][:status] unless params[:interview][:status].nil?
+
+    if @interview.save
+      redirect_to interview_path(@interview), :notice => 'Interview is updated successfully'
     else
       prepare_edit
-      render :action => 'edit'
+      render :action => :edit
     end
   end
 
@@ -180,16 +152,17 @@ class InterviewsController < AuthorizedController
   end
 
   def update_favorite_interviewers(user_ids)
-    user_ids = user_ids.split(',') if user_ids.is_a? String
-    if user_ids && user_ids.any?
+    user_ids ||= []
+    if user_ids.any?
       opening = @opening_candidate.opening
-      user_ids.each do | id |
-        op = opening.opening_participants.build
-        op.user_id = id
-        op.save
+      user_ids.each do |id|
+        if id.to_i > 0
+          op = opening.opening_participants.build
+          op.user_id = id
+          op.save
+        end
       end
     end
-
   end
 
   private

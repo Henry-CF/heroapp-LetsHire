@@ -13,9 +13,6 @@ class DashboardController < ApplicationController
     @candidates_with_assessment = []
 
     # interviews related action items data providers
-    @interviews_owned_by_me = []
-    @interviews_interviewed_by_me = []
-    @interviews_without_feedback = []
 
     if can? :manage, Opening
       @active_openings = Opening.published.owned_by(current_user.id)
@@ -34,6 +31,10 @@ class DashboardController < ApplicationController
       @interviews_interviewed_by_me = Interview.interviewed_by(current_user.id).upcoming
       @interviews_without_feedback = Interview.where(:assessment => nil)
     end
+    @interviews_owned_by_me ||= []
+    @interviews_interviewed_by_me ||= []
+    @interviews_without_feedback ||= []
+
 
     # data displayed in charts
     @openings_created_by_me = Opening.created_by(current_user.id).length

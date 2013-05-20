@@ -15,3 +15,27 @@
     padding-left: 4px;
   }
 }
+
+input#duration, input#interview_duration {
+  width: 50px;
+}
+
+.datetimepicker {
+  width:  140px;
+}
+
+table.schedule_interviews {
+  #modality {
+    width: 140px;
+  }
+
+  #status {
+    width: 100px;
+  }
+
+  th, td {
+    overflow: hidden;
+    width: 100px;
+  }
+
+}
