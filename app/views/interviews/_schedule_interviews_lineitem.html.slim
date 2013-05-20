@@ -1,5 +1,4 @@
-tr
-  td.first.hide = interview.id
+tr data-interview_id=interview.id
   - if interview.editable?
     td = text_field_tag :scheduled_at, nil, :class => 'datetimepicker', :id => nil, :data => {:iso => interview.scheduled_at_iso}
     td = number_field_tag :duration, interview.duration, :in => 30..180, :step => 10

@@ -61,13 +61,7 @@ class InterviewsController < AuthorizedController
     new_interviews.delete :opening_candidate_id
     new_interviews.delete :opening_id
     new_interviews.delete :candidate_id
-    interview_ids = []
-    new_interviews[:interviews_attributes].each do |key, val|
-      interview_ids << val[:id].to_i
-    end
-    removed_interview_ids = @opening_candidate.interview_ids - interview_ids
     OpeningCandidate.transaction do
-      Interview.delete removed_interview_ids
       if @opening_candidate.update_attributes new_interviews
         user_ids = []
         new_interviews[:interviews_attributes].each do |key, val|
