@@ -55,7 +55,10 @@ class Interview < ActiveRecord::Base
   end
 
   def interviewers_str
-    users.collect { |user| user.name}.join(', ')
+    default_department_id = opening_candidate.opening.department_id
+    users.collect do |user|
+      user.department_id == default_department_id ? user.name : "#{user.name}(#{user.department.name})"
+    end.join(', ')
   end
 
   def editable?

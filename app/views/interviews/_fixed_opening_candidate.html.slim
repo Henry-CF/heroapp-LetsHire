@@ -1,5 +1,5 @@
 =hidden_field_tag :opening_candidate_id, opening_candidate.id
-=hidden_field_tag :opening_id, opening_candidate.opening_id
+=hidden_field_tag :opening_id, opening_candidate.opening_id, :data => { :department => opening_candidate.opening.department_id, :participants => opening_candidate.opening.participant_ids }
 =hidden_field_tag :candidate_id, opening_candidate.candidate_id
 dl.dl-horizontal.clear-both
   dt Job Opening

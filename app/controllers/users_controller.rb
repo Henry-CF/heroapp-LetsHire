@@ -6,7 +6,15 @@ class UsersController < AuthenticatedController
   end
 
   def index_for_selection
-    @users = User.name_order.select("id, name, email").where("name like ?", "%#{params[:q]}%").paginate(:page => params[:page])
+    @users = []
+    if params[:department_id]
+      department = Department.find(params[:department_id])
+      @users = department.users.where("name like ?", "%#{params[:q]}%").paginate(:page => params[:page])
+    else
+      @users = User.name_order.where("name like ?", "%#{params[:q]}%").paginate(:page => params[:page])
+    end
+    render :action => 'index_for_selection', :layout => false
+  rescue
     render :action => 'index_for_selection', :layout => false
   end
 

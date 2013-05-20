@@ -1,7 +1,20 @@
 - users.each do |user|
-  div
-    = check_box_tag nil, user.id, false,  { :id => nil }
-    span = user.name
+  tr
+    td
+      = check_box_tag nil, user.id, false,  { :id => nil, :data => { :str => user.name  } }
+    td
+      = user.name
+    td
+      i.icon-arrow-down
+  tr.hide
+    td
+    td
+      = "Email: #{h(user.email)}"
+      p
+      = "Department: #{user.department.name}"
+    td
+
+
 
 .pull-right
   = will_paginate users
