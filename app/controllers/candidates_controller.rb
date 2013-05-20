@@ -6,15 +6,22 @@ class CandidatesController < AuthenticatedController
   include ApplicationHelper
 
   def index
-    if params.has_key? :no_openings
-      @candidates = Candidate.without_opening.order(sort_column('Candidate') + ' ' + sort_direction).paginate(:page => params[:page])
-    elsif params.has_key? :no_interviews
-      @candidates = Candidate.without_interview.order(sort_column('Candidate') + ' ' + sort_direction).paginate(:page => params[:page])
-    elsif params.has_key? :with_assessment
-      @candidates = Candidate.with_assessment.order(sort_column('Candidate') + ' ' + sort_direction).paginate(:page => params[:page])
-    elsif params.has_key? :without_assessment
-      @candidates = Candidate.without_assessment.paginate(:page => params[:page])
-    else
+    filter = false
+    valid_keys = [:no_openings, :no_interviews, :with_assessment, :without_assessment, \
+                  :active, :inactive, :available, :all]
+    valid_keys.each do |key|
+      if params.has_key? key
+        filter = true
+        if key == :all
+          @candidates = Candidate.paginate(:page => params[:page])
+        else
+          @candidates = Candidate.send(key).paginate(:page => params[:page])
+        end
+        break
+      end
+    end
+
+    unless filter
       opening = nil
       if (params[:opening_id])
         opening = Opening.find(params[:opening_id])
@@ -22,8 +29,13 @@ class CandidatesController < AuthenticatedController
       if opening
         @candidates = opening.candidates.paginate(:page => params[:page])
       else
-        @candidates = Candidate.order(sort_column('Opening') + ' ' + sort_direction).paginate(:page => params[:page])
+        # NOTE: show active candidates by default
+        @candidates = Candidate.active.order(sort_column('Opening') + ' ' + sort_direction).paginate(:page => params[:page])
       end
+    end
+
+    if params.has_key? :partial
+      render partial: 'candidates/candidates_index'
     end
   end
 
@@ -168,6 +180,18 @@ class CandidatesController < AuthenticatedController
     redirect_to candidates_url, notice: 'Invalid Candidate'
   end
 
+  def move_to_blacklist
+    @candidate = Candidate.find(params[:id])
+    @candidate.mark_inactive
+
+    redirect_to candidates_url, :notice => "Candidate \"#{@candidate.name}\" (#{@candidate.email}) was successfully moved to blacklist."
+  rescue ActiveRecord::RecordNotFound
+    redirect_to users_url, notice: 'Invalid user'
+  rescue
+    redirect_to candidates_url, :error => "Candidate \"#{@candidate.name}\" (#{@candidate.email}) cannot be moved to blacklist."
+  end
+
+  # NOTE: keep the destroy method since we are not sure whether it is needed or not
   def destroy
     @candidate = Candidate.find(params[:id])
     @resume = @candidate.resume

@@ -1,5 +1,16 @@
 class Candidate < ActiveRecord::Base
-  attr_accessible :name, :email, :phone, :source, :description
+  default_scope order('name ASC')
+
+  attr_accessible :name, :email, :phone, :source, :description, :status
+
+  # candidate status constants
+  NORMAL = 0
+  INACTIVE = 1
+
+  STATUS_DESC = {
+      NORMAL   => 'normal',
+      INACTIVE => 'in blacklist'
+  }
 
   # valid phone number examples
   # 754-647-0105 x6950
@@ -20,6 +31,9 @@ class Candidate < ActiveRecord::Base
   has_many :openings, :class_name => 'Opening', :through => :opening_candidates
   has_one  :resume, :class_name => 'Resume', :dependent => :destroy
 
+  scope :active, where('id IN (SELECT candidate_id FROM opening_candidates)')
+  scope :inactive, where("status = #{INACTIVE}")
+  scope :available, where("status = #{NORMAL} and id NOT IN (SELECT candidate_id FROM opening_candidates)")
   scope :without_opening, where('id NOT IN (SELECT candidate_id FROM opening_candidates)')
   scope :with_opening, joins(:opening_candidates).uniq
   scope :with_interview, joins(:opening_candidates => :interviews).uniq
@@ -39,6 +53,27 @@ class Candidate < ActiveRecord::Base
       end
     end
     false
+  end
+
+  def mark_inactive
+    update_attributes(:status => INACTIVE)
+  end
+
+  def status_str
+    STATUS_DESC[status]
+  end
+
+  def inactive?
+    # NOTE: Shall we keep another table to store candidates in blacklist?
+    status == INACTIVE # means the candidate is in blacklist
+  end
+
+  def self.status_description
+    description = []
+    STATUS_DESC.each do |key, value|
+      description << [value, key]
+    end
+    description
   end
 
   def self.without_assessment

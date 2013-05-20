@@ -1,6 +1,10 @@
 = f.error_messages
 
 .control-group
+  = f.label :status, :class => 'control-label'
+  .controls
+    = f.select :status, Candidate.status_description, :selected => @candidate.status
+.control-group
   = f.label :name, :class => 'control-label'
   .controls
     = f.text_field :name
