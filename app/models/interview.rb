@@ -5,9 +5,7 @@ class Interview < ActiveRecord::Base
   has_many :users, :through => :interviewers
   has_many :photos, :dependent => :destroy
 
-  accepts_nested_attributes_for :users, :allow_destroy => true, :reject_if => proc { |user| user.empty? }
-
-  attr_accessible :user_id, :user_ids
+  attr_accessible :user_ids
 
   attr_accessible :opening_candidate_id
   attr_accessible :modality, :scheduled_at, :scheduled_at_iso, :duration, :phone, :location, :description
@@ -51,17 +49,13 @@ class Interview < ActiveRecord::Base
     end
   end
 
-  def user_id
-    user_ids.try(:first)
-  end
-
-  def user_id=(id)
-    self.user_ids = [id]
-  end
-
   def scheduled_at_iso=(val)
     self.scheduled_at = Time.parse val
   rescue
+  end
+
+  def interviewers_str
+    users.collect { |user| user.name}.join(', ')
   end
 
   def editable?

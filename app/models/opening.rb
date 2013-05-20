@@ -29,7 +29,7 @@ class Opening < ActiveRecord::Base
 
   STATUS_LIST = { :draft => 0, :published => 1, :closed => -1 }
   scope :published, where(:status => 1)
-  scope :owned_by,  ->(user_id) { where('hiring_manager_id = ? OR recruiter_id = ?', user_id, user_id) }
+  scope :owned_by,  ->(user_id) { where('hiring_manager_id = ? OR recruiter_id = ? OR creator_id = ?', user_id, user_id, user_id) }
   scope :created_by, ->(user_id) { where('creator_id = ?', user_id)}
   scope :without_candidates, where(:opening_candidates_count => 0)
   scope :without_interviewers, where('id NOT IN (SELECT opening_id FROM opening_candidates)')

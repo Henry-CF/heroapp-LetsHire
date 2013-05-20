@@ -69,7 +69,7 @@ describe DashboardController do
   end
 
   def assign_interview_to_user(interview, user)
-    interview.user_id = user.id
+    interview.user_ids = [user.id]
   end
 
   before :each  do
