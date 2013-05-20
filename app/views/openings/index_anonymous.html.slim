@@ -3,10 +3,10 @@ h3 Openings
 table class='table table-hover'
   thead
     tr
-      th Title
-      th = Department
-      th Recruiter
-      th Seats
+      th = sortable 'title', 'Title'
+      th = sortable 'department_id', 'Department'
+      th = sortable 'recruiter_id', 'Recruiter'
+      th = sortable 'total_no', 'Seat'
       th
   tbody
   - @openings.each do |opening|
