@@ -3,13 +3,15 @@ class CandidatesController < AuthenticatedController
 
   MAX_FILE_SIZE = 10 * 1024 * 1024
 
+  include ApplicationHelper
+
   def index
     if params.has_key? :no_openings
-      @candidates = Candidate.without_opening.paginate(:page => params[:page])
+      @candidates = Candidate.without_opening.order(sort_column('Candidate') + ' ' + sort_direction).paginate(:page => params[:page])
     elsif params.has_key? :no_interviews
-      @candidates = Candidate.without_interview.paginate(:page => params[:page])
+      @candidates = Candidate.without_interview.order(sort_column('Candidate') + ' ' + sort_direction).paginate(:page => params[:page])
     elsif params.has_key? :with_assessment
-      @candidates = Candidate.with_assessment.paginate(:page => params[:page])
+      @candidates = Candidate.with_assessment.order(sort_column('Candidate') + ' ' + sort_direction).paginate(:page => params[:page])
     elsif params.has_key? :without_assessment
       @candidates = Candidate.without_assessment.paginate(:page => params[:page])
     else
@@ -20,7 +22,7 @@ class CandidatesController < AuthenticatedController
       if opening
         @candidates = opening.candidates.paginate(:page => params[:page])
       else
-        @candidates = Candidate.paginate(:page => params[:page])
+        @candidates = Candidate.order(sort_column('Opening') + ' ' + sort_direction).paginate(:page => params[:page])
       end
     end
   end

@@ -8,9 +8,9 @@ br
 table class='table table-hover'
  thead
   tr
-    th Name
-    th Email
-    th Phone
+    th = sortable 'Candidate', 'name', 'Name'
+    th = sortable 'Candidate', 'email', 'Email'
+    th = sortable 'Candidate', 'phone','Phone'
     th
 
   - @candidates.each do |candidate|
