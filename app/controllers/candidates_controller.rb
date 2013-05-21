@@ -30,11 +30,16 @@ class CandidatesController < AuthenticatedController
   def show
     @candidate = Candidate.find params[:id]
     @latest_applying_job = @candidate.opening_candidates.last
+    @opening_candidate = nil
     @opening = nil
     @interviews = []
+    @assessment = nil
     unless @latest_applying_job.nil?
+      @opening_candidate = @latest_applying_job # to fit the assessment form
       @opening = @latest_applying_job.opening
       @interviews = @latest_applying_job.interviews
+      @assessment = Assessment.new(:opening_candidate_id => @latest_applying_job.id,
+                                   :creator => current_user)
     end
 
     @applying_jobs = nil
