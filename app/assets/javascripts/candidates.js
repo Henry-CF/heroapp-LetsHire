@@ -39,60 +39,67 @@ $(function() {
         });
     }
 
-    function getEventTarget(e) {
-        e = e || window.event;
-        return e.target || e.srcElement;
+    if ($('.dropdown-toggle').length > 0) {
+        $('.dropdown-toggle').dropdown();
     }
 
-    function getIndex(sender) {   
-        var aElements = sender.parentNode.parentNode.getElementsByTagName("a");
-        var aElementsLength = aElements.length;
+    $('#candidates_viewfilter').click(function(event) {
+        function getEventTarget(e) {
+            e = e || window.event;
+            return e.target || e.srcElement;
+        }
 
-        var index;
-        for (var i = 0; i < aElementsLength; i ++) {
-            if (aElements[i] == sender) {
-                index = i;
-                return index;
+        function getIndex(sender) {
+            var aElements = sender.parentNode.parentNode.getElementsByTagName("a");
+            var aElementsLength = aElements.length;
+
+            var index;
+            for (var i = 0; i < aElementsLength; i ++) {
+                if (aElements[i] == sender) {
+                    index = i;
+                    return index;
+                }
             }
         }
-    }
 
-    function refreshCandidates(condition) {
-        var xmlhttp = null;
-        var url = null;
-        if (condition == '') {
-            url = '/candidates?partial';
-        } else {
-            url = '/candidates?partial&' + condition;
+        function refreshCandidates(condition) {
+            var xmlhttp = null;
+            var url = null;
+            if (condition == '') {
+                url = '/candidates?partial';
+            } else {
+                url = '/candidates?partial&' + condition;
+            }
+
+            if (window.XMLHttpRequest) {
+                xmlhttp = new XMLHttpRequest();
+            } else if (window.ActiveXObject) {
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            } 
+            
+            if (xmlhttp != null) {
+                xmlhttp.onreadystatechange = function() {
+                    if (xmlhttp.readyState == 4) { // loaded
+                       if (xmlhttp.status == 200) { // ok
+                           document.getElementById('all-candidates').innerHTML = xmlhttp.responseText;
+                           if ($('.dropdown-toggle').length > 0) {
+                               $('.dropdown-toggle').dropdown();
+                           }
+                       }
+                       else {
+                           alert("Problem retrieving data:" + xmlhttp.statusText);
+                       }
+                    }
+                };
+                xmlhttp.open("GET", url, true);
+                xmlhttp.send(null);
+            }
+            else {
+                alert("Your browser does not support XMLHTTP.");
+            }
         }
 
-        if (window.XMLHttpRequest) {
-            xmlhttp = new XMLHttpRequest();
-        } else if (window.ActiveXObject) {
-            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-        } 
-        
-        if (xmlhttp != null) {
-            xmlhttp.onreadystatechange = function() {
-                if (xmlhttp.readyState == 4) { // loaded
-                   if (xmlhttp.status == 200) { // ok
-                       document.getElementById('all-candidates').innerHTML = xmlhttp.responseText;
-                   }
-                   else {
-                       alert("Problem retrieving data:" + xmlhttp.statusText);
-                   }
-                }
-            };
-            xmlhttp.open("GET", url, true);
-            xmlhttp.send(null);
-        }
-        else {
-            alert("Your browser does not support XMLHTTP.");
-        }
-    }
 
-    $('.dropdown-toggle').dropdown();
-    $('#viewfilter').click(function(event) {
         var target = getEventTarget(event);
         document.getElementById('filtername').innerHTML = target.innerHTML.toString();
         switch (getIndex(target)) {
