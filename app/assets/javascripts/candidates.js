@@ -57,4 +57,15 @@ $(function() {
             }
         }
     });
+
+    if ($('#candidate-assessment-btn').length > 0 ){
+        $('#candidate-assessment-btn').click(function(e){
+            $('div#candidate-assessment-dialog').dialog({
+                modal: true,
+                width: '700',
+                height: '620',
+                title: 'Assess Candidate'
+            });
+        });
+    }
 });
