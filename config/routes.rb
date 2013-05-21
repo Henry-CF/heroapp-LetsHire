@@ -63,6 +63,7 @@ LetsHire::Application.routes.draw do
   resources :candidates do
     member do
       get 'legacy_show'
+      post 'move_to_blacklist'
       get 'resume'
       get 'new_opening'
       put 'create_opening'

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130514025408) do
+ActiveRecord::Schema.define(:version => 20130520073408) do
 
   create_table "assessments", :force => true do |t|
     t.integer  "opening_candidate_id"
@@ -32,6 +32,7 @@ ActiveRecord::Schema.define(:version => 20130514025408) do
     t.datetime "created_at",                              :null => false
     t.datetime "updated_at",                              :null => false
     t.integer  "opening_candidates_count", :default => 0
+    t.integer  "status",                   :default => 0
   end
 
   add_index "candidates", ["email"], :name => "index_candidates_on_email"

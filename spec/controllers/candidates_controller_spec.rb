@@ -39,7 +39,17 @@ describe CandidatesController do
       candidate = Candidate.create! valid_candidate
       Candidate.stub(:paginate).and_return([candidate])
       get :index, {}
+      assigns(:candidates).should include(@candidate) # by default we only get active candidates
+    end
+
+    it "assigns candidates under filter condition as @candidates" do
+      candidate = Candidate.create! FactoryGirl.attributes_for(:candidate)
+      candidate.should be_valid
+      opening_candidate = OpeningCandidate.create!(:opening_id => @opening.id, :candidate_id => candidate.id)
+      opening_candidate.should be_valid
+      get :index, {:all => true}
       assigns(:candidates).should include(candidate)
+      assigns(:candidates).should include(@candidate)
     end
   end
 

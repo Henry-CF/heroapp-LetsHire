@@ -1,32 +1,22 @@
-.pull-left
-  h3 Candidates
+h3 Candidates
 
-.pull-right.align-to-title
+.pull-left
+  .div.btn-group
+    button.btn id="filtername" View Active
+    button.btn.dropdown-toggle data-toggle="dropdown"
+      span.caret
+    ul.dropdown-menu id="candidates_viewfilter"
+      li
+        a href="#" View Active
+      li
+        a href="#" View Inactive
+      li
+        a href="#" View Available
+      li
+        a href="#" View All
+
+.pull-right
   -if can? :create, Candidate
     = link_to 'Add a Candidate', new_candidate_path, :class => 'btn btn-primary'
 br
-table class='table table-hover'
- thead
-  tr
-    th = sortable 'Candidate', 'name', 'Name'
-    th = sortable 'Candidate', 'email', 'Email'
-    th = sortable 'Candidate', 'phone','Phone'
-    th
-
-  - @candidates.each do |candidate|
-    tr
-      td= link_to candidate.name, candidate
-      td
-        a href="mailto:#{candidate.email}" = candidate.email
-      td= candidate.phone
-      td.actions
-        .dropdown
-          a.dropdown-toggle.icon-cog.icon-large.action-icon data-toggle="dropdown" href="#"
-          ul.dropdown-menu
-            li = link_to 'View Details', candidate
-            li = link_to 'Edit', edit_candidate_path(candidate)
-            li = link_to 'Delete', candidate, :confirm => 'Are you sure?', :method => :delete
-          =link_to '', edit_candidate_path(candidate) , :class => 'icon-file-alt icon-large action-icon'
-          =link_to '', candidate, :confirm => 'Are you sure?', :method => :delete, :class => 'icon-remove icon-large action-icon'
-
-= will_paginate @candidates, :class => "digg-paginate"
+=render 'candidates_index'
