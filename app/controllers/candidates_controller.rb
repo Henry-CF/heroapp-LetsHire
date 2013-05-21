@@ -30,11 +30,12 @@ class CandidatesController < AuthenticatedController
       end
       if opening
         @candidates = opening.candidates.active.paginate(:page => params[:page])
+      else
+        # NOTE: show active candidates by default
+        @candidates = Candidate.active.order(sort_column('Opening') + ' ' + sort_direction).paginate(:page => params[:page])
       end
 
     end
-    # NOTE: show active candidates by default
-    @candidates ||= Candidate.active.order(sort_column('Opening') + ' ' + sort_direction).paginate(:page => params[:page])
     if params.has_key? :partial
       render partial: 'candidates/candidates_index'
     end
