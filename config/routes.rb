@@ -53,6 +53,7 @@ LetsHire::Application.routes.draw do
   devise_for :users
   match '/profile', to: 'profile#edit'
   match '/profile/update', to: 'profile#update'
+  get '/users/index_for_selection', to: 'users#index_for_selection'
   resources :users
 
   get '/departments/:id/user_select' => 'departments#user_select'
@@ -83,13 +84,10 @@ LetsHire::Application.routes.draw do
     resources :interviews
   end
 
-  get "dashboard/overview"
-
   get '/settings', to: 'settings#index'
 
   get '/addresses/subregion_options' => 'openings#subregion_options'
   get '/positions/opening_options' => 'openings#opening_options'
-  get '/participants' => 'users#index_for_selection'
 
   # Sample resource route with options:
   #   resources :products do

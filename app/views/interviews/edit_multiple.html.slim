@@ -4,7 +4,7 @@ h3 Schedule Interviews
 -if @opening_candidate
   = render :partial => "fixed_opening_candidate", :locals => { :opening_candidate => @opening_candidate}
 -else
-  = render :partial => "flexible_opening_candidate"
+  = render :partial => "flexible_opening_candidate", :locals => { :opening => @opening}
 .pull-left
   h4 Interviews
 .pull-right
@@ -14,6 +14,7 @@ h3 Schedule Interviews
 
 #interviewers_selection_container.hide
   h3 Assign Interviewers
+  = collection_select(nil, :participants_department_id, Department.with_users, :id, :name, { :selected => @opening.department_id }, { :prompt => 'Filter by department', :id => :participants_department_id })
   #interviewers_selection
 
 table.table.table-hover.schedule_interviews

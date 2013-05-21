@@ -80,7 +80,11 @@ class InterviewsController < AuthorizedController
 
   def schedule_add
     authorize! :manage, Interview
+
+    parse_parent
+    return :text => '' if @opening_candidate.nil?
     interview = Interview.new({ :modality => Interview::MODALITY_PHONE,
+                                :opening_candidate_id => @opening_candidate.id,
                                 :duration => 30,
                                 :scheduled_at => Time.now.beginning_of_hour + 1.hour,
                                 :status => Interview::STATUS_NEW})
@@ -90,12 +94,9 @@ class InterviewsController < AuthorizedController
 
   def schedule_reload
     authorize! :manage, Interview
-    @opening_candidate = OpeningCandidate.find(params[:opening_candidate_id]) unless params[:opening_candidate_id].nil?
-    if @opening_candidate.nil?
-      if !params[:opening_id].nil? && !params[:candidate_id].nil?
-        @opening_candidate = OpeningCandidate.find_by_opening_id_and_candidate_id(params[:opening_id], params[:candidate_id])
-      end
-    end
+
+    parse_parent
+
     return :text => '' if @opening_candidate.nil?
     @interviews = @opening_candidate.interviews
     render :partial => 'interviews/schedule_interviews_lineitem', :collection => @interviews, :as => :interview, :layout => false
@@ -166,6 +167,17 @@ class InterviewsController < AuthorizedController
   end
 
   private
+  def parse_parent
+    @opening_candidate = OpeningCandidate.find(params[:opening_candidate_id]) unless params[:opening_candidate_id].nil?
+    if @opening_candidate.nil?
+      if !params[:opening_id].nil? && !params[:candidate_id].nil?
+        @opening_candidate = OpeningCandidate.find_by_opening_id_and_candidate_id(params[:opening_id], params[:candidate_id])
+      end
+    end
+
+  end
+
+
 
   def prepare_edit
     @opening_candidate = @interview.opening_candidate

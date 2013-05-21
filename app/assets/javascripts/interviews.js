@@ -1,5 +1,6 @@
 $(function () {
     if ($('.flexible_schedule_interviews').length > 0) {
+
         $('.flexible_schedule_interviews').click(function(event) {
             var opening_candidate_id = $('#opening_candidate_id').val();
             if (opening_candidate_id) {
@@ -143,8 +144,9 @@ $(function () {
             interview.status = row.find('#status').val();
             if (row.find('.icon-remove').length > 0) {
                 interview.scheduled_at_iso = row.find('td:eq(0) input').data('iso');
-                interview.duration = row.find('#duration').val();
-                interview.modality = row.find('#modality').val();
+                interview.duration = row.find('td:eq(1) input').val();
+                interview.modality = row.find('td:eq(2) select').val();
+                interview.location = row.find('td:eq(3) input').val();
                 var interviewer_td = row.find('td:eq(4)');
                 var user_ids = interviewer_td.data('user_ids');
                 if (user_ids == null || user_ids.length == 0) {
@@ -171,6 +173,7 @@ $(function () {
                 $('.submit_interviews').show();
                 $('.add_new_interview').show();
 
+                $('#participants_department_id').attr('name', null);
                 var url = '/interviews/schedule_reload?opening_id=' + opening_id + '&candidate_id=' + candidate_id;
                 tbody.load(url, function(data, status) {
                     if (status == 'success') {
@@ -196,13 +199,26 @@ $(function () {
         update_schedule_interviews_table();
 
 
-        function select_existing_interviewers(container){
-            var current_selected_user_ids = $('#interviewers_selection_container').data('user_ids');
-            $(container).find('input:checkbox').each(function(index, elem) {
+        var interviewers_selection_container = $("#interviewers_selection_container");
+        function load_interviewers_status(){
+            var current_selected_user_ids = interviewers_selection_container.data('user_ids');
+            var participants = $('#opening_id').data('participants');
+            if (!participants) {
+                participants = [];
+            }
+            $(interviewers_selection_container).find('input:checkbox').each(function(index, elem) {
                 if (current_selected_user_ids.indexOf(parseInt($(elem).val())) >=0) {
                     $(elem).prop('checked', true);
                 }
+                if (participants.indexOf(parseInt($(elem).val())) >= 0) {
+                    var tr = $(elem).parent().parent();
+                    tr.addClass('starred');
+                    tr.next().addClass('starred'); // The same style for the hidden tr
+
+                }
             });
+
+
         }
 
 
@@ -226,7 +242,7 @@ $(function () {
 
 
         function calculate_interviewers_change(interviewer_td) {
-            var interviewers_selection_container = $("#interviewers_selection_container");
+
             var new_user_ids = interviewers_selection_container.data('user_ids');
             var old_user_ids = $(interviewer_td).data('user_ids');
             if (uniq_array_equal(new_user_ids, old_user_ids)) {
@@ -250,42 +266,58 @@ $(function () {
             return true;
         }
 
+        $('#participants_department_id').change(function() {
+            Users.reload_department_users($('#interviewers_selection'), $('#participants_department_id').val(), load_interviewers_status);
+        });
+
         tbody.on('click', 'td .edit_interviewers', function() {
             var interviewer_td = $(this).parent().parent();
-            $('#interviewers_selection_container').data('user_ids', interviewer_td.data('user_ids').slice(0));
-            $('#interviewers_selection_container').data('users', interviewer_td.data('users').slice(0));
-            $('#interviewers_selection').load('/participants', function(response, status) {
-                if (status == 'success') {
-                    select_existing_interviewers(this);
-                    $("#interviewers_selection_container").show().dialog({
-                        width : 400,
-                        height: 500,
-                        modal: true,
-                        buttons: {
-                            "OK": function() {
-                                $("#interviewers_selection_container").hide().dialog( "close" );
-                                calculate_interviewers_change(interviewer_td);
-                            },
-                            Cancel: function() {
-                                $("#interviewers_selection_container").hide().dialog( "close" );
-                            }
-                        }
-                    });
+            interviewers_selection_container.data('user_ids', interviewer_td.data('user_ids').slice(0));
+            interviewers_selection_container.data('users', interviewer_td.data('users').slice(0));
+
+            var new_val = $('#opening_id').data('department');
+            $('#interviewers_selection').empty().append('Loading users...');
+            $('#participants_department_id').val(new_val);
+            Users.reload_department_users($('#interviewers_selection'), $('#participants_department_id').val(), load_interviewers_status);
+            interviewers_selection_container.show().dialog({
+                width : 400,
+                height: 500,
+                modal: true,
+                buttons: {
+                    "OK": function() {
+                        $("#interviewers_selection_container").hide().dialog( "close" );
+                        calculate_interviewers_change(interviewer_td);
+                    },
+                    Cancel: function() {
+                        $("#interviewers_selection_container").hide().dialog( "close" );
+                    }
                 }
             });
         });
 
-        $('#interviewers_selection_container').delegate('.pagination a', 'click', function () {
+        interviewers_selection_container.delegate('.pagination a', 'click', function () {
             $('.pagination').html('Page is loading...');
             $('#interviewers_selection').load(this.href, function() {
-                select_existing_interviewers(this);
+                load_interviewers_status(this);
             });
             return false;
         });
 
+        interviewers_selection_container.delegate('i.icon-arrow-down', 'click', function () {
+            $(this).parent().parent().next().show();
+            $(this).removeClass('icon-arrow-down').addClass('icon-arrow-up');
+            return false;
+        });
+
+        interviewers_selection_container.delegate('i.icon-arrow-up', 'click', function () {
+            $(this).parent().parent().next().hide();
+            $(this).removeClass('icon-arrow-up').addClass('icon-arrow-down');
+            return false;
+        });
+
         $('#interviewers_selection_container').delegate('input:checkbox', 'change', function () {
-            var user_ids= $('#interviewers_selection_container').data('user_ids');
-            var users = $('#interviewers_selection_container').data('users');
+            var user_ids= interviewers_selection_container.data('user_ids');
+            var users = interviewers_selection_container.data('users');
             var current_val = parseInt($(this).val());
             var index = user_ids.indexOf(current_val);
             if (index >= 0) {
@@ -293,8 +325,7 @@ $(function () {
                 users.splice(index, 1);
             } else {
                 user_ids.push(current_val);
-                var str = $(this).parent().children('span').text();
-                users.push(str);
+                users.push($(this).data('str'));
             }
         });
 
@@ -304,7 +335,10 @@ $(function () {
                 alert('Too many interviews scheduled.');
                 return;
             }
-            $.get("/interviews/schedule_add", function(data, status) {
+            var opening_id = $('#opening_id').val();
+            var candidate_id = $('#candidate_id').val();
+            var url = '/interviews/schedule_add?opening_id=' + opening_id + '&candidate_id=' + candidate_id;
+            $.get(url, function(data, status) {
                 if (status == 'success') {
                     var newElem = $(data).appendTo(tbody);
                     setup_datetimepicker(newElem.find("td .datetimepicker"));
