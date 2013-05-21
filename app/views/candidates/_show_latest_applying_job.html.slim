@@ -7,7 +7,7 @@
         .span6
           = link_to 'Schedule Interviews', edit_multiple_interviews_path(:opening_candidate_id => @latest_applying_job.id), :class => "btn btn-primary"
         .span6
-          = link_to 'Assess Candidate', new_opening_candidate_assessments_path(@latest_applying_job), :class => "btn btn-primary"
+          a.btn.btn-primary id='candidate-assessment-btn' Assess Candidate
   hr
   div
     div.accordion id="accordion2"
@@ -43,3 +43,5 @@
                             div.accordion-inner
                               span
                                 = interview.assessment
+  div.assessment-candidate-dialog id='candidate-assessment-dialog'
+    = render 'assessments/form', {:opening_candidate => @latest_applying_job, :assessment => @assessment }
