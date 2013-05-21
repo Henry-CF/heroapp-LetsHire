@@ -14,7 +14,7 @@ class CandidatesController < AuthenticatedController
         filter = true
         if key == :all
           @candidates = Candidate.paginate(:page => params[:page])
-        elsif key == :inactive
+        elsif key != :inactive
           @candidates = Candidate.active.send(key).paginate(:page => params[:page])
         else
           @candidates = Candidate.send(key).paginate(:page => params[:page])
