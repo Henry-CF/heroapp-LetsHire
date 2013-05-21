@@ -38,7 +38,7 @@
           - if @latest_applying_job.nil?
             p No job assigned
           - else
-            - status_list = @latest_applying_job.status_str.split(',')
+            - status_list = @latest_applying_job.overall_status_str.split(',')
             div.span3
               - status_list.each do |s|
                 label = s
