@@ -14,7 +14,7 @@ class OpeningCandidate < ActiveRecord::Base
 
   accepts_nested_attributes_for :interviews, :allow_destroy => true, :reject_if => proc { |interview| interview.empty? }
 
-  def status_str
+  def overall_status_str
     if status.nil?
       return "interview unscheduled"
     elsif STATUS_STRINGS[status] == OpeningCandidate::INTERVIEW_LOOP
@@ -23,6 +23,14 @@ class OpeningCandidate < ActiveRecord::Base
       else
         return Interview.overall_status(interviews)
       end
+    else
+      STATUS_STRINGS[status]
+    end
+  end
+
+  def status_str
+    if status.nil?
+      return "interview unscheduled"
     else
       STATUS_STRINGS[status]
     end

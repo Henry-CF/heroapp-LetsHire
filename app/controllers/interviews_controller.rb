@@ -40,7 +40,6 @@ class InterviewsController < AuthorizedController
       return redirect_to :back, :notice  => 'No Candidate to schedule interviews' if @opening.nil?
       @interviews = []
     else
-      return redirect_to :back, :notice  => "Candidate isn't in interview status for this Job opening" unless @opening_candidate.in_interview_loop?
       @opening = @opening_candidate.opening
       @interviews = @opening_candidate.interviews
     end
@@ -82,12 +81,13 @@ class InterviewsController < AuthorizedController
     authorize! :manage, Interview
 
     parse_parent
-    return :text => '' if @opening_candidate.nil?
+    return render :text => '' if @opening_candidate.nil? || !@opening_candidate.in_interview_loop?
     interview = Interview.new({ :modality => Interview::MODALITY_PHONE,
                                 :opening_candidate_id => @opening_candidate.id,
                                 :duration => 30,
                                 :scheduled_at => Time.now.beginning_of_hour + 1.hour,
                                 :status => Interview::STATUS_NEW})
+
     render :partial => 'interviews/schedule_interviews_lineitem', :locals => { :interview => interview }
   end
 
@@ -99,7 +99,8 @@ class InterviewsController < AuthorizedController
 
     return :text => '' if @opening_candidate.nil?
     @interviews = @opening_candidate.interviews
-    render :partial => 'interviews/schedule_interviews_lineitem', :collection => @interviews, :as => :interview, :layout => false
+
+    render :partial => 'schedule_reload', :layout => false
   end
 
   def edit
@@ -174,7 +175,6 @@ class InterviewsController < AuthorizedController
         @opening_candidate = OpeningCandidate.find_by_opening_id_and_candidate_id(params[:opening_id], params[:candidate_id])
       end
     end
-
   end
 
 

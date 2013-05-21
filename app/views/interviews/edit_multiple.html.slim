@@ -5,6 +5,7 @@ h3 Schedule Interviews
   = render :partial => "fixed_opening_candidate", :locals => { :opening_candidate => @opening_candidate}
 -else
   = render :partial => "flexible_opening_candidate", :locals => { :opening => @opening}
+
 .pull-left
   h4 Interviews
 .pull-right
@@ -18,19 +19,7 @@ h3 Schedule Interviews
   #interviewers_selection
 
 table.table.table-hover.schedule_interviews
-  thead
-    tr
-      th Scheduled At
-      th Duration(min)
-      th Interview Type
-      th Location
-      th Interviewers
-      th Status
-      th
-  tbody
-    -if @opening_candidate
-      = render :partial => "interviews/schedule_interviews_lineitem", :collection => @interviews, :as => :interview
-
+  = render :partial => 'schedule_reload'
 
 p
 .action_container
