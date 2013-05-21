@@ -14,7 +14,7 @@ class User < ActiveRecord::Base
 
   ROLES = %w[interviewer recruiter hiring_manager]
 
-  self.per_page = 2
+  self.per_page = 20
 
   default_scope where(:deleted_at => nil)
 
