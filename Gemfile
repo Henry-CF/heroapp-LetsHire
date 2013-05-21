@@ -16,7 +16,7 @@ gem 'carmen-rails', '1.0.0.beta3'
 gem 'jquery-tokeninput-rails', '1.6.0'
 gem 'ransack', '0.7.2'
 gem 'rake', '10.0.4'
-gem "jqplot-rails", "~> 0.3"
+gem 'jqplot-rails', '~> 0.3'
 
 group :development, :test do
   gem 'sqlite3', '1.3.5'
