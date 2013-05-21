@@ -2,7 +2,7 @@
   tr
     td
       = check_box_tag nil, user.id, false,  { :id => nil, :data => { :str => user.name  } }
-    td
+    td.span5
       = user.name
     td
       i.icon-arrow-down
@@ -14,7 +14,3 @@
       = "Department: #{user.department.name}"
     td
 
-
-
-.pull-right
-  = will_paginate users

@@ -72,7 +72,6 @@ class OpeningsController < ApplicationController
   end
 
   # POST /openings
-  # POST /openings.json
   def create
     @opening = Opening.new(params[:opening])
 
@@ -85,7 +84,6 @@ class OpeningsController < ApplicationController
   end
 
   # PUT /openings/1
-  # PUT /openings/1.json
   def update
     @opening = Opening.find(params[:id])
 
@@ -96,6 +94,19 @@ class OpeningsController < ApplicationController
     else
       render action: "edit"
     end
+  rescue ActiveRecord::RecordNotFound
+    redirect_to openings_url, notice: 'Invalid opening'
+  end
+
+  # POST /openings/1/assign_candidates
+  def assign_candidates
+    @opening = Opening.find(params[:id])
+
+    params[:candidates] ||= []
+    params[:candidates].each do |candidate|
+      @opening.opening_candidates.create :candidate_id => candidate
+    end
+    render :json => { :success => true }
   rescue ActiveRecord::RecordNotFound
     redirect_to openings_url, notice: 'Invalid opening'
   end

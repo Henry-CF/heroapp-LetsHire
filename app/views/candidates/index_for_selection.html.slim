@@ -1,0 +1,24 @@
+table
+  tbody
+    - @candidates.each do |candidate|
+      tr
+        td
+          = check_box_tag nil, candidate.id, false,  { :id => nil, :data => { :str => candidate.name  } }
+        td.span5
+          = candidate.name
+        td
+          i.icon-arrow-down
+      tr.hide
+        td
+        td
+          = "Email: #{h(candidate.email)}"
+          p
+          = "Description: #{h(candidate.description)}"
+        td
+
+
+
+.pull-right
+  = will_paginate @candidates
+
+

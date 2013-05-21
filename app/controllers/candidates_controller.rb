@@ -8,12 +8,14 @@ class CandidatesController < AuthenticatedController
   def index
     filter = false
     valid_keys = [:no_openings, :no_interviews, :with_assessment, :without_assessment, \
-                  :active, :inactive, :available, :all]
+                  :with_opening, :inactive, :available, :all]
     valid_keys.each do |key|
       if params.has_key? key
         filter = true
         if key == :all
           @candidates = Candidate.paginate(:page => params[:page])
+        elsif key == :inactive
+          @candidates = Candidate.active.send(key).paginate(:page => params[:page])
         else
           @candidates = Candidate.send(key).paginate(:page => params[:page])
         end
@@ -27,13 +29,12 @@ class CandidatesController < AuthenticatedController
         opening = Opening.find(params[:opening_id])
       end
       if opening
-        @candidates = opening.candidates.paginate(:page => params[:page])
-      else
-        # NOTE: show active candidates by default
-        @candidates = Candidate.active.order(sort_column('Opening') + ' ' + sort_direction).paginate(:page => params[:page])
+        @candidates = opening.candidates.active.paginate(:page => params[:page])
       end
-    end
 
+    end
+    # NOTE: show active candidates by default
+    @candidates ||= Candidate.active.order(sort_column('Opening') + ' ' + sort_direction).paginate(:page => params[:page])
     if params.has_key? :partial
       render partial: 'candidates/candidates_index'
     end
@@ -84,6 +85,18 @@ class CandidatesController < AuthenticatedController
     @selected_department_id = assigned_departments[0].try(:id)
     render :action => :new_opening, :layout => false
   end
+
+
+  # GET /edit_candidates
+  def index_for_selection
+    @opening = Opening.find(params[:opening_id]) if params[:opening_id]
+    @candidates = Candidate.active.paginate(:page => params[:page])
+    render :action => :index_for_selection, :layout => false
+  rescue ActiveRecord::RecordNotFound
+    return render :text => "", notice: 'Invalid opening'
+  end
+
+
 
   def create
     tempio = nil

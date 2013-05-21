@@ -11,10 +11,9 @@ h3 Schedule Interviews
 .pull-right
   = button_tag 'Schedule New', :class => 'add_new_interview'
 .hide
-  p#error_messages
+  #error_messages
 
 #interviewers_selection_container.hide
-  h3 Assign Interviewers
   = collection_select(nil, :participants_department_id, Department.with_users, :id, :name, { :selected => @opening.department_id }, { :prompt => 'Filter by department', :id => :participants_department_id })
   #interviewers_selection
 

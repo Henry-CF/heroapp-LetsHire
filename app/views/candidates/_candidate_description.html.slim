@@ -1,4 +1,4 @@
 - unless @candidate.nil?
   h3 Candidate Details
   h3 = "#{@candidate.name}"
-  p = "#{@candidate.description}"
+  p = "#{h(@candidate.description)}"

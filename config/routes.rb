@@ -58,9 +58,15 @@ LetsHire::Application.routes.draw do
 
   get '/departments/:id/user_select' => 'departments#user_select'
   resources :departments
-  get '/openings/:id/interviewers_select' => 'openings#interviewers_select'
-  resources :openings
+  resources :openings do
+    member do
+      post 'assign_candidates'
+    end
+  end
   resources :candidates do
+    collection do
+      get 'index_for_selection'
+    end
     member do
       get 'legacy_show'
       post 'move_to_blacklist'
