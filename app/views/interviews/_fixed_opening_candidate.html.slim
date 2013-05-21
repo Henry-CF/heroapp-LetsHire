@@ -1,9 +1,10 @@
 =hidden_field_tag :opening_candidate_id, opening_candidate.id
-=hidden_field_tag :opening_id, opening_candidate.opening_id, :data => { :department => opening_candidate.opening.department_id, :participants => opening_candidate.opening.participant_ids }
+-opening = opening_candidate.opening
+=hidden_field_tag :opening_id, opening.id, :data => { :department => opening.department_id, :participants => opening.participant_ids }
 =hidden_field_tag :candidate_id, opening_candidate.candidate_id
 dl.dl-horizontal.clear-both
   dt Job Opening
-  dd =link_to opening_candidate.opening.title_with_department , opening_candidate.opening
+  dd =link_to opening.title_with_department , opening
   dt Candidate
   dd =link_to opening_candidate.candidate.name , opening_candidate.candidate
 

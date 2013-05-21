@@ -4,7 +4,7 @@ h3 Schedule Interviews
 -if @opening_candidate
   = render :partial => "fixed_opening_candidate", :locals => { :opening_candidate => @opening_candidate}
 -else
-  = render :partial => "flexible_opening_candidate"
+  = render :partial => "flexible_opening_candidate", :locals => { :opening => @opening}
 .pull-left
   h4 Interviews
 .pull-right
