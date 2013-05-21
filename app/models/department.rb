@@ -10,6 +10,8 @@ class Department < ActiveRecord::Base
 
   scope :with_openings, joins(:openings).uniq
 
+  scope :with_users, joins(:users).uniq
+
 
   DEFAULT_SET = [ { name: 'Admin', description: 'Administrative' },
                   { name: 'Customer Support', description: 'Customer Support' },
