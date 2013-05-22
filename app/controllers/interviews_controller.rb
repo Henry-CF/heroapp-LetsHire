@@ -7,15 +7,19 @@ class InterviewsController < AuthorizedController
       @interviews = Interview.owned_by(current_user.id)
     elsif params.has_key? :interviewed_by_me
       @interviews = Interview.interviewed_by(current_user.id)
+    elsif params.has_key? :interviewed_by_me_today
+      @interviews = Interview.interviewed_by(current_user.id).during(Time.zone.now)
     elsif params.has_key? :no_feedback
       @interviews = Interview.where(:assessment => nil)
-    else
+    elsif params.has_key? :all
       @interviews = Interview.all
-      unless can? :create, Interview
-        @interviews.reject! do |interview|
-          not interview.interviewers.any? { |interviewer| interviewer.user_id == current_user.id }
-        end
-      end
+    else
+      # show interviews interviewed by me by default
+      @interviews = Interview.interviewed_by(current_user.id)
+    end
+
+    if params.has_key? :partial
+      render :partial => 'interviews/interviews_index', :locals => {:opening_candidate => nil}
     end
   end
 
