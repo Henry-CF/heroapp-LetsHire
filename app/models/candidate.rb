@@ -33,7 +33,8 @@ class Candidate < ActiveRecord::Base
 
   scope :active, where(:status => NORMAL)
   scope :inactive, where(:status => INACTIVE)
-  scope :without_opening, where('id NOT IN (SELECT candidate_id FROM opening_candidates)')
+  scope :without_opening, where('id NOT IN (SELECT DISTINCT candidate_id FROM opening_candidates)')
+  scope :not_in_opening, ->(opening_id) { where("id NOT IN (SELECT DISTINCT candidate_id FROM opening_candidates WHERE opening_id=#{opening_id})") }
   scope :available, where(:status => INACTIVE).without_opening
   scope :with_opening, joins(:opening_candidates).uniq
   scope :with_interview, joins(:opening_candidates => :interviews).uniq

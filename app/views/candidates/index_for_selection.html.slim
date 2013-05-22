@@ -13,7 +13,7 @@ table
         td
           = "Email: #{h(candidate.email)}"
           p
-          = "Description: #{h(candidate.description)}"
+          = "Description: #{h(truncate(candidate.description, :length => 200))}"
         td
 
 
