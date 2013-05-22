@@ -41,10 +41,6 @@ class Candidate < ActiveRecord::Base
   scope :without_interview, where('id NOT in ( SELECT DISTINCT "candidates"."id" FROM "candidates" INNER JOIN "opening_candidates" ON "opening_candidates"."candidate_id" = "candidates"."id" INNER JOIN "interviews" ON "interviews"."opening_candidate_id" = "opening_candidates"."id" )')
   scope :with_assessment, joins(:opening_candidates => :assessments).uniq
 
-
-  VALID_SCOPE_LIST = [:without_opening, :no_interviews, :with_assessment, :without_assessment, \
-                  :with_opening, :inactive, :available, :all]
-
   def opening(index)
     opening_candidates[index].opening if opening_candidates.size > index
   end
