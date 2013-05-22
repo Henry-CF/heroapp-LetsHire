@@ -101,7 +101,7 @@ $(function() {
 
 
         var target = getEventTarget(event);
-        document.getElementById('filtername').innerHTML = target.innerHTML.toString();
+        document.getElementById('candidates_filtername').innerHTML = target.innerHTML.toString();
         switch (getIndex(target)) {
             case 0: // View Active
                 refreshCandidates('with_opening');

@@ -378,6 +378,87 @@ $(function () {
         });
     }
 
+    if ($('.dropdown-toggle').length > 0) {
+        $('.dropdown-toggle').dropdown();
+    }
+
+    $('#interviews_viewfilter').click(function(event) {
+        function getEventTarget(e) {
+            e = e || window.event;
+            return e.target || e.srcElement;
+        }
+
+        function getIndex(sender) {
+            var aElements = sender.parentNode.parentNode.getElementsByTagName("a");
+            var aElementsLength = aElements.length;
+
+            var index;
+            for (var i = 0; i < aElementsLength; i ++) {
+                if (aElements[i] == sender) {
+                    index = i;
+                    return index;
+                }
+            }
+        }
+
+        function refreshInterviews(condition) {
+            var xmlhttp = null;
+            var url = null;
+            if (condition == '') {
+                url = '/interviews?partial';
+            } else {
+                url = '/interviews?partial&' + condition;
+            }
+
+            if (window.XMLHttpRequest) {
+                xmlhttp = new XMLHttpRequest();
+            } else if (window.ActiveXObject) {
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            } 
+            
+            if (xmlhttp != null) {
+                xmlhttp.onreadystatechange = function() {
+                    if (xmlhttp.readyState == 4) { // loaded
+                       if (xmlhttp.status == 200) { // ok
+                           document.getElementById('all-interviews').innerHTML = xmlhttp.responseText;
+                           if ($('.dropdown-toggle').length > 0) {
+                               $('.dropdown-toggle').dropdown();
+                           }
+                       }
+                       else {
+                           alert("Problem retrieving data:" + xmlhttp.statusText);
+                       }
+                    }
+                };
+                xmlhttp.open("GET", url, true);
+                xmlhttp.send(null);
+            }
+            else {
+                alert("Your browser does not support XMLHTTP.");
+            }
+        }
+
+
+        var target = getEventTarget(event);
+        document.getElementById('interviews_filtername').innerHTML = target.innerHTML.toString();
+        switch (getIndex(target)) {
+            case 0: // View Mine as interviewer
+                refreshInterviews('interviewed_by_me');
+                break;
+            case 1: // View Mine as interviewer today
+                refreshInterviews('interviewed_by_me_today');
+                break;
+            case 2: // View My job openings related
+                refreshInterviews('owned_by_me');
+                break;
+            case 3: // View All
+                refreshInterviews('all');
+                break;
+            default:
+                alert('Invalid choice');
+                break;
+        }
+    });
 
 
 });

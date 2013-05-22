@@ -16,8 +16,17 @@
   background-color: lightyellow;
 }
 
+.action_items.span9 {
+  border-style: solid;
+  border-color: gainsboro;
+  border-width: 1px;
+  border-radius: 5px;
+  padding-bottom: 0;
+}
+
 .carousel-wrapper {
   margin: 10px auto;
+  margin-bottom: 0;
   position: relative;
   border: 10px solid #fff;
   -webkit-border-radius: 5px;

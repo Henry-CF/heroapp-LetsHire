@@ -16,7 +16,7 @@ gem 'carmen-rails', '1.0.0.beta3'
 gem 'jquery-tokeninput-rails', '1.6.0'
 gem 'ransack', '0.7.2'
 gem 'rake', '10.0.4'
-gem "jqplot-rails", "~> 0.3"
+gem 'jqplot-rails', '~> 0.3'
 
 group :development, :test do
   gem 'sqlite3', '1.3.5'
@@ -38,8 +38,6 @@ end
 group :assets do
   gem 'sass-rails', '3.2.5'
   gem 'uglifier', '1.2.3'
-  gem 'jquery-rails', '2.0.2'
-  gem 'jquery-ui-rails', '4.0.2'
   gem 'jquery-timepicker-addon-rails', '1.2.2'
 end
 
