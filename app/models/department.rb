@@ -31,4 +31,13 @@ class Department < ActiveRecord::Base
   ]
 
 
+  def self.selectable(user)
+    if user.has_role?(:recruiter)
+      Department.with_openings
+    else
+      [ user.department ]
+    end
+  end
+
+
 end
