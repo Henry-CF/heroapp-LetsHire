@@ -7,8 +7,7 @@ class CandidatesController < AuthenticatedController
 
   def index
     filter = false
-    valid_keys = [:no_openings, :no_interviews, :with_assessment, :without_assessment, \
-                  :with_opening, :inactive, :available, :all]
+    valid_keys = Candidate::VALID_SCOPE_LIST
     valid_keys.each do |key|
       if params.has_key? key
         filter = true
