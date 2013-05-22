@@ -90,8 +90,12 @@ class CandidatesController < AuthenticatedController
 
   # GET /edit_candidates
   def index_for_selection
-    @opening = Opening.find(params[:opening_id]) if params[:opening_id]
-    @candidates = Candidate.active.paginate(:page => params[:page])
+    if params[:exclude_opening_id]
+      exclude_opening = Opening.find(params[:exclude_opening_id])
+      @candidates = Candidate.active.not_in_opening(exclude_opening.id).paginate(:page => params[:page])
+    else
+      @candidates = Candidate.active.paginate(:page => params[:page])
+    end
     render :action => :index_for_selection, :layout => false
   rescue ActiveRecord::RecordNotFound
     return render :text => "", notice: 'Invalid opening'

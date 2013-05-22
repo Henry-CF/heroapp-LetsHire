@@ -74,7 +74,11 @@ $(function() {
             var p = $(this);
             for (var i = 0; i < 5; i++) { p = p.parent(); }
             var opening_row = p;
-            $('#candidates_selection').load('/candidates/index_for_selection', function() {
+            var opening_id = opening_row.data('id');
+            if (opening_id == undefined) {
+                return false;
+            }
+            $('#candidates_selection').load('/candidates/index_for_selection?exclude_opening_id=' + opening_id, function() {
                 candidates_selection_container.data('ids', []);
                 candidates_selection_container.show().dialog({
                     width : 400,
@@ -83,7 +87,7 @@ $(function() {
                     modal: true,
                     buttons: {
                         "OK": function() {
-                            assign_candidates(opening_row.data('id'), candidates_selection_container.data('ids'));
+                            assign_candidates(opening_id, candidates_selection_container.data('ids'));
                         },
                         Cancel: function() {
                             $("#candidates_selection_container").hide().dialog( "close" );
