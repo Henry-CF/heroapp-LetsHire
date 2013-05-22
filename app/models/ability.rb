@@ -53,6 +53,7 @@ class Ability
     can :create, Opening
     can :manage, Opening, :hiring_manager_id => user.id
     can :create, Candidate
+    can :read, Candidate
     can :create, Interview
     can :update, Interview
   end

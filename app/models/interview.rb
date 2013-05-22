@@ -33,8 +33,7 @@ class Interview < ActiveRecord::Base
   scope :upcoming, lambda { where('scheduled_at > ?', Time.zone.now)}
   scope :during, ->(date) { where('scheduled_at >= ? and scheduled_at <= ?', date.to_time.at_beginning_of_day, date.end_of_day)}
   scope :interviewed_by, ->(user_id) { joins(:interviewers).where('interviewers.user_id = ? ', user_id)}
-  #TODO: interview -> opening_candidate -> opening -> owned_by
-  scope :owned_by, ->(user_id){ joins(:interviewers).where('interviewers.user_id = ? ', user_id)}
+  scope :owned_by, ->(user_id) { includes(:opening_candidate => [:opening]).where('openings.hiring_manager_id = ? OR openings.recruiter_id = ? OR openings.creator_id = ?', user_id, user_id, user_id) }
 
   def self.overall_status(interviews)
     interview_counts = interviews.group(:status).count

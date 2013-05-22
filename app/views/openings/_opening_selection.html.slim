@@ -1,5 +1,5 @@
 - selected ||= {}
-- departments ||= Department.with_openings
+- departments ||= Department.selectable(current_user)
 - selected_department_id = selected[:department]
 .control-group
   = label_tag :opening, "Department", :class => "control-label"

@@ -4,10 +4,12 @@
   -if department.nil?
     em Please select a department
   -else
-    -if department.openings.count > 0
-      = collection_select(nil, :opening_id, department.openings, :id, :title, { :selected => opening_id }, { :prompt => 'Select a department...', :id => :opening_id })
+    - openings = department.openings
+    - openings.reject! { |opening| opening.hiring_manager_id != current_user.id } unless current_user.has_role?(:recruiter)
+    -if openings.count > 0
+      = collection_select(nil, :opening_id, openings, :id, :title, { :selected => opening_id }, { :prompt => 'Select a department...', :id => :opening_id })
     -else
-      em No job openings under the selected department
+      em No job openings owned by you
 -else
   em Please select a department
 

@@ -1,21 +1,30 @@
-class InterviewsController < AuthorizedController
+class InterviewsController < AuthenticatedController
   include InterviewsHelper
   def index
     authorize! :read, Interview
 
     if params.has_key? :owned_by_me
-      @interviews = Interview.owned_by(current_user.id)
+      @interviews = Interview.owned_by(current_user.id).paginate(:page => params[:page])
     elsif params.has_key? :interviewed_by_me
-      @interviews = Interview.interviewed_by(current_user.id)
+      @interviews = Interview.interviewed_by(current_user.id).paginate(:page => params[:page])
+    elsif params.has_key? :interviewed_by_me_today
+      @interviews = Interview.interviewed_by(current_user.id).during(Time.zone.now).paginate(:page => params[:page])
     elsif params.has_key? :no_feedback
-      @interviews = Interview.where(:assessment => nil)
+      @interviews = Interview.owned_by(current_user.id).where(:assessment => nil).paginate(:page => params[:page])
     else
-      @interviews = Interview.all
-      unless can? :create, Interview
-        @interviews.reject! do |interview|
-          not interview.interviewers.any? { |interviewer| interviewer.user_id == current_user.id }
-        end
+      if can? :manage, Interview
+          if params.has_key? :all
+            @interviews = Interview.all.paginate(:page => params[:page])
+          end
       end
+      if can? :update, Interview
+        @interviews ||= Interview.owned_by(current_user.id).paginate(:page => params[:page])
+      end
+      @interviews ||= Interview.interviewed_by(current_user.id).paginate(:page => params[:page])
+    end
+
+    if params.has_key? :partial
+      render :partial => 'interviews/interviews_index', :locals => {:opening_candidate => nil}
     end
   end
 
@@ -27,13 +36,8 @@ class InterviewsController < AuthorizedController
   end
 
 
-  def schedule_opening_selection
-    authorize! :manage, Interview
-    render :action => :schedule_opening_selection, :layout => false
-  end
-
   def edit_multiple
-    authorize! :manage, Interview
+    authorize! :update, Interview
     @opening_candidate = OpeningCandidate.find(params[:opening_candidate_id]) unless params[:opening_candidate_id].nil?
     if @opening_candidate.nil?
       @opening = Opening.find(params[:opening_id]) unless params[:opening_id].nil?
@@ -46,7 +50,8 @@ class InterviewsController < AuthorizedController
   end
 
   def update_multiple
-    authorize! :manage, Interview
+    # Use update authorization since we'll do detailed check below
+    authorize! :update, Interview
 
     render :json => { :success => false, :messages => ['Invalid object'] } if params[:interviews].nil?
     new_interviews = params[:interviews]
@@ -55,6 +60,11 @@ class InterviewsController < AuthorizedController
     @opening_candidate = OpeningCandidate.find new_interviews[:opening_candidate_id] unless new_interviews[:opening_candidate_id].nil?
     if @opening_candidate.nil?
       @opening_candidate = OpeningCandidate.find_by_opening_id_and_candidate_id(new_interviews[:opening_id], new_interviews[:candidate_id])
+    end
+
+    opening = @opening_candidate.opening
+    if opening.hiring_manager != current_user && !current_user.has_role?(:recruiter)
+      return render :json => { :success => false, :messages => 'access denied'}
     end
 
     new_interviews.delete :opening_candidate_id
@@ -69,7 +79,6 @@ class InterviewsController < AuthorizedController
         update_favorite_interviewers user_ids
         render :json => { :success => true }
       else
-        puts  @opening_candidate.errors.inspect
         render :json => { :success => false, :messages => @opening_candidate.errors.full_messages, :status => 400 }
       end
     end
@@ -78,7 +87,7 @@ class InterviewsController < AuthorizedController
   end
 
   def schedule_add
-    authorize! :manage, Interview
+    authorize! :create, Interview
 
     parse_parent
     return render :text => '' if @opening_candidate.nil? || !@opening_candidate.in_interview_loop?
@@ -93,7 +102,7 @@ class InterviewsController < AuthorizedController
 
 
   def schedule_reload
-    authorize! :manage, Interview
+    authorize! :read, Interview
 
     parse_parent
 
@@ -118,6 +127,7 @@ class InterviewsController < AuthorizedController
     authorize! :update, @interview
     unless params[:interview][:assessment].nil?
       unless is_interviewer? @interview.interviewers
+        prepare_edit
         return render :action => :edit, :notice => 'Not an interviewer'
       else
         @interview.assessment = params[:interview][:assessment]
@@ -136,6 +146,7 @@ class InterviewsController < AuthorizedController
   # DELETE /interviews/1
   # DELETE /interviews/1.json
   def destroy
+    authorize! :manage, @interview
     @interview = Interview.find params[:id]
     @candidate = @interview.opening_candidate.candidate
     @interview.destroy
@@ -153,6 +164,7 @@ class InterviewsController < AuthorizedController
     redirect_to interviews_url, notice: 'Invalid interview'
   end
 
+  private
   def update_favorite_interviewers(user_ids)
     user_ids ||= []
     if user_ids.any?
@@ -167,7 +179,6 @@ class InterviewsController < AuthorizedController
     end
   end
 
-  private
   def parse_parent
     @opening_candidate = OpeningCandidate.find(params[:opening_candidate_id]) unless params[:opening_candidate_id].nil?
     if @opening_candidate.nil?

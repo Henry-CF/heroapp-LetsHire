@@ -10,7 +10,7 @@ $(function() {
         var select_wrapper = $('#candidate_openingid_select_wrapper');
         $('select', select_wrapper).attr('disabled', true);
         var department_id = $('#department_id').val();
-        var url = '/positions/opening_options?selected_department_id=' + department_id;
+        var url = '/openings/opening_options?selected_department_id=' + department_id;
         return select_wrapper.load(url, function() {
             $('select#opening_id').attr('name', 'candidate[opening_ids]');
         });
@@ -101,7 +101,7 @@ $(function() {
 
 
         var target = getEventTarget(event);
-        document.getElementById('filtername').innerHTML = target.innerHTML.toString();
+        document.getElementById('candidates_filtername').innerHTML = target.innerHTML.toString();
         switch (getIndex(target)) {
             case 0: // View Active
                 refreshCandidates('with_opening');
