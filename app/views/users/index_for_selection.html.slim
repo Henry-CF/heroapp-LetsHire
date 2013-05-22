@@ -2,3 +2,5 @@ table
   tbody
     = render :partial => 'users_for_selection', :locals => {:users => @users}
 
+.pull-right
+  = will_paginate @users

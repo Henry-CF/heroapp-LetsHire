@@ -284,6 +284,7 @@ $(function () {
             interviewers_selection_container.show().dialog({
                 width : 400,
                 height: 500,
+                title: "Assign Interviewers",
                 modal: true,
                 buttons: {
                     "OK": function() {
@@ -297,39 +298,21 @@ $(function () {
             });
         });
 
-        interviewers_selection_container.delegate('.pagination a', 'click', function () {
-            $('.pagination').html('Page is loading...');
-            $('#interviewers_selection').load(this.href, function() {
-                load_interviewers_status(this);
-            });
-            return false;
-        });
-
-        interviewers_selection_container.delegate('i.icon-arrow-down', 'click', function () {
-            $(this).parent().parent().next().show();
-            $(this).removeClass('icon-arrow-down').addClass('icon-arrow-up');
-            return false;
-        });
-
-        interviewers_selection_container.delegate('i.icon-arrow-up', 'click', function () {
-            $(this).parent().parent().next().hide();
-            $(this).removeClass('icon-arrow-up').addClass('icon-arrow-down');
-            return false;
-        });
-
-        $('#interviewers_selection_container').delegate('input:checkbox', 'change', function () {
+        Common.prepare_object_selection_container($('#interviewers_selection'), load_interviewers_status, function (checkbox) {
             var user_ids= interviewers_selection_container.data('user_ids');
             var users = interviewers_selection_container.data('users');
-            var current_val = parseInt($(this).val());
+            var current_val = parseInt($(checkbox).val());
             var index = user_ids.indexOf(current_val);
             if (index >= 0) {
                 user_ids.splice(index, 1);
                 users.splice(index, 1);
             } else {
                 user_ids.push(current_val);
-                users.push($(this).data('str'));
+                users.push(checkbox.data('str'));
             }
         });
+
+
 
         $('.add_new_interview').click(function() {
             var tbody = table.find('tbody');
@@ -390,7 +373,7 @@ $(function () {
                 }
             })
             .fail(function(jqXHR, textStatus, errorThrown) {
-                alert('fail');
+                alert('fail to save');
             });
         });
     }
