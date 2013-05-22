@@ -26,14 +26,14 @@ div.carousel-wrapper
             div.action-item
               h2 = @candidates_without_opening.size
               h5 = 'candidates are not assigned to job openings'
-              =link_to 'Assign', candidates_path(:no_openings => 1)
+              =link_to 'Assign', candidates_path(:without_opening => 1)
       - if can? :manage, Candidate
         li
           div.action-item-wrapper
             div.action-item
               h2 = @candidates_without_interview.size
               h5 = "active candidates haven't been scheduled for interviews"
-              =link_to 'Schedule', candidates_path(:no_interviews => 1)
+              =link_to 'Schedule', candidates_path(:without_interview => 1)
       - if can? :manage, Interview
         li
           div.action-item-wrapper

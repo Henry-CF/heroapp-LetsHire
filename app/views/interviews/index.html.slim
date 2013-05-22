@@ -1,11 +1,21 @@
 h3 Interviews
-#opening_selection
+= form_tag 'interviews/edit_multiple',  :method => :get, :class => 'form-horizontal hide' do
+  #opening_selection_container
+    = render 'openings/opening_selection'
+  .control-group
+    .controls
+      .actions
+        =submit_tag 'OK', :name => nil
+
 - opening_candidate ||= nil
 =hidden_field_tag :opening_candidate_id, opening_candidate.try(:id)
 
 .pull-left
   .div.btn-group
-    button.btn id="interviews_filtername" View Mine as interviewer
+    -if can? :update, Interview
+      button.btn id="interviews_filtername" View My job openings related
+    -else
+      button.btn id="interviews_filtername" View Mine as interviewer
     button.btn.dropdown-toggle data-toggle="dropdown"
       span.caret
     ul.dropdown-menu id="interviews_viewfilter"
@@ -18,7 +28,8 @@ h3 Interviews
       li
         a href="#" View All
 
-.pull-right
-  = button_tag 'Schedule Interviews', :class => 'flexible_schedule_interviews'
+-if can? :update, Interview
+  .pull-right
+    = button_tag 'Schedule Interviews', :class => 'flexible_schedule_interviews'
 
 =render :partial => 'interviews_index', :locals => {:opening_candidate => opening_candidate}
