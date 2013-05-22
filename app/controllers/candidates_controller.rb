@@ -1,5 +1,5 @@
 class CandidatesController < AuthenticatedController
-  load_and_authorize_resource :except => [:create, :update]
+  load_and_authorize_resource
 
   MAX_FILE_SIZE = 10 * 1024 * 1024
 
@@ -41,6 +41,11 @@ class CandidatesController < AuthenticatedController
   end
 
   def show
+    unless params[:legacy].nil?
+      @candidate = Candidate.find params[:id]
+      @resume = @candidate.resume.name unless @candidate.resume.nil?
+      return render 'legacy_show'
+    end
     @candidate = Candidate.find params[:id]
     @latest_applying_job = @candidate.opening_candidates.last
     @opening_candidate = nil
@@ -63,15 +68,8 @@ class CandidatesController < AuthenticatedController
     @resume = @candidate.resume.name unless @candidate.resume.nil?
   end
 
-  #NOTE: This is the legacy 'Candidate Detail' action, it will be removed before release.
-  def legacy_show
-    @candidate = Candidate.find params[:id]
-    @resume = @candidate.resume.name unless @candidate.resume.nil?
-  end
-
   def new
     @candidate = Candidate.new
-    @departments = Department.with_openings
   end
 
   def edit
@@ -131,7 +129,6 @@ class CandidatesController < AuthenticatedController
 
       redirect_to @candidate, :notice => "Candidate \"#{@candidate.name}\" (#{@candidate.email}) was successfully created."
     else
-      @departments = Department.with_openings
       render :action => 'new'
     end
   end
