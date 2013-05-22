@@ -8,11 +8,11 @@
  * You're free to add application-wide styles to this file and they'll appear at the top of the
  * compiled file, but it's generally better to create a new file per style scope.
  *
- *= require jquery.ui.all
+ *= require custom-theme/jquery-ui.custom
  *= require jquery-ui-timepicker-addon
  *= require jqplot
  *= require token-input
- *= require bootstrap/css/bootstrap
+ *= require bootstrap
  *= require font-awesome/css/font-awesome
  *= require_self
  *= require_tree .
