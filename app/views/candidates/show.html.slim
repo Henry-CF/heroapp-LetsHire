@@ -3,6 +3,7 @@ div.row
     =link_to 'Link to the old candidate detail page', legacy_show_candidate_path({:id => @candidate.id}), :style => "font-size:20px; color:red"
     =render 'candidate_description'
     =render 'show_latest_applying_job'
+    =render 'candidate_assessments'
     =render 'recruiting_histroy'
   .span4
     =render 'candidate_profile'
