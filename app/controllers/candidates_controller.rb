@@ -1,5 +1,5 @@
 class CandidatesController < AuthenticatedController
-  load_and_authorize_resource
+  load_and_authorize_resource :except => [:create, :update ]
 
   MAX_FILE_SIZE = 10 * 1024 * 1024
 
@@ -110,6 +110,7 @@ class CandidatesController < AuthenticatedController
     params[:candidate].delete(:department_id)
     opening_id = params[:candidate][:opening_ids]
     params[:candidate].delete(:opening_ids)
+    authorize! :create, Candidate
     @candidate = Candidate.new params[:candidate]
     if @candidate.save
       if opening_id
@@ -174,6 +175,8 @@ class CandidatesController < AuthenticatedController
       tempio = params[:candidate][:resume]
       params[:candidate].delete(:resume)
     end
+
+    authorize! :update, Candidate
 
     if @candidate.update_attributes(params[:candidate])
       unless tempio.nil?
