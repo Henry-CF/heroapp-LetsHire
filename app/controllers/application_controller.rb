@@ -28,7 +28,11 @@ class ApplicationController < ActionController::Base
 
   def require_login
     unless user_signed_in?
-      redirect_to new_user_session_path, :notice => REQUIRE_LOGIN
+      if request.fullpath == '/'
+        redirect_to new_user_session_path
+      else
+        redirect_to new_user_session_path, :notice => REQUIRE_LOGIN
+      end
     end
   end
 

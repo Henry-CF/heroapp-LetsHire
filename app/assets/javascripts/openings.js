@@ -71,9 +71,7 @@ $(function() {
         }
 
         $('a.assign_candidates').click(function() {
-            var p = $(this);
-            for (var i = 0; i < 5; i++) { p = p.parent(); }
-            var opening_row = p;
+            var opening_row = $(this).closest('tr');
             var opening_id = opening_row.data('id');
             if (opening_id == undefined) {
                 return false;
@@ -101,5 +99,84 @@ $(function() {
 
         });
     }
+
+    if ($('.dropdown-toggle').length > 0) {
+        $('.dropdown-toggle').dropdown();
+    }
+
+    $('#openings_viewfilter').click(function(event) {
+        function getEventTarget(e) {
+            e = e || window.event;
+            return e.target || e.srcElement;
+        }
+
+        function getIndex(sender) {
+            var aElements = sender.parentNode.parentNode.getElementsByTagName("a");
+            var aElementsLength = aElements.length;
+
+            var index;
+            for (var i = 0; i < aElementsLength; i ++) {
+                if (aElements[i] == sender) {
+                    index = i;
+                    return index;
+                }
+            }
+        }
+
+        function refreshOpenings(condition) {
+            var xmlhttp = null;
+            var url = null;
+            if (condition == '') {
+                url = '/openings?partial';
+            } else {
+                url = '/openings?partial&' + condition;
+            }
+
+            if (window.XMLHttpRequest) {
+                xmlhttp = new XMLHttpRequest();
+            } else if (window.ActiveXObject) {
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            } 
+            
+            if (xmlhttp != null) {
+                xmlhttp.onreadystatechange = function() {
+                    if (xmlhttp.readyState == 4) { // loaded
+                       if (xmlhttp.status == 200) { // ok
+                           document.getElementById('all-openings').innerHTML = xmlhttp.responseText;
+                           if ($('.dropdown-toggle').length > 0) {
+                               $('.dropdown-toggle').dropdown();
+                           }
+                       }
+                       else {
+                           alert("Problem retrieving data:" + xmlhttp.statusText);
+                       }
+                    }
+                };
+                xmlhttp.open("GET", url, true);
+                xmlhttp.send(null);
+            }
+            else {
+                alert("Your browser does not support XMLHTTP.");
+            }
+        }
+
+
+        var target = getEventTarget(event);
+        document.getElementById('openings_filtername').innerHTML = target.innerHTML.toString();
+        switch (getIndex(target)) {
+            case 0: // View Mine
+                refreshOpenings('owned_by_me');
+                break;
+            case 1: // View No Candidates
+                refreshOpenings('no_candidates');
+                break;
+            case 2: // View All
+                refreshOpenings('all');
+                break;
+            default:
+                alert('Invalid choice');
+                break;
+        }
+    });
 
 });

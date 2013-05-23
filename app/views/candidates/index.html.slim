@@ -1,22 +1,23 @@
 h3 Candidates
 
-.pull-left
-  .div.btn-group
-    button.btn id="candidates_filtername" View Active
-    button.btn.dropdown-toggle data-toggle="dropdown"
-      span.caret
-    ul.dropdown-menu id="candidates_viewfilter"
-      li
-        a href="#" View Active
-      li
-        a href="#" View Inactive
-      li
-        a href="#" View Available
-      li
-        a href="#" View All
-
-.pull-right
-  -if can? :create, Candidate
-    = link_to 'Add a Candidate', new_candidate_path, :class => 'btn btn-primary'
+div.row-fluid
+  .pull-left
+    .div.btn-group
+      button.btn id="candidates_filtername" View Active
+      button.btn.dropdown-toggle data-toggle="dropdown"
+        span.caret
+      ul.dropdown-menu id="candidates_viewfilter"
+        li
+          a href="#" View Active
+        li
+          a href="#" View Inactive
+        li
+          a href="#" View Available
+        li
+          a href="#" View All
+  
+  .pull-right
+    -if can? :create, Candidate
+      = link_to 'Add a Candidate', new_candidate_path, :class => 'btn btn-primary'
 br
 =render 'candidates_index'

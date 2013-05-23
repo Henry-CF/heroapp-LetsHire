@@ -17,6 +17,8 @@ class OpeningsController < ApplicationController
         @openings = Opening.order(sort_column('Opening') + ' ' + sort_direction).paginate(:page => params[:page])
       elsif params.has_key? :no_candidates
         @openings = Opening.without_candidates.owned_by(current_user.id).order(sort_column('Opening') + ' ' + sort_direction).paginate(:page => params[:page])
+      elsif params.has_key? :owned_by_me
+        @openings = Opening.owned_by(current_user.id).order(sort_column('Opening') + ' ' + sort_direction).paginate(:page => params[:page])
       else
         if can? :manage, Opening
           @openings = Opening.owned_by(current_user.id).order(sort_column('Opening') + ' ' + sort_direction).paginate(:page => params[:page])
@@ -29,7 +31,11 @@ class OpeningsController < ApplicationController
     respond_to do |format|
       format.html  do
         if user_signed_in?
-          render "openings/index"
+          if params.has_key?(:partial)
+            render :partial => "openings/openings_index"
+          else
+            render "openings/index"
+          end
         else
           render "openings/index_anonymous"
         end

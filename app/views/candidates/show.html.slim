@@ -1,4 +1,4 @@
-div.row
+div.row-fluid
   .span8
     =link_to 'Link to the old candidate detail page', candidate_path({:id => @candidate.id, :legacy => true}), :style => "font-size:20px; color:red"
     =render 'candidate_description'

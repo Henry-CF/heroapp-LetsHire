@@ -47,6 +47,8 @@ class InterviewsController < AuthenticatedController
       @opening = @opening_candidate.opening
       @interviews = @opening_candidate.interviews
     end
+  rescue ActiveRecord::RecordNotFound
+    return redirect_to :back, :notice => 'Object deleted.'
   end
 
   def update_multiple
@@ -59,12 +61,11 @@ class InterviewsController < AuthenticatedController
     return render :json => { :success => true }  if new_interviews[:interviews_attributes].nil?
     @opening_candidate = OpeningCandidate.find new_interviews[:opening_candidate_id] unless new_interviews[:opening_candidate_id].nil?
     if @opening_candidate.nil?
-      @opening_candidate = OpeningCandidate.find_by_opening_id_and_candidate_id(new_interviews[:opening_id], new_interviews[:candidate_id])
+      @opening_candidate = OpeningCandidate.find_by_opening_id_and_candidate_id!(new_interviews[:opening_id], new_interviews[:candidate_id])
     end
-
     opening = @opening_candidate.opening
     if opening.hiring_manager != current_user && !current_user.has_role?(:recruiter)
-      return render :json => { :success => false, :messages => 'access denied'}
+      return render :json => { :success => false, :messages => ['access denied']}
     end
 
     new_interviews.delete :opening_candidate_id

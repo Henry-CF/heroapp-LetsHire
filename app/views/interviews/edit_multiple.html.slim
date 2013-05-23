@@ -6,8 +6,9 @@ h3 Schedule Interviews
 -else
   = render :partial => "flexible_opening_candidate", :locals => { :opening => @opening}
 
-.hide
-  #error_messages
+#errorExplanation.hide
+  h2 Interviews cannot be saved due to the following errors.
+  ul#error_messages
 
 .pull-left
   h4 Interviews

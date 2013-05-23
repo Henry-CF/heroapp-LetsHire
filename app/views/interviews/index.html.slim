@@ -10,26 +10,27 @@ h3 Interviews
 - opening_candidate ||= nil
 =hidden_field_tag :opening_candidate_id, opening_candidate.try(:id)
 
-.pull-left
-  .div.btn-group
-    -if can? :update, Interview
-      button.btn id="interviews_filtername" View My job openings related
-    -else
-      button.btn id="interviews_filtername" View Mine as interviewer
-    button.btn.dropdown-toggle data-toggle="dropdown"
-      span.caret
-    ul.dropdown-menu id="interviews_viewfilter"
-      li
-        a href="#" View Mine as interviewer
-      li
-        a href="#" View Mine as interviewer today
-      li
-        a href="#" View My job openings related
-      li
-        a href="#" View All
-
--if can? :update, Interview
-  .pull-right
-    = button_tag 'Schedule Interviews', :class => 'flexible_schedule_interviews'
+div.row-fluid
+  .pull-left
+    .div.btn-group
+      -if can? :update, Interview
+        button.btn id="interviews_filtername" View My job openings related
+      -else
+        button.btn id="interviews_filtername" View Mine as interviewer
+      button.btn.dropdown-toggle data-toggle="dropdown"
+        span.caret
+      ul.dropdown-menu id="interviews_viewfilter"
+        li
+          a href="#" View Mine as interviewer
+        li
+          a href="#" View Mine as interviewer today
+        li
+          a href="#" View My job openings related
+        li
+          a href="#" View All
+  
+  -if can? :update, Interview
+    .pull-right
+      = button_tag 'Schedule Interviews', :class => 'flexible_schedule_interviews'
 
 =render :partial => 'interviews_index', :locals => {:opening_candidate => opening_candidate}
