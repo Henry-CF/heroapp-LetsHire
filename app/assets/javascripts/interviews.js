@@ -33,19 +33,22 @@ $(function () {
 
     }
 
+    $(document).on('click', '.interview-feedback-btn', function(event){
+        event.stopPropagation();
+        var interview_id = $(this).attr('data-interview-id');
+        var div_id = "interview-feedback-dialog-" + interview_id;
 
-    if ($('.interview-feedback-btn').length > 0) {
-        $('.interview-feedback-btn').click(function(event){
-            var interview_id = $(this).attr('data-interview-id');
-            var div_id = "interview-feedback-dialog-" + interview_id;
-            $("div#" + div_id).dialog({
-                height: 500,
-                width: 600,
-                modal: true,
-                title: 'Add Feedback'
-            });
+        $("div#" + div_id).dialog({
+            height: 500,
+            width: 600,
+            modal: true,
+            title: 'Add Feedback',
+            close: function(event, ui){
+                $(this).dialog('destroy');
+            }
         });
-    }
+    });
+
 
     function setup_datetimepicker(elements) {
         $(elements).datetimepicker().each(function(index, elem) {

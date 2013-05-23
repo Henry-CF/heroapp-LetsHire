@@ -8,7 +8,7 @@ h3.pull-left
   span
     - if is_interviewer? @interview.interviewers
       = ' | '
-      = link_to 'Update Feedback', edit_interview_path(@interview)
+      a.interview-feedback-btn href='#' data-interview-id=@interview.id Update Feedback
 dl.dl-horizontal.clear-both
   dt Interview Type
   dd =@interview.modality
@@ -30,6 +30,7 @@ dl.dl-horizontal.clear-both
   dd = simple_format h(@interview.description)
   dt Feedback
   dd= simple_format h(@interview.assessment)
+=render 'interviews/interview_feedback', {:interview => @interview}
 
 
 
