@@ -11,6 +11,12 @@ $(function() {
         var el = $(this);
         el.jcarouselControl(el.data());
     });
+
+    if($('.stats-chart').length > 0) {
+        for (var i = 0; i < $('.stats-chart').length; i ++) {
+            $('.stats-chart')[i].style.marginLeft = 0;
+        }
+    }
 });
 
 

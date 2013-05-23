@@ -1,22 +1,23 @@
 h3 Job Openings
 
-.pull-left
-  .div.btn-group
-    button.btn id="openings_filtername" View Mine
-    button.btn.dropdown-toggle data-toggle="dropdown"
-      span.caret
-    ul.dropdown-menu id="openings_viewfilter"
-      li
-        a href="#" View Mine
-      li
-        a href="#" View No Candidates
-      li
-        a href="#" View All
-
-.pull-right
-  -if can? :create, Opening
-    = '  '
-    = link_to 'Add a Job Opening', new_opening_path, :class => 'btn btn-primary'
+div.row-fluid
+  .pull-left
+    .div.btn-group
+      button.btn id="openings_filtername" View Mine
+      button.btn.dropdown-toggle data-toggle="dropdown"
+        span.caret
+      ul.dropdown-menu id="openings_viewfilter"
+        li
+          a href="#" View Mine
+        li
+          a href="#" View No Candidates
+        li
+          a href="#" View All
+  
+  .pull-right
+    -if can? :create, Opening
+      = '  '
+      = link_to 'Add a Job Opening', new_opening_path, :class => 'btn btn-primary'
 
 
 #candidates_selection_container.hide
