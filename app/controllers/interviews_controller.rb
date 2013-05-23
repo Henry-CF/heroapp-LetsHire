@@ -136,7 +136,7 @@ class InterviewsController < AuthenticatedController
     @interview.status = params[:interview][:status] unless params[:interview][:status].nil?
 
     if @interview.save
-      redirect_to interview_path(@interview), :notice => 'Interview is updated successfully'
+      redirect_to request.referer, :notice => 'Interview is updated successfully'
     else
       prepare_edit
       render :action => :edit
