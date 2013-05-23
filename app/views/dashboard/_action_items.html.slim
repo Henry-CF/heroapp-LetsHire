@@ -13,56 +13,56 @@ div.carousel-wrapper
               h2 = @active_openings.size
               h5 = 'active job openings'
               =link_to 'Create', new_opening_path
-      - if can? :manage, Opening
+      - if can? :manage, Opening and @openings_without_candidate.size !=0
         li
           div.action-item-wrapper
             div.action-item
               h2 = @openings_without_candidate.size
               h5 = "job openings don't have candidates"
               =link_to 'Assign', openings_path(:no_candidates => 1)
-      - if can? :manage, Candidate
+      - if can? :manage, Candidate and @candidates_without_opening.size != 0
         li
           div.action-item-wrapper
             div.action-item
               h2 = @candidates_without_opening.size
               h5 = 'candidates are not assigned to job openings'
-              =link_to 'Assign', candidates_path(:no_openings => 1)
-      - if can? :manage, Candidate
+              =link_to 'Assign', candidates_path(:without_opening => 1)
+      - if can? :manage, Candidate and @candidates_without_interview.size != 0
         li
           div.action-item-wrapper
             div.action-item
               h2 = @candidates_without_interview.size
               h5 = "active candidates haven't been scheduled for interviews"
-              =link_to 'Schedule', candidates_path(:no_interviews => 1)
-      - if can? :manage, Interview
+              =link_to 'Schedule', candidates_path(:without_interview => 1)
+      - if can? :manage, Interview and @interviews_owned_by_me.size != 0
         li
           div.action-item-wrapper
             div.action-item
               h2 = @interviews_owned_by_me.size
               h5 = 'upcoming interviews for my owned job openings'
               =link_to 'View', interviews_path(:owned_by_me => 1)
-      - if can? :manage, Interview
+      - if can? :manage, Interview and @interviews_interviewed_by_me.size != 0
         li
           div.action-item-wrapper
             div.action-item
               h2 = @interviews_interviewed_by_me.size
               h5 = 'upcoming interviews for me as an interviewer'
               =link_to 'View', interviews_path(:interviewed_by_me => 1)
-      - if can? :manage, Interview
+      - if can? :manage, Interview and @interviews_without_feedback.size != 0
         li
           div.action-item-wrapper
             div.action-item
               h2 = @interviews_without_feedback.size
               h5 = 'interviews were not given feedback'
               =link_to 'Give Feedback', interviews_path(:no_feedback => 1)
-      - if can? :manage, Candidate
+      - if can? :manage, Candidate and @candidates_without_assessment.size != 0
         li
           div.action-item-wrapper
             div.action-item
               h2 = @candidates_without_assessment.size
               h5 = 'interviews candidates were not given final assessment'
               =link_to 'Assess', candidates_path(:without_assessment => 1)
-      - if can? :manage, Candidate
+      - if can? :manage, Candidate and @candidates_with_assessment.size != 0
         li
           div.action-item-wrapper
             div.action-item

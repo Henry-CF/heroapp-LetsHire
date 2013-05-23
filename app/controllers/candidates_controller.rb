@@ -1,5 +1,5 @@
 class CandidatesController < AuthenticatedController
-  load_and_authorize_resource :except => [:create, :update]
+  load_and_authorize_resource :except => [:create, :update ]
 
   MAX_FILE_SIZE = 10 * 1024 * 1024
 
@@ -7,8 +7,7 @@ class CandidatesController < AuthenticatedController
 
   def index
     filter = false
-    valid_keys = [:no_openings, :no_interviews, :with_assessment, :without_assessment, \
-                  :with_opening, :inactive, :available, :all]
+    valid_keys = Candidate::VALID_SCOPE_LIST
     valid_keys.each do |key|
       if params.has_key? key
         filter = true
@@ -42,6 +41,11 @@ class CandidatesController < AuthenticatedController
   end
 
   def show
+    unless params[:legacy].nil?
+      @candidate = Candidate.find params[:id]
+      @resume = @candidate.resume.name unless @candidate.resume.nil?
+      return render 'legacy_show'
+    end
     @candidate = Candidate.find params[:id]
     @latest_applying_job = @candidate.opening_candidates.last
     @opening_candidate = nil
@@ -64,15 +68,8 @@ class CandidatesController < AuthenticatedController
     @resume = @candidate.resume.name unless @candidate.resume.nil?
   end
 
-  #NOTE: This is the legacy 'Candidate Detail' action, it will be removed before release.
-  def legacy_show
-    @candidate = Candidate.find params[:id]
-    @resume = @candidate.resume.name unless @candidate.resume.nil?
-  end
-
   def new
     @candidate = Candidate.new
-    @departments = Department.with_openings
   end
 
   def edit
@@ -113,6 +110,7 @@ class CandidatesController < AuthenticatedController
     params[:candidate].delete(:department_id)
     opening_id = params[:candidate][:opening_ids]
     params[:candidate].delete(:opening_ids)
+    authorize! :create, Candidate
     @candidate = Candidate.new params[:candidate]
     if @candidate.save
       if opening_id
@@ -132,7 +130,6 @@ class CandidatesController < AuthenticatedController
 
       redirect_to @candidate, :notice => "Candidate \"#{@candidate.name}\" (#{@candidate.email}) was successfully created."
     else
-      @departments = Department.with_openings
       render :action => 'new'
     end
   end
@@ -178,6 +175,8 @@ class CandidatesController < AuthenticatedController
       tempio = params[:candidate][:resume]
       params[:candidate].delete(:resume)
     end
+
+    authorize! :update, Candidate
 
     if @candidate.update_attributes(params[:candidate])
       unless tempio.nil?
