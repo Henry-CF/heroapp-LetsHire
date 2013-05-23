@@ -6,23 +6,24 @@ class CandidatesController < AuthenticatedController
   include ApplicationHelper
 
   def index
-    filter = false
-    valid_keys = Candidate::VALID_SCOPE_LIST
-    valid_keys.each do |key|
-      if params.has_key? key
-        filter = true
-        if key == :all
-          @candidates = Candidate.paginate(:page => params[:page])
-        elsif key != :inactive
-          @candidates = Candidate.active.send(key).paginate(:page => params[:page])
-        else
-          @candidates = Candidate.send(key).paginate(:page => params[:page])
-        end
-        break
-      end
-    end
-
-    unless filter
+    # TODO: too many cases, we need a neat approach here.
+    if params.has_key? :no_openings
+      @candidates = Candidate.active.without_opening.order(sort_column('Candidate') + ' ' + sort_direction).paginate(:page => params[:page])
+    elsif params.has_key? :no_interviews
+      @candidates = Candidate.active.without_interview.order(sort_column('Candidate') + ' ' + sort_direction).paginate(:page => params[:page])
+    elsif params.has_key? :with_assessment
+      @candidates = Candidate.active.with_assessment.order(sort_column('Candidate') + ' ' + sort_direction).paginate(:page => params[:page])
+    elsif params.has_key? :without_assessment
+      @candidates = Candidate.active.without_assessment.paginate(:page => params[:page])
+    elsif params.has_key? :with_opening
+      @candidates = Candidate.active.with_opening.order(sort_column('Candidate') + ' ' + sort_direction).paginate(:page => params[:page])
+    elsif params.has_key? :inactive
+      @candidates = Candidate.inactive.order(sort_column('Candidate') + ' ' + sort_direction).paginate(:page => params[:page])
+    elsif params.has_key? :available
+      @candidates = Candidate.available.order(sort_column('Candidate') + ' ' + sort_direction).paginate(:page => params[:page])
+    elsif params.has_key? :all
+      @candidates = Candidate.paginate(:page => params[:page])
+    else
       opening = nil
       if (params[:opening_id])
         opening = Opening.find(params[:opening_id])
@@ -33,8 +34,8 @@ class CandidatesController < AuthenticatedController
         # NOTE: show active candidates by default
         @candidates = Candidate.active.order(sort_column('Opening') + ' ' + sort_direction).paginate(:page => params[:page])
       end
-
     end
+
     if params.has_key? :partial
       render partial: 'candidates/candidates_index'
     end
