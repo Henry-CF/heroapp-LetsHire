@@ -100,17 +100,35 @@ $(function () {
             }
         });
 
+
+        function validationCheck(tbody) {
+            var errors = [];
+            tbody.find('tr').each(function (index, row)
+            {
+                var interviewer_td = $(row).find('td:eq(4)');
+                interviewer_td.find('div').removeClass('field_with_errors');
+                if ($(row).find('.icon-remove').length > 0) {
+                    var user_ids = interviewer_td.data('user_ids');
+                    if (user_ids == null || user_ids.length == 0) {
+                        interviewer_td.find('div').addClass('field_with_errors');
+                        errors.push('No interviewers configured for row ' + (index + 1));
+                    }
+                }
+            });
+            display_submit_errors(errors);
+            return (errors.length == 0);
+        }
+
         // Read all rows and return an array of objects
         function GetAllInterviews(tbody)
         {
             var interviews = [];
             tbody.find('tr').each(function (index, value)
             {
-                var row = GetRow(tbody, index);
-                if (row == false) {
-                    return false;
+                var row = GetRow(index,value);
+                if (row) {
+                    interviews.push(row);
                 }
-                interviews.push(row);
             });
 
             if (interviews.length < $('table.schedule_interviews tbody tr').length) {
@@ -133,10 +151,9 @@ $(function () {
         }
 
         // Read the row into an object
-        function GetRow(tbody, rowNum)
+        function GetRow(rowNum, rowElem)
         {
-            var row = tbody.find('tr').eq(rowNum);
-
+            var row = $(rowElem);
             var interview = {};
 
             interview.id = row.data('interview_id');
@@ -215,7 +232,7 @@ $(function () {
                     $(elem).prop('checked', true);
                 }
                 if (participants.indexOf(parseInt($(elem).val())) >= 0) {
-                    var tr = $(elem).parent().parent();
+                    var tr = $(elem).closest('tr');
                     tr.addClass('starred');
                     tr.next().addClass('starred'); // The same style for the hidden tr
 
@@ -253,8 +270,11 @@ $(function () {
                 //No change comparing to data before dialog open.
                 return true;
             }
+            if (new_user_ids.length > 0) {
+                $(interviewer_td).children(":first-child").removeClass('field_with_errors');
+            }
             $(interviewer_td).data('users', interviewers_selection_container.data('users').slice(0));
-            $(interviewer_td).children().first().text(interviewers_selection_container.data('users').join());
+            $(interviewer_td).find('span:first-child').text(interviewers_selection_container.data('users').join());
             var original_user_ids = $(interviewer_td).data('origin_user_ids');
             if (!original_user_ids) {
                 // Definitely a change comparing to content loading
@@ -275,7 +295,7 @@ $(function () {
         });
 
         table.on('click', 'td .edit_interviewers', function() {
-            var interviewer_td = $(this).parent().parent();
+            var interviewer_td = $(this).closest('td');
             interviewers_selection_container.data('user_ids', interviewer_td.data('user_ids').slice(0));
             interviewers_selection_container.data('users', interviewer_td.data('users').slice(0));
 
@@ -336,7 +356,7 @@ $(function () {
 
         table.on('click', 'td i.icon-remove', function() {
             var tbody = table.find('tbody');
-            var row = $(this).parent().parent();
+            var row = $(this).closest('tr');
             if (row.data('interview_id')) {
                 var del_ids = tbody.data('del_ids');
                 if (!del_ids) {
@@ -349,8 +369,28 @@ $(function () {
             row.remove();
         });
 
+        function display_submit_errors(errors) {
+            if (errors.length > 0) {
+                var error_content = '<ul>';
+                for (var i = 0; i < errors.length; i ++) {
+                    error_content += '<li>'+ errors[i] + '</li>';
+                }
+                error_content +='</ul>';
+                $('#error_messages').html(error_content);
+                $('#error_messages').closest('div').show();
+            } else {
+                $('#error_messages').closest('div').hide();
+            }
+
+        }
+
         $('.submit_interviews').click(function() {
-            var interviews = GetAllInterviews(table.find('tbody'));
+            var tbody = table.find('tbody');
+            $('#error_messages').closest('div').hide();
+            if (!validationCheck(tbody)) {
+                return false;
+            }
+            var interviews = GetAllInterviews(tbody);
             if (interviews == false) {
                 return false;
             }
@@ -364,7 +404,7 @@ $(function () {
                 })
             .done(function(response) {
                 if (!response.success) {
-                    $('#error_messages').html('<p class="errors">' + response.messages + '</p>').parent().show();
+                    display_submit_errors(response.messages);
                 }
                 else {
                     var url = $('#previous_url').data('value');
@@ -375,8 +415,9 @@ $(function () {
                 }
             })
             .fail(function(jqXHR, textStatus, errorThrown) {
-                alert('fail to save');
+                display_submit_errors(['Server error']);
             });
+            return false;
         });
     }
 
