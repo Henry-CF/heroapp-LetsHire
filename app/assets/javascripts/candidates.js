@@ -149,4 +149,8 @@ $(function() {
             });
         });
     }
+
+    $("ul.interviewline").each(function (index, elem) {
+        elem.childNodes[0].innerHTML = new Date(elem.childNodes[0].innerHTML).toLocaleString();
+    });
 });
