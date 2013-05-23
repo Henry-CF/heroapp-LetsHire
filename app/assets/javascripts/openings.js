@@ -71,9 +71,7 @@ $(function() {
         }
 
         $('a.assign_candidates').click(function() {
-            var p = $(this);
-            for (var i = 0; i < 5; i++) { p = p.parent(); }
-            var opening_row = p;
+            var opening_row = $(this).closest('tr');
             var opening_id = opening_row.data('id');
             if (opening_id == undefined) {
                 return false;
