@@ -3,6 +3,9 @@
 // You can also rename this file to openings.js.coffee, and only keep the coffee script
 
 $(function() {
+    $('.fileupload').fileupload({
+        name: "candidate[resume]"
+    });
 
     if ($('.candidates_index_new_opening').length > 0 ||
         $('.candidate_new_opening').length > 0 ||

@@ -28,4 +28,10 @@
             = link_to "#{@resume}", resume_candidate_path({:id => @candidate.id})
         td
         td
-          = f.file_field :resume
+          .fileupload.fileupload-new data-provides='fileupload'
+            span.btn.btn-file
+              span.fileupload-new Select File
+              span.fileupload-exists Change
+              = f.file_field :resume
+            span.fileupload-preview
+            a.close.fileupload-exists href='#' data-dismiss='fileupload' style="float: none" ×

@@ -15,6 +15,7 @@
 //= require jquery-ui.custom.min
 //= require jquery-ui-timepicker-addon
 //= require bootstrap
+//= require bootstrap-fileupload
 //= require jquery.tokeninput
 //= require jquery.jcarousel
 //= require_tree .
