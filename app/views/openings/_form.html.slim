@@ -9,6 +9,7 @@
     =f.label :recruiter, :class => 'control-label'
     .controls
       = f.select :recruiter_id, User.with_role(:recruiter).map { |user| [ user.name, user.id ] }
+      = f.label "You are creating one job opening that doesn't belong to you! ", :class => 'warning_message_label', :id => 'opening_recruiting_warn', :data_recruiter_id => current_user.id
 
   .control-group
     =f.label :department, :class => 'control-label'
