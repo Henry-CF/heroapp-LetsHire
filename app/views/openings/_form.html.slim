@@ -31,7 +31,7 @@
     .control-group
       =f.label :hiring_manager, 'Hiring Manager', :class => 'control-label'
       .controls
-        = f.label @opening.hiring_manager.name.html_safe
+        = f.label nil, @opening.hiring_manager.name.html_safe
 
   .control-group
     =f.label :total_no, 'Total Seats', :class => 'control-label'
@@ -68,3 +68,4 @@
       .actions
         = f.submit 'Save', :class=>'btn-primary btn'
         = link_to 'Cancel', :back, :class => 'btn'
+

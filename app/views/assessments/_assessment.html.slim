@@ -1,6 +1,1 @@
-div
-  = assessment.creator.try(:name)
-  = ' '
-  = assessment.updated_at
-  = simple_format h(assessment.comment)
-p
+li = simple_format "#{assessment.creator.try(:name)}: #{h(assessment.comment)}"

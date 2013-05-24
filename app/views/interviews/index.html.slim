@@ -31,6 +31,6 @@ div.row-fluid
   
   -if can? :update, Interview
     .pull-right
-      = button_tag 'Schedule Interviews', :class => 'flexible_schedule_interviews'
+      = button_tag 'Schedule Interviews', :class => 'flexible_schedule_interviews btn-primary'
 
 =render :partial => 'interviews_index', :locals => {:opening_candidate => opening_candidate}

@@ -1,5 +1,5 @@
 var Common = {
-    prepare_object_selection_container: function (object, paginate_callback, change_event_callback) {
+    prepare_object_selection_container:function (object, paginate_callback, change_event_callback) {
         var parent_object = object.parent();
         parent_object.delegate('.pagination a', 'click', function () {
             $('.pagination').html('Page is loading...');
@@ -28,9 +28,19 @@ var Common = {
                 change_event_callback($(this));
             }
         });
+    },
+
+    reload_opening:  function(department_control, opening_control, opening_control_name) {
+    $(department_control).attr('disabled', true);
+    var url = '/openings/opening_options?selected_department_id=' + $(department_control).val();
+    return $(opening_control).load(url, function() {
+        $(department_control).attr('disabled', false);
+        $(opening_control).find('select#opening_id').attr('name', opening_control_name);
+    });
+}
 
 
-    }
+
 };
 
 $(function() {

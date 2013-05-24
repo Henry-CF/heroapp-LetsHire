@@ -7,46 +7,42 @@ class CandidatesController < AuthenticatedController
 
   def index
     # TODO: too many cases, we need a neat approach here.
-    if params.has_key? :no_openings
-      @candidates = Candidate.active.without_opening.order(sort_column('Candidate') + ' ' + sort_direction).paginate(:page => params[:page])
-    elsif params.has_key? :no_interviews
-      @candidates = Candidate.active.without_interview.order(sort_column('Candidate') + ' ' + sort_direction).paginate(:page => params[:page])
-    elsif params.has_key? :with_assessment
-      @candidates = Candidate.active.with_assessment.order(sort_column('Candidate') + ' ' + sort_direction).paginate(:page => params[:page])
-    elsif params.has_key? :without_assessment
-      @candidates = Candidate.active.without_assessment.paginate(:page => params[:page])
-    elsif params.has_key? :with_opening
-      @candidates = Candidate.active.with_opening.order(sort_column('Candidate') + ' ' + sort_direction).paginate(:page => params[:page])
-    elsif params.has_key? :inactive
-      @candidates = Candidate.inactive.order(sort_column('Candidate') + ' ' + sort_direction).paginate(:page => params[:page])
-    elsif params.has_key? :available
-      @candidates = Candidate.available.order(sort_column('Candidate') + ' ' + sort_direction).paginate(:page => params[:page])
-    elsif params.has_key? :all
-      @candidates = Candidate.paginate(:page => params[:page])
-    else
-      opening = nil
-      if (params[:opening_id])
-        opening = Opening.find(params[:opening_id])
-      end
-      if opening
-        @candidates = opening.candidates.active.paginate(:page => params[:page])
+    @candidates = (if params.has_key? :no_openings
+        Candidate.active.without_opening
+      elsif params.has_key? :no_interviews
+        Candidate.active.without_interview
+      elsif params.has_key? :with_assessment
+        Candidate.active.with_assessment
+      elsif params.has_key? :without_assessment
+        Candidate.active.without_assessment
+      elsif params.has_key? :with_opening
+        Candidate.active.with_opening
+      elsif params.has_key? :inactive
+        Candidate.inactive
+      elsif params.has_key? :available
+        Candidate.available
+      elsif params.has_key? :all
+        Candidate
       else
-        # NOTE: show active candidates by default
-        @candidates = Candidate.active.order(sort_column('Opening') + ' ' + sort_direction).paginate(:page => params[:page])
-      end
-    end
+        opening = nil
+        if (params[:opening_id])
+          opening = Opening.find(params[:opening_id])
+        end
+        if opening
+          opening.candidates.active
+        else
+          # NOTE: show active candidates by default
+          Candidate.active
+        end
+      end).order(sort_column('Candidate') + ' ' + sort_direction).paginate(:page => params[:page])
 
     if params.has_key? :partial
       render partial: 'candidates/candidates_index'
     end
-  end
+    end
+
 
   def show
-    unless params[:legacy].nil?
-      @candidate = Candidate.find params[:id]
-      @resume = @candidate.resume.name unless @candidate.resume.nil?
-      return render 'legacy_show'
-    end
     @candidate = Candidate.find params[:id]
     @latest_applying_job = @candidate.opening_candidates.last
     @opening_candidate = nil
@@ -77,14 +73,6 @@ class CandidatesController < AuthenticatedController
     @candidate = Candidate.find params[:id]
     @resume = @candidate.resume.name unless @candidate.resume.nil?
   end
-
-  def new_opening
-    @candidate = Candidate.find params[:id]
-    assigned_departments = get_assigned_departments(@candidate)
-    @selected_department_id = assigned_departments[0].try(:id)
-    render :action => :new_opening, :layout => false
-  end
-
 
   # GET /edit_candidates
   def index_for_selection
@@ -139,22 +127,22 @@ class CandidatesController < AuthenticatedController
   def create_opening
     @candidate = Candidate.find params[:id]
     unless params[:candidate]
-      redirect_to @candidate, notice: 'Invalid attributes'
+      redirect_to request.referrer, notice: 'Invalid attributes'
       return
     end
     new_opening_id = params[:candidate][:opening_ids].to_i
     if new_opening_id == 0
-      redirect_to @candidate, :notice => "Opening was not given."
+      redirect_to request.referrer, :notice => "Opening was not given."
       return
     end
     if @candidate.opening_ids.index(new_opening_id)
-      redirect_to @candidate, :notice => "Opening was already assigned."
+      redirect_to request.referrer, :notice => "Opening was already assigned."
       return
     end
     if @candidate.opening_candidates.create(:opening_id => new_opening_id)
-      redirect_to @candidate, :notice => "Opening was successfully assigned."
+      redirect_to request.referrer, :notice => "Opening was successfully assigned."
     else
-      redirect_to @candidate, :notice => "Opening was already assigned or not given."
+      redirect_to request.referrer, :notice => "Opening was already assigned or not given."
     end
   rescue ActiveRecord::RecordNotFound
     redirect_to candidates_url, notice: 'Invalid Candidate'

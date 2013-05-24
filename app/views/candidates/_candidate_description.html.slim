@@ -1,4 +1,8 @@
-- unless @candidate.nil?
-  h3 Candidate Details
-  h3 = "#{@candidate.name}"
-  p = "#{h(@candidate.description)}"
+h3 Candidate Details
+=hidden_field_tag :candidate_id, @candidate.id
+div.row-fluid
+  .span5
+    h3 = "#{@candidate.name}"
+  .span4
+    = link_to 'Assign Job Opening', "", :class => 'candidate_new_opening btn btn-primary'
+p = "#{h(truncate(@candidate.description, :length => 1000))}"

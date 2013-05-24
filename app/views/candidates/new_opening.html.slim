@@ -1,6 +1,0 @@
-= form_for @candidate, {:html => { :class => 'form-horizontal'}, :url => {:action => 'create_opening' }}  do |f|
-  = render :partial => 'openings/opening_selection', :locals => { :selected => { :opening => @candidate.openings[0].try(:id), :department => @selected_department_id} }
-  .control-group
-    .controls
-      .actions
-        =f.submit 'Save', :method => :put
