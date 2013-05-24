@@ -30,7 +30,7 @@ $(function() {
     };
 
     $('#opening_recruiter_id').change(function(event){
-        var current_user_id = $('#opening_recruiting_warn').attr('data_recruiter_id');
+        var current_user_id = $('#opening_recruiting_warn').attr('data-recruiter-id');
         if (current_user_id != $(this).val()){
             $('#opening_recruiting_warn').show();
         }else{
