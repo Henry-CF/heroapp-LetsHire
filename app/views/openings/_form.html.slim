@@ -63,5 +63,8 @@
         = f.check_box :status
 
 
-  .actions
-    = f.submit 'Save', :class=>'btn'
+  .control-group
+    .controls
+      .actions
+        = f.submit 'Save', :class=>'btn-primary btn'
+        = link_to 'Cancel', :back, :class => 'btn'

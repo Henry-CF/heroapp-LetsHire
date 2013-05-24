@@ -13,7 +13,7 @@ h3 Schedule Interviews
 .pull-left
   h4 Interviews
 .pull-right
-  = button_tag 'Schedule New', :class => 'add_new_interview'
+  = button_tag 'Schedule New', :class => 'add_new_interview btn'
 
 #interviewers_selection_container.hide
   = collection_select(nil, :participants_department_id, Department.with_users, :id, :name, { :selected => @opening.department_id }, { :prompt => 'Filter by department', :id => :participants_department_id })
