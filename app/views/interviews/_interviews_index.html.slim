@@ -13,3 +13,5 @@ div id="all-interviews"
   
     tbody
       =render @interviews, :opening_candidate => false
+
+  = will_paginate @interviews, :class => "digg-paginate"

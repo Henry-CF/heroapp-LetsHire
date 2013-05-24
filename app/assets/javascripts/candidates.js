@@ -3,44 +3,40 @@
 // You can also rename this file to openings.js.coffee, and only keep the coffee script
 
 $(function() {
-    function reload_opening() {
-        $('#department_id').attr('name', null);
-        $('#openingid_select_wrapper').attr('id', 'candidate_openingid_select_wrapper');
-        $('select#opening_id').attr('name', 'candidate[opening_ids]');
-        var select_wrapper = $('#candidate_openingid_select_wrapper');
-        $('select', select_wrapper).attr('disabled', true);
-        var department_id = $('#department_id').val();
-        var url = '/openings/opening_options?selected_department_id=' + department_id;
-        return select_wrapper.load(url, function() {
-            $('select#opening_id').attr('name', 'candidate[opening_ids]');
-        });
-    }
-
-
     $('.fileupload').fileupload({
         name: "candidate[resume]"
     });
 
-    if ($('.candidate_new_opening').length > 0 || $('#new_candidate').length > 0) {
-        reload_opening();
+    if ($('.candidates_index_new_opening').length > 0 ||
+        $('.candidate_new_opening').length > 0 ||
+        $('#new_candidate').length > 0)
+    {
+        $('#department_id').attr('name', null);
+        $('#openingid_select_wrapper').attr('id', 'candidate_openingid_select_wrapper');
+        $('select#opening_id').attr('name', 'candidate[opening_ids]');
 
-        $('body').delegate('select#department_id', 'change', reload_opening);
+        $('body').delegate('select#department_id', 'change', function() {
+            Common.reload_opening($(this), $('#candidate_openingid_select_wrapper'), 'candidate[opening_ids]');
+        });
+
+        var opening_selection_container = $("#opening_selection_container");
+        function create_opening(id) {
+            opening_selection_container.parent().get(0).setAttribute('action', '/candidates/' + id + '/create_opening');
+            opening_selection_container.parent().dialog({
+                modal: true,
+                title: "Select Opening",
+                width : '450px'});
+
+        }
+
+        $('.candidates_index_new_opening').click(function(event) {
+            create_opening($(this).closest('tr').data('id'));
+            return false;
+        });
 
         $('.candidate_new_opening').click(function(event) {
-            var candidate_id = $('#candidate_id').val();
-            if (candidate_id) {
-                $('#opening_selection').load('/candidates/' + candidate_id + '/new_opening', function(response, status) {
-                    if (status == 'success') {
-                        $(this).find('select#department_id').attr('name', null);
-                        $(this).find('#openingid_select_wrapper').attr('id', 'candidate_openingid_select_wrapper');
-                        $(this).find('select#opening_id').attr('name', 'candidate[opening_ids]');
-                        $(this).dialog({
-                            modal: true,
-                            title: "Assign Opening",
-                            width : '500px'});
-                    }
-                });
-            }
+            create_opening($('#candidate_id').val());
+            return false;
         });
     }
 

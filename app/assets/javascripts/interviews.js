@@ -1,21 +1,16 @@
 $(function () {
     var opening_selection_container = $("#opening_selection_container");
     if (opening_selection_container.length > 0) {
-        opening_selection_container.find('select#department_id').attr('name', null);
-        opening_selection_container.find('#openingid_select_wrapper').attr('id', 'interview_openingid_select_wrapper');
-        opening_selection_container.find('select#opening_id').attr('name', 'opening_id');
-
-        $('body').delegate('select#department_id', 'change', function(event) {
-            var select_wrapper = $('#interview_openingid_select_wrapper');
-            $('select', select_wrapper).attr('disabled', true);
-            var department_id = $(this).val();
-            var url = '/openings/opening_options?selected_department_id=' + department_id;
-            return select_wrapper.load(url, function() {
-                $('select#opening_id').attr('name', 'opening_id');
-            });
-        });
-
         if ($('.flexible_schedule_interviews').length > 0) {
+
+            opening_selection_container.find('select#department_id').attr('name', null);
+            opening_selection_container.find('#openingid_select_wrapper').attr('id', 'interview_openingid_select_wrapper');
+            opening_selection_container.find('select#opening_id').attr('name', 'opening_id');
+
+            $('body').delegate('select#department_id', 'change', function(event) {
+                Common.reload_opening($(this), $('#interview_openingid_select_wrapper'), 'opening_id');
+            });
+
             $('.flexible_schedule_interviews').click(function(event) {
 
                 var opening_candidate_id = $('#opening_candidate_id').val();

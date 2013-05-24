@@ -1,0 +1,7 @@
+= form_tag  'candidates/create_opening', :method => :put, :class => 'form-horizontal hide' do
+  #opening_selection_container
+    = render 'openings/opening_selection'
+  .control-group
+    .controls
+      .actions
+        =submit_tag 'Save'

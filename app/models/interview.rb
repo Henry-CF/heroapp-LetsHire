@@ -12,6 +12,8 @@ class Interview < ActiveRecord::Base
   attr_accessible :status, :score, :assessment
   attr_accessible :created_at, :updated_at
 
+  self.per_page = 20
+
   # interview status constants
   STATUS_NEW      = 'scheduled'
   STATUS_PROGRESS = 'started'
