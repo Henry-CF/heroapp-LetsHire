@@ -26,7 +26,6 @@ div id="all-candidates"
                   li = link_to 'Move to Blacklist', move_to_blacklist_candidate_path(candidate), :method => :post, :confirm => 'Are you sure?'
               -if can? :manage, @candidate
                 =link_to '', edit_candidate_path(candidate) , :class => 'icon-file-alt icon-large action-icon'
-                =link_to '', move_to_blacklist_candidate_path(candidate), :method => :post, :confirm => 'Are you sure?', :class => 'icon-remove icon-large action-icon'
   
   = will_paginate @candidates, :class => "digg-paginate"
   
