@@ -52,6 +52,18 @@ class OpeningCandidate < ActiveRecord::Base
     status.nil? || (status == OpeningCandidate::STATUS_LIST[OpeningCandidate::INTERVIEW_LOOP])
   end
 
+  def quit?
+    status == OpeningCandidate::STATUS_LIST[OpeningCandidate::INTERVIEW_QUIT]
+  end
+
+  def quit_job_application
+    update_attributes(:status => OpeningCandidate::STATUS_LIST[OpeningCandidate::INTERVIEW_QUIT])
+  end
+
+  def reopen_job_application
+    update_attributes(:status => OpeningCandidate::STATUS_LIST[OpeningCandidate::INTERVIEW_LOOP])
+  end
+
   # find all 'rejected' records belong to recruiter user
   def self.rejected?(user_id)
     records = OpeningCandidate.find(:all, \
@@ -87,6 +99,7 @@ class OpeningCandidate < ActiveRecord::Base
 
   private
   INTERVIEW_LOOP = 'Interview Loop'
+  INTERVIEW_QUIT = 'Quit'
   #Don't change order randomly. order matters.
   STATUS_LIST = { INTERVIEW_LOOP => 1,
                   'Fail' => 2,
