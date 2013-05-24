@@ -14,7 +14,12 @@ $(function() {
         return select_wrapper.load(url, function() {
             $('select#opening_id').attr('name', 'candidate[opening_ids]');
         });
-    };
+    }
+
+
+    $('.fileupload').fileupload({
+        name: "candidate[resume]"
+    });
 
     if ($('.candidate_new_opening').length > 0 || $('#new_candidate').length > 0) {
         reload_opening();
