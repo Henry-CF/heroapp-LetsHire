@@ -1,27 +1,30 @@
 class InterviewsController < AuthenticatedController
   include InterviewsHelper
+
   def index
     authorize! :read, Interview
 
-    if params.has_key? :owned_by_me
-      @interviews = Interview.owned_by(current_user.id).paginate(:page => params[:page])
+    @interviews = (if params.has_key? :owned_by_me
+      Interview.owned_by(current_user.id)
     elsif params.has_key? :interviewed_by_me
-      @interviews = Interview.interviewed_by(current_user.id).paginate(:page => params[:page])
+      Interview.interviewed_by(current_user.id)
     elsif params.has_key? :interviewed_by_me_today
-      @interviews = Interview.interviewed_by(current_user.id).during(Time.zone.now).paginate(:page => params[:page])
+      Interview.interviewed_by(current_user.id).during(Time.zone.now)
     elsif params.has_key? :no_feedback
-      @interviews = Interview.owned_by(current_user.id).where(:assessment => nil).paginate(:page => params[:page])
+      Interview.owned_by(current_user.id).where(:assessment => nil)
     else
       if can? :manage, Interview
           if params.has_key? :all
-            @interviews = Interview.all.paginate(:page => params[:page])
+            Interview
+          else
+            Interview.owned_by(current_user.id)
           end
+      elsif can? :update, Interview
+        Interview.owned_by(current_user.id)
+      else
+        Interview.interviewed_by(current_user.id)
       end
-      if can? :update, Interview
-        @interviews ||= Interview.owned_by(current_user.id).paginate(:page => params[:page])
-      end
-      @interviews ||= Interview.interviewed_by(current_user.id).paginate(:page => params[:page])
-    end
+    end).paginate(:page => params[:page])
 
     if params.has_key? :partial
       render :partial => 'interviews/interviews_index', :locals => {:opening_candidate => nil}

@@ -33,27 +33,19 @@
                           div.accordion-body.collapse id="collapse3-#{j}-#{i}"
                             div.accordion-inner
                               div.feedbackborder
-                                 p Feedback from interviews
-                                 div.accordion id="accordion3-#{j}-#{i}-internal"
-                                   div.accordion-group
-                                     div.accordion-heading
-                                       a.accordion-toggle.collapsed data-toggle="collapse" data-parent="#accordion3-#{j}-#{i}-internal" href="#collapse3-#{j}-#{i}-internal"
-                                         - uids = interview.interviewers.map{|u| u.user_id}
-                                         - interviews = User.find(:all, :conditions => ['id in (?)', uids]).map{|u| u.name}
-                                         span
-                                           = "From #{interviews.join(' ')}"
-                                       div.accordion-body.collapse id="collapse3-#{j}-#{i}-internal"
-                                         div.accordion-inner
-                                         span
-                                           = interview.assessment
+                                p Feedback from interviews
+                                div.accordion id="accordion3-#{j}-#{i}-internal"
+                                  div.accordion-group
+                                    div.accordion-heading
+                                      a.accordion-toggle.collapsed data-toggle="collapse" data-parent="#accordion3-#{j}-#{i}-internal" href="#collapse3-#{j}-#{i}-internal"
+                                        - uids = interview.interviewers.map{|u| u.user_id}
+                                        - interviews = User.find(:all, :conditions => ['id in (?)', uids]).map{|u| u.name}
+                                        span
+                                          = "From #{interviews.join(' ')}"
+                                      div.accordion-body.collapse id="collapse3-#{j}-#{i}-internal"
+                                        div.accordion-inner
+                                        span
+                                          = interview.assessment
         p style="text-indent: 2em" = "Final Assessment:"
-        div.row-fluid
-          div.span1
-          div.span11
-            - if job.assessments.length > 0
-              ul
-              - job.assessments.each do |assessment|
-                li = "#{assessment.comment}"
-            - else
-              span No final assessments.
+        =render :partial => 'job_assessments', :locals => { :opening_candidate => job }
         br
