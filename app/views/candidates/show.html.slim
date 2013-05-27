@@ -3,7 +3,6 @@ div.row-fluid
     =render 'candidate_description'
     =render 'show_latest_applying_job'
     h4 Assessments
-    - puts @latest_applying_job.assessments.inspect
     = render :partial => 'job_assessments', :locals => { :opening_candidate => @latest_applying_job }
     =render 'recruiting_history'
   .span4
