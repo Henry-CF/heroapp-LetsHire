@@ -1,6 +1,6 @@
 
 
-= form_for [@opening_candidate, @assessment], :html => {:class => 'form-horizontal clear-both assessment-form'} do |f|
+= form_for [@opening_candidate, @assessment], :method => :put, :html => {:class => 'form-horizontal clear-both assessment-form'} do |f|
   = f.error_messages
 
   .control-group
@@ -12,6 +12,7 @@
     = f.label :comment, 'Comment', :class => 'control-label'
     .controls
       = f.text_area :comment, :class => 'span5'
+
   .control-group
     .controls
       .actions

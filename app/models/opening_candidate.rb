@@ -5,8 +5,8 @@ class OpeningCandidate < ActiveRecord::Base
   belongs_to :opening, :counter_cache => true
 
   has_many :interviews, :dependent => :destroy
-  
-  has_many :assessments, :dependent => :destroy
+
+  has_one :assessment, :dependent => :destroy
 
   validates :candidate_id, :opening_id, :presence => true
 

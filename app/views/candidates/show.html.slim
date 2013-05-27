@@ -2,9 +2,9 @@ div.row-fluid
   .span8
     =render 'candidate_description'
     =render 'show_latest_applying_job'
-    h4 Assessments
-    = render :partial => 'job_assessments', :locals => { :opening_candidate => @latest_applying_job }
-    =render 'recruiting_history'
+    h4 Assessment
+    = render :partial => 'job_assessment', :locals => { :opening_candidate => @latest_applying_job }
+    = render 'recruiting_history'
   .span4
     =render 'candidate_profile'
 
