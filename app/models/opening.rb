@@ -71,6 +71,10 @@ class Opening < ActiveRecord::Base
     status == STATUS_LIST[:closed]
   end
 
+  def owned_by?(user_id)
+    hiring_manager_id == user_id || recruiter_id == user_id
+  end
+
   def available_no
     total_no - filled_no
   end

@@ -96,6 +96,12 @@ class OpeningsController < ApplicationController
   def update
     @opening = Opening.find(params[:id])
 
+    authorize! :manage, @opening
+    unless current_user.has_role?(:recruiter)
+      params[:opening].delete :recruiter_id
+      params[:opening].delete :hiring_manager_id
+      params[:opening].delete :department_id
+    end
     params[:opening].delete :creator_id
 
     if @opening.update_attributes(params[:opening])
@@ -110,6 +116,7 @@ class OpeningsController < ApplicationController
   # POST /openings/1/assign_candidates
   def assign_candidates
     @opening = Opening.find(params[:id])
+    authorize! :manage, @opening
 
     params[:candidates] ||= []
     params[:candidates].each do |candidate|
@@ -126,6 +133,7 @@ class OpeningsController < ApplicationController
   # DELETE /openings/1.json
   def destroy
     @opening = Opening.find(params[:id])
+    authorize! :manage, @opening
     @opening.destroy
 
     redirect_to openings_url

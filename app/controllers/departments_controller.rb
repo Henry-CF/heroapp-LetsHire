@@ -1,5 +1,5 @@
 class DepartmentsController < AuthenticatedController
-  before_filter :require_admin, :except => [:user_select]
+  before_filter :require_admin, :except => [:user_select, :show]
   # GET /departments
   def index
     @departments = Department.all

@@ -32,6 +32,7 @@ class Ability
     user ||= User.new
     if user.admin?
       can :manage, :all
+      can :create, :all
     else
       can :read, :all
       user.roles.each do |role|
@@ -55,11 +56,17 @@ class Ability
     can :create, Candidate
     can :read, Candidate
     can :create, Interview
-    can :update, Interview
+    can :manage, Interview do |interview|
+      interview.opening_candidate.opening.owned_by?(user.id)
+    end
   end
 
   def interviewer(user)
-    can :update, Interview
+    can :read, User
+    can :read, Opening
+    can :update, Interview, :id => user.interview_ids
+    can :read, Candidate
+
   end
 
   def is?(role)

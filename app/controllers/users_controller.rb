@@ -1,5 +1,5 @@
 class UsersController < AuthenticatedController
-  before_filter :require_admin, :except => [:index_for_selection]
+  before_filter :require_admin, :except => [:index_for_selection, :show]
 
   def index
     @users = User.include_deleted_in { User.name_order.paginate(:page => params[:page]) }
@@ -32,6 +32,7 @@ class UsersController < AuthenticatedController
   end
 
   def show
+    authorize! :read, User
     @user = User.active.find(params[:id])
   rescue ActiveRecord::RecordNotFound
     redirect_to users_url, :notice => 'Invalid user'

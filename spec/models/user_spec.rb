@@ -32,65 +32,73 @@ describe User do
     let(:ability) { Ability.new(user) }
     let(:user) { nil }
 
+
+    before :all do
+      @hiring_manager1 = create_user(:hiring_manager)
+      @recruiter1 = create_user(:recruiter)
+      @opening = Opening.create! FactoryGirl.attributes_for(:opening).merge({:department_id => @recruiter1.department_id,
+                                                                  :recruiter_id => @recruiter1.id,
+                                                                  :creator_id => @hiring_manager1.id,
+                                                                  :hiring_manager_id => @hiring_manager1.id})
+      @candidate = Candidate.create! FactoryGirl.attributes_for :candidate
+      @o_c = OpeningCandidate.create! :opening_id => @opening.id, :candidate_id => @candidate.id
+      @users = []
+      3.times { @users << create_user(:user) }
+      @interview = Interview.create! FactoryGirl.attributes_for(:interview).merge({ :opening_candidate_id => @o_c.id,
+                                                                              :user_ids => [@users[0].id, @users[1].id]})
+    end
+
+
     context 'admin user' do
       let(:user) { User.new_admin }
-      it{ should be_able_to(:manage, Interview.new)}
+      it{ should be_able_to(:manage, @interview)}
       it{ should be_able_to(:manage, User.new)}
-      it{ should be_able_to(:manage, Opening.new)}
+      it{ should be_able_to(:manage, @opening)}
     end
 
     context 'normal user' do
-      let(:user) { FactoryGirl.build(:user)}
-      it{ should_not be_able_to(:manage, Interview.new)}
+      let(:user) { @users[2]}
+      it{ should_not be_able_to(:update, @interview)}
+      it{ should_not be_able_to(:manage, @interview)}
       it{ should_not be_able_to(:manage, User.new)}
-      it{ should_not be_able_to(:manage, Opening.new)}
+      it{ should_not be_able_to(:manage, Opening)}
     end
 
     context 'recruiter' do
       let(:user) do
-        user = FactoryGirl.build(:user)
-        user.add_role('recruiter')
-        user
+        @recruiter1
       end
-      it{ should be_able_to :manage, Interview.new }
-      it{ should be_able_to :manage, Opening.new }
+      it{ should be_able_to :manage, @interview }
+      it{ should be_able_to :manage, @opening }
       it{ should_not be_able_to :manage, User.new }
     end
 
     context 'hiring_manager' do
       let(:user) do
-        user = FactoryGirl.build(:user)
-        user.add_role('hiring_manager')
-        user
+        @hiring_manager1
       end
-      it{ should_not be_able_to :manage, Interview.new }
-      it{ should be_able_to :update, Interview.new }
-      it{ should be_able_to :manage, Opening.new }
+      it{ should be_able_to :manage, @interview }
+      it{ should be_able_to :manage, @opening }
       it{ should_not be_able_to :manage, User.new }
     end
 
     context 'interviewer' do
-      let(:user) do
-        user = FactoryGirl.build(:user)
-        user.add_role('interviewer')
-        user
-      end
-      it{ should_not be_able_to :manage, Interview.new }
-      it{ should be_able_to :update, Interview.new }
+      let(:user)  {@users[0]}
+      it{ should_not be_able_to :manage, @interview }
+      it{ should be_able_to :update, @interview }
+      it{ should_not be_able_to :manage, @opening }
+      it{ should_not be_able_to :create, Opening }
       it{ should_not be_able_to :manage, User.new }
     end
 
     context 'mixed roles' do
       let(:user) do
-        user = FactoryGirl.build(:user)
-        user.add_role('interviewer')
+        user = @users[1]
         user.add_role('hiring_manager')
         user
       end
-      it{ should_not be_able_to :manage, Interview.new }
-      it{ should be_able_to :update, Interview.new }
-      it{ should be_able_to :manage, Opening.new }
-      it{ should_not be_able_to :manage, User.new }
+      it{ should_not be_able_to :manage, @opening }
+      it{ should be_able_to :create, Opening }
     end
   end
 
