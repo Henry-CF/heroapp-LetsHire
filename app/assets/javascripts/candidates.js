@@ -110,10 +110,7 @@ $(function() {
             case 1: // View Inactive
                 refreshCandidates('inactive');
                 break;
-            case 2: // View Available
-                refreshCandidates('available');
-                break;
-            case 3: // View All
+            case 2: // View All
                 refreshCandidates('all');
                 break;
             default:

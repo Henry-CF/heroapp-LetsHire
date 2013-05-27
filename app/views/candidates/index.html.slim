@@ -3,18 +3,17 @@ h3 Candidates
 div.row-fluid
   .pull-left
     .div.btn-group
-      button.btn id="candidates_filtername" View Active
+      label.inline-label.filter-button-label View
+      button.btn id="candidates_filtername" Active Candidates
       button.btn.dropdown-toggle data-toggle="dropdown"
         span.caret
       ul.dropdown-menu id="candidates_viewfilter"
         li
-          a href="#" View Active
+          a href="#" Active Candidates
         li
-          a href="#" View Inactive
+          a href="#" Blacklisted Candidates
         li
-          a href="#" View Available
-        li
-          a href="#" View All
+          a href="#" All
   
   .pull-right
     -if can? :create, Candidate
