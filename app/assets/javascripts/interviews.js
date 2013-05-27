@@ -462,6 +462,11 @@ $(function () {
                     if (xmlhttp.readyState == 4) { // loaded
                        if (xmlhttp.status == 200) { // ok
                            document.getElementById('all-interviews').innerHTML = xmlhttp.responseText;
+
+                           $(".iso-time").each(function (index, elem) {
+                               elem.innerHTML = new Date(elem.innerHTML).toLocaleString();
+                           });
+
                            if ($('.dropdown-toggle').length > 0) {
                                $('.dropdown-toggle').dropdown();
                            }
