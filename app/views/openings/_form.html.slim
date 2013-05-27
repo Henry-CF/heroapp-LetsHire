@@ -14,9 +14,9 @@
   .control-group
     =f.label :department, :class => 'control-label'
     .controls
-      - departments = User.active_departments
+      - departments = current_user.has_role?(:recruiter) ? User.active_departments : [current_user.department]
       - if departments.size > 0
-        = f.select :department_id, departments, :prompt => 'Please select a department'
+        = f.select :department_id, departments.map { |d| [d.name, d.id]}, :prompt => departments.size > 1
       - else
         = f.label 'No hiring manager created?!'
 

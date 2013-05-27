@@ -82,7 +82,7 @@ class User < ActiveRecord::Base
     department_ids = with_role(:hiring_manager).map(&:department_id).reject { |item| item.nil?}
     department_ids.try(:uniq!)
     if department_ids.try(:first)
-      Department.find_all_by_id(department_ids).map { |d| [d.name, d.id]}
+      Department.find_all_by_id(department_ids)
     else
       []
     end
