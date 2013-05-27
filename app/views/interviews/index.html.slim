@@ -13,24 +13,25 @@ h3 Interviews
 div.row-fluid
   .pull-left
     .div.btn-group
+      label.inline-label.filter-button-label View
       -if can? :update, Interview
-        button.btn id="interviews_filtername" View My job openings related
+        button.btn id="interviews_filtername" Any Interviews Related to Me
       -else
-        button.btn id="interviews_filtername" View Mine as interviewer
+        button.btn id="interviews_filtername" My Interviews Today
       button.btn.dropdown-toggle data-toggle="dropdown"
         span.caret
       ul.dropdown-menu id="interviews_viewfilter"
         li
-          a href="#" View Mine as interviewer
+          a href="#" My Interviews Today
         li
-          a href="#" View Mine as interviewer today
+          a href="#" All of My Interviews
         li
-          a href="#" View My job openings related
+          a href="#" Any Interviews Related to Me
         li
-          a href="#" View All
+          a href="#" All
   
   -if can? :update, Interview
     .pull-right
       = button_tag 'Schedule Interviews', :class => 'flexible_schedule_interviews btn-primary'
-
+br
 =render :partial => 'interviews_index', :locals => {:opening_candidate => opening_candidate}

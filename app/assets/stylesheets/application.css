@@ -62,3 +62,10 @@ div.form-horizontal .control-label {
 .clear-both {
   clear: both;
 }
+
+label.filter-button-label {
+  font-size: 14px;
+  padding: 4px 12px;
+  text-align: center;
+  vertical-align: middle;
+}
