@@ -81,6 +81,9 @@ class OpeningsController < ApplicationController
   def create
     @opening = Opening.new(params[:opening])
 
+    unless current_user.has_role?(:recruiter)
+      return redirect_to openings_url, notice: 'Cannot create Job opening for other hiring managers.' if @opening.hiring_manager_id != current_user.id
+    end
     @opening.creator = current_user
     if @opening.save
       redirect_to @opening, notice: 'Opening was successfully created.'

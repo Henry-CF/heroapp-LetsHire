@@ -8,9 +8,9 @@ describe 'openings/new' do
       :title => 'MyString'
     ).as_new_record)
 
-    assign(:current_user, stub_model(User,
-      :id => 1
-    ).as_new_record)
+    user = FactoryGirl.create(:user)
+
+    controller.stub(:current_user) { user }
 
   end
 

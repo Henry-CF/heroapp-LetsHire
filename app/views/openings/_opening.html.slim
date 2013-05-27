@@ -17,6 +17,8 @@ tr data-id=opening.id
           li = link_to 'Edit', edit_opening_path(opening)
           - if opening.published?
             li = link_to 'Assign Candidates', '', :class => 'assign_candidates'
-          li = link_to 'Delete', opening, :confirm => 'Are you sure?', :method => :delete
+          -if current_user.admin? || opening.status == Opening::STATUS_LIST[:draft]
+            li = link_to 'Delete', opening, :confirm => 'Are you sure?', :method => :delete
+
+
         = link_to '', edit_opening_path(opening), class: 'icon-file-alt icon-large action-icon'
-        = link_to '', opening, :confirm => 'Are you sure?', :method => :delete, :class => 'icon-remove icon-large action-icon'

@@ -6,9 +6,9 @@ describe 'openings/edit' do
       :title => 'MyString'
     ))
 
-    assign(:current_user, stub_model(User,
-                                     :id => 1
-    ).as_new_record)
+    user = FactoryGirl.create(:user)
+
+    controller.stub(:current_user) { user }
   end
 
   it 'renders the edit opening form' do
