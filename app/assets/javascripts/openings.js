@@ -29,10 +29,20 @@ $(function() {
         });
     };
 
+    $('#opening_recruiter_id').change(function(event){
+        var current_user_id = $('#opening_recruiting_warn').attr('data-recruiter-id');
+        if (current_user_id != $(this).val()){
+            $('#opening_recruiting_warn').show();
+        }else{
+            $('#opening_recruiting_warn').hide();
+        }
+    });
+
     $('select#opening_department_id').change(function(event) {
         var department_id = $(this).val();
         return reload_role_func(department_id, 'hiring_manager');
     });
+
     if ($('#opening_hiring_manager_id').length > 0) {
         reload_role_func($('#opening_department_id')[0].value, 'hiring_manager');
     }
