@@ -67,9 +67,8 @@ class InterviewsController < AuthenticatedController
       @opening_candidate = OpeningCandidate.find_by_opening_id_and_candidate_id!(new_interviews[:opening_id], new_interviews[:candidate_id])
     end
     opening = @opening_candidate.opening
-    if opening.hiring_manager != current_user && !current_user.has_role?(:recruiter)
-      return render :json => { :success => false, :messages => ['access denied']}
-    end
+
+    return render :json => { :success => false, :messages => ['access denied']} unless (current_user.admin? || opening.owned_by?(current_user))
 
     new_interviews.delete :opening_candidate_id
     new_interviews.delete :opening_id

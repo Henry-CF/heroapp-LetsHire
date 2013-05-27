@@ -26,10 +26,12 @@ class DashboardController < ApplicationController
       @candidates_without_assessment = Candidate.without_assessment
     end
 
+    @interviews_interviewed_by_me = Interview.interviewed_by(current_user.id).upcoming
     if can? :manage, Interview
       @interviews_owned_by_me = Interview.owned_by(current_user.id).upcoming
-      @interviews_interviewed_by_me = Interview.interviewed_by(current_user.id).upcoming
       @interviews_without_feedback = Interview.where(:assessment => nil)
+    else
+      @interviews_without_feedback = current_user.interviews.where(:assessment => nil)
     end
     @interviews_owned_by_me ||= []
     @interviews_interviewed_by_me ||= []

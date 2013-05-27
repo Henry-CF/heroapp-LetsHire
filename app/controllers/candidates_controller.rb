@@ -63,6 +63,8 @@ class CandidatesController < AuthenticatedController
     end
 
     @resume = @candidate.resume.name unless @candidate.resume.nil?
+  rescue ActiveRecord::RecordNotFound
+    return render :text => "", notice: 'Invalid candidate'
   end
 
   def new
@@ -72,11 +74,11 @@ class CandidatesController < AuthenticatedController
   def edit
     @candidate = Candidate.find params[:id]
     @resume = @candidate.resume.name unless @candidate.resume.nil?
+  rescue ActiveRecord::RecordNotFound
+    redirect_to request.referrer, notice: 'Invalid candidate'
   end
 
-  # GET /edit_candidates
   def index_for_selection
-    authorize! :read, Candidate
     if params[:exclude_opening_id]
       exclude_opening = Opening.find(params[:exclude_opening_id])
       @candidates = Candidate.active.not_in_opening(exclude_opening.id).paginate(:page => params[:page])
@@ -84,8 +86,6 @@ class CandidatesController < AuthenticatedController
       @candidates = Candidate.active.paginate(:page => params[:page])
     end
     render :action => :index_for_selection, :layout => false
-  rescue ActiveRecord::RecordNotFound
-    return render :text => "", notice: 'Invalid opening'
   end
 
 
@@ -122,23 +122,19 @@ class CandidatesController < AuthenticatedController
     else
       render :action => 'new'
     end
+  rescue ActiveRecord::RecordNotFound
+    return render :text => "", notice: 'Invalid parameters'
   end
 
 
   def create_opening
+    return redirect_to request.referrer, notice: 'Invalid attributes' unless params[:candidate]
     @candidate = Candidate.find params[:id]
-    unless params[:candidate]
-      redirect_to request.referrer, notice: 'Invalid attributes'
-      return
-    end
+    authorize! :update, @candidate
     new_opening_id = params[:candidate][:opening_ids].to_i
-    if new_opening_id == 0
-      redirect_to request.referrer, :notice => "Opening was not given."
-      return
-    end
+    return redirect_to request.referrer, :notice => "Opening was not given." if new_opening_id == 0
     if @candidate.opening_ids.index(new_opening_id)
-      redirect_to request.referrer, :notice => "Opening was already assigned."
-      return
+      return redirect_to request.referrer, :notice => "Opening was already assigned."
     end
     if @candidate.opening_candidates.create(:opening_id => new_opening_id)
       redirect_to request.referrer, :notice => "Opening was successfully assigned."
@@ -152,11 +148,8 @@ class CandidatesController < AuthenticatedController
   #Don't support remove JD assignment via update API
   #To avoid removing a JD assignment accidentally, should use 'create_opening' instead.
   def update
+    return redirect_to @candidate, notice: 'Invalid parameters' unless params[:candidate]
     @candidate = Candidate.find params[:id]
-    unless params[:candidate]
-      redirect_to @candidate, notice: 'Invalid parameters'
-      return
-    end
     params[:candidate].delete(:department_id)
     params[:candidate].delete(:opening_ids)
 
@@ -165,8 +158,6 @@ class CandidatesController < AuthenticatedController
       tempio = params[:candidate][:resume]
       params[:candidate].delete(:resume)
     end
-
-    authorize! :update, Candidate
 
     if @candidate.update_attributes(params[:candidate])
       unless tempio.nil?
@@ -194,6 +185,8 @@ class CandidatesController < AuthenticatedController
 
   def move_to_blacklist
     @candidate = Candidate.find(params[:id])
+    authorize! :manage, @candidate
+
     reason = params[:comments]
     @candidate.mark_inactive(reason)
 
@@ -206,6 +199,8 @@ class CandidatesController < AuthenticatedController
 
   def reactivate
     @candidate = Candidate.find(params[:id])
+    authorize! :manage, @candidate
+
     @candidate.mark_active
 
     redirect_to candidates_url, :notice => "Candidate \"#{@candidate.name}\" (#{@candidate.email}) was successfully reactived."
