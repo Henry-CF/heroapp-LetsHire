@@ -50,7 +50,7 @@ class Ability
   end
 
   def hiring_manager(user)
-    can :create, Opening
+    can :create, Opening, :hiring_manager_id => user.id
     can :manage, Opening, :hiring_manager_id => user.id
     can :create, Candidate
     can :read, Candidate
