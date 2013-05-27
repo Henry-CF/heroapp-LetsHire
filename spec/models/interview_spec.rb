@@ -93,5 +93,11 @@ describe Interview do
       interview = Interview.create! valid_interview.merge(:user_ids => @users.map { |user| user.id })
       interview.should have(@users.size).interviewers
     end
+
+    it 'see canceled status after interview is canceled' do
+      interview = Interview.create! valid_interview.merge(:user_ids => @users.map { |user| user.id })
+      interview.cancel_interview('spec test')
+      interview.canceled?.should be_equal(true)
+    end
   end
 end

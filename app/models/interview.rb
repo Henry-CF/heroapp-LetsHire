@@ -18,6 +18,7 @@ class Interview < ActiveRecord::Base
   STATUS_NEW      = 'scheduled'
   STATUS_PROGRESS = 'started'
   STATUS_CLOSED   = 'finished'
+  STATUS_CANCELED = 'canceled'
 
   # interview modality constants
   MODALITY_PHONE = 'phone interview'
@@ -25,7 +26,7 @@ class Interview < ActiveRecord::Base
 
   MODALITIES = [MODALITY_PHONE, MODALITY_ONSITE]
 
-  STATUS = [STATUS_NEW, STATUS_PROGRESS, STATUS_CLOSED]
+  STATUS = [STATUS_NEW, STATUS_PROGRESS, STATUS_CLOSED, STATUS_CANCELED]
 
   validates :opening_candidate_id, :presence => true
   validates :modality, :scheduled_at, :presence => true
@@ -40,6 +41,10 @@ class Interview < ActiveRecord::Base
   def self.overall_status(interviews)
     interview_counts = interviews.group(:status).count
     (interview_counts.collect { | key, value | "#{value} #{key} interviews" }).join(',')
+  end
+
+  def cancel_interview(reason)
+    update_attributes({:status => STATUS_CANCELED, :assessment=> reason})
   end
 
   def scheduled_at_iso
@@ -68,6 +73,10 @@ class Interview < ActiveRecord::Base
 
   def finished?
     status == STATUS_CLOSED
+  end
+
+  def canceled?
+    status == STATUS_CANCELED
   end
 
 end

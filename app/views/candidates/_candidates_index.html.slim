@@ -23,10 +23,13 @@ div id="all-candidates"
                 -if can? :manage, @candidate
                   li = link_to 'Edit', edit_candidate_path(candidate)
                   li = link_to 'Assign Job Opening', "", :class => 'candidates_index_new_opening'
-                  li = link_to 'Move to Blacklist', move_to_blacklist_candidate_path(candidate), :method => :post, :confirm => 'Are you sure?'
+                  - unless candidate.inactive?
+                    li
+                      a.candidate-blacklist-link href='#' data-candidate-id=candidate.id Move to Blacklist
+                  - else
+                    li = link_to 'Reactivate', reactivate_candidate_path(candidate), :method => :post, :confirm => 'Please confirm?'
               -if can? :manage, @candidate
                 =link_to '', edit_candidate_path(candidate) , :class => 'icon-file-alt icon-large action-icon'
-                =link_to '', move_to_blacklist_candidate_path(candidate), :method => :post, :confirm => 'Are you sure?', :class => 'icon-remove icon-large action-icon'
-  
+          =render 'candidates/candidate_blacklist', {:candidate => candidate}
+
   = will_paginate @candidates, :class => "digg-paginate"
-  

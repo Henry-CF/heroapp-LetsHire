@@ -54,8 +54,27 @@ class Candidate < ActiveRecord::Base
     false
   end
 
-  def mark_inactive
+  def mark_inactive(reason = '')
+    # mark all unfinished interviews to be 'canceled' status
+    # mark all opening_candidates during interviewing to be 'quit' status
+    opening_candidates.each do |opening_candidate|
+      opening_candidate.interviews.each do |interview|
+        unless interview.finished?
+          interview.cancel_interview(reason)
+        end
+      end
+      opening_candidate.quit_job_application if opening_candidate.in_interview_loop?
+    end
     update_attributes(:status => INACTIVE)
+  end
+
+  def mark_active
+    opening_candidates.each do |opening_candidate|
+      # NOTE: For these 'canceled' interviews we do not touch them user should
+      # schedule new round of interviews.
+      opening_candidate.reopen_job_application if opening_candidate.quit?
+    end
+    update_attributes(:status => NORMAL)
   end
 
   def status_str
