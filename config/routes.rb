@@ -74,6 +74,7 @@ LetsHire::Application.routes.draw do
     member do
       get 'legacy_show'
       post 'move_to_blacklist'
+      post 'reactivate'
       get 'resume'
       get 'new_opening'
       put 'create_opening'
