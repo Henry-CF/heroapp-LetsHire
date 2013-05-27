@@ -39,7 +39,7 @@
                                     div.accordion-heading
                                       a.accordion-toggle.collapsed data-toggle="collapse" data-parent="#accordion3-#{j}-#{i}-internal" href="#collapse3-#{j}-#{i}-internal"
                                         - uids = interview.interviewers.map{|u| u.user_id}
-                                        - interviews = User.find(:all, :conditions => ['id in (?)', uids]).map{|u| u.name}
+                                        - interviews = User.active.find(:all, :conditions => ['id in (?)', uids]).map{|u| u.name}
                                         span
                                           = "From #{interviews.join(' ')}"
                                       div.accordion-body.collapse id="collapse3-#{j}-#{i}-internal"

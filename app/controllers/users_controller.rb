@@ -11,7 +11,7 @@ class UsersController < AuthenticatedController
       department = Department.find(params[:department_id])
       @users = department.users.where("name like ?", "%#{params[:q]}%").paginate(:page => params[:page])
     else
-      @users = User.name_order.where("name like ?", "%#{params[:q]}%").paginate(:page => params[:page])
+      @users = User.active.name_order.where("name like ?", "%#{params[:q]}%").paginate(:page => params[:page])
     end
     render :action => 'index_for_selection', :layout => false
   rescue
@@ -32,13 +32,13 @@ class UsersController < AuthenticatedController
   end
 
   def show
-    @user = User.find(params[:id])
+    @user = User.active.find(params[:id])
   rescue ActiveRecord::RecordNotFound
     redirect_to users_url, :notice => 'Invalid user'
   end
 
   def update
-    @user = User.find(params[:id])
+    @user = User.active.find(params[:id])
 
     # required for settings form to submit when password is left blank
     if params[:user][:password].blank?
@@ -61,14 +61,14 @@ class UsersController < AuthenticatedController
   end
 
   def edit
-    @user = User.find(params[:id])
+    @user = User.active.find(params[:id])
     @departments = Department.all
   rescue ActiveRecord::RecordNotFound
     redirect_to users_url, notice: 'Invalid user'
   end
 
   def deactivate
-    @user = User.find(params[:id])
+    @user = User.active.find(params[:id])
     if current_user == @user
       return redirect_to :back, :notice => 'Cannot disable yourself'
     end

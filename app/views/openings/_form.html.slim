@@ -8,13 +8,13 @@
   .control-group
     =f.label :recruiter, :class => 'control-label'
     .controls
-      = f.select :recruiter_id, User.with_role(:recruiter).map { |user| [ user.name, user.id ] }
+      = f.select :recruiter_id, User.active.with_role(:recruiter).map { |user| [ user.name, user.id ] }
       = f.label "You are creating one job opening that doesn't belong to you! ", :class => 'warning_message_label', :id => 'opening_recruiting_warn', :"data-recruiter-id" => @current_user ? @current_user.id : current_user.id
 
   .control-group
     =f.label :department, :class => 'control-label'
     .controls
-      - departments = User.active_departments
+      - departments = User.active.active_departments
       - if departments.size > 0
         = f.select :department_id, departments, :prompt => 'Please select a department'
       - else
@@ -25,7 +25,7 @@
       =f.label :hiring_manager, 'Hiring Manager', :class => 'control-label'
       .controls
         -if @opening.department
-          - users = @opening.department.users.select { |user| (user.has_role?(:hiring_manager)) }
+          - users = @opening.department.users.select { |user|  user.has_role?(:hiring_manager) && user.active? }
         = render :partial => 'users/user_select', :locals => { :name => :opening_hiring_manager_id, :users=> users, :selected => @opening.try(:hiring_manager_id) }
   - else
     .control-group

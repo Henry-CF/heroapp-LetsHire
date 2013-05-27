@@ -17,6 +17,7 @@ class User < ActiveRecord::Base
   self.per_page = 20
 
   scope :name_order, order('name ASC')
+  scope :active, where(:deleted_at => nil)
 
   belongs_to :department
   has_many :openings_to_be_interviewed, :through => :opening_participants
@@ -35,6 +36,10 @@ class User < ActiveRecord::Base
 
   def has_role?(role_name)
     admin? || role_name.to_s == 'interviewer' || (roles_mask & User::name2role(role_name) ) != 0
+  end
+
+  def active?
+    deleted_at.nil?
   end
 
   # The class method used in seed.rb to create the only admin user
