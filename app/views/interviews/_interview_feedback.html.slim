@@ -16,6 +16,10 @@ div.clear-both.form-horizontal.dialog-feedback-div id="interview-feedback-dialog
       .controls
         = f.text_area :assessment, :rows => 6, :class => 'span4'
     .control-group
+      .controls
+        = f.check_box :status, {:checked => true}, 'finished', interview.status
+        = f.label :status, 'Mark this interview finished', :class => 'checkbox inline-label'
+    .control-group
       label.control-label
       .controls
         .actions
