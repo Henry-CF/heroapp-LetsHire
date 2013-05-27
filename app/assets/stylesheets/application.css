@@ -62,3 +62,24 @@ div.form-horizontal .control-label {
 .clear-both {
   clear: both;
 }
+
+.sortable th .current {
+  padding-right: 12px;
+  background-repeat: no-repeat;
+  background-position: right center;
+}
+
+.sortable th .asc {
+  background-image: url(up_arrow.gif);
+}
+
+.sortable th .desc {
+  background-image: url(down_arrow.gif);
+}
+
+label.filter-button-label {
+  font-size: 14px;
+  padding: 4px 12px;
+  text-align: center;
+  vertical-align: middle;
+}
