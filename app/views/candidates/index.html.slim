@@ -4,12 +4,20 @@ div.row-fluid
   .pull-left
     .div.btn-group
       label.inline-label.filter-button-label View
-      button.btn id="candidates_filtername" Active Candidates
+      button.btn id="candidates_filtername" =@default_filter
       button.btn.dropdown-toggle data-toggle="dropdown"
         span.caret
       ul.dropdown-menu id="candidates_viewfilter"
         li
-          a href="#" Active Candidates
+          a href="#" Active Candidates without job openigns
+        li
+          a href="#" Active Candidates without interviews
+        li
+          a href="#" Interviewed Candidates with no final assessment
+        li
+          a href="#" Interviewed Candidates with final assessment
+        li
+          a href="#" All Active Candidates
         li
           a href="#" Blacklisted Candidates
         li

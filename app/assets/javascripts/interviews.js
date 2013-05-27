@@ -488,16 +488,19 @@ $(function () {
         var target = getEventTarget(event);
         document.getElementById('interviews_filtername').innerHTML = target.innerHTML.toString();
         switch (getIndex(target)) {
-            case 0: // View Mine as interviewer
-                refreshInterviews('interviewed_by_me');
-                break;
-            case 1: // View Mine as interviewer today
+            case 0: // View Mine as interviewer today
                 refreshInterviews('interviewed_by_me_today');
+                break;
+            case 1: // View Mine as interviewer
+                refreshInterviews('interviewed_by_me');
                 break;
             case 2: // View My job openings related
                 refreshInterviews('owned_by_me');
                 break;
-            case 3: // View All
+            case 3:
+                refreshInterviews('no_feedback');
+                break;
+            case 4: // View All
                 refreshInterviews('all');
                 break;
             default:

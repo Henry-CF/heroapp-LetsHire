@@ -14,10 +14,8 @@ div.row-fluid
   .pull-left
     .div.btn-group
       label.inline-label.filter-button-label View
-      -if can? :update, Interview
-        button.btn id="interviews_filtername" Any Interviews Related to Me
-      -else
-        button.btn id="interviews_filtername" My Interviews Today
+      button.btn id="interviews_filtername" = @default_filter
+
       button.btn.dropdown-toggle data-toggle="dropdown"
         span.caret
       ul.dropdown-menu id="interviews_viewfilter"
@@ -27,6 +25,8 @@ div.row-fluid
           a href="#" All of My Interviews
         li
           a href="#" Any Interviews Related to Me
+        li
+          a href="#" Interviews without Feedback
         li
           a href="#" All
   
