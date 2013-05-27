@@ -16,7 +16,7 @@ class OpeningsController < ApplicationController
       if params.has_key?(:all)
         @openings = Opening.order(sort_column('Opening') + ' ' + sort_direction).paginate(:page => params[:page])
       elsif params.has_key? :no_candidates
-        @openings = Opening.without_candidates.owned_by(current_user.id).order(sort_column('Opening') + ' ' + sort_direction).paginate(:page => params[:page])
+        @openings = Opening.published.without_candidates.owned_by(current_user.id).order(sort_column('Opening') + ' ' + sort_direction).paginate(:page => params[:page])
       elsif params.has_key? :owned_by_me
         @openings = Opening.owned_by(current_user.id).order(sort_column('Opening') + ' ' + sort_direction).paginate(:page => params[:page])
       else
