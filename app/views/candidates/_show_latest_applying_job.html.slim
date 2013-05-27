@@ -43,7 +43,11 @@
                             div.accordion-inner
                               span
                                 = interview.assessment
-            - if interview.status != 'finished'
+            - if interview.status == 'canceled'
+              div.accordion-body.collapse id="collapse2-#{i}"
+                div.accordion-inner
+                  = "Cancel reason: #{interview.assessment}"
+            - elsif interview.status != 'finished'
               div.accordion-body.collapse id="collapse2-#{i}"
                 div.accordion-inner This Interview has not finished yet
 

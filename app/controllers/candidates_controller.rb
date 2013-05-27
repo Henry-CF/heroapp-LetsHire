@@ -194,13 +194,25 @@ class CandidatesController < AuthenticatedController
 
   def move_to_blacklist
     @candidate = Candidate.find(params[:id])
-    @candidate.mark_inactive
+    reason = params[:comments]
+    @candidate.mark_inactive(reason)
 
     redirect_to candidates_url, :notice => "Candidate \"#{@candidate.name}\" (#{@candidate.email}) was successfully moved to blacklist."
   rescue ActiveRecord::RecordNotFound
     redirect_to users_url, notice: 'Invalid user'
   rescue
     redirect_to candidates_url, :error => "Candidate \"#{@candidate.name}\" (#{@candidate.email}) cannot be moved to blacklist."
+  end
+
+  def reactivate
+    @candidate = Candidate.find(params[:id])
+    @candidate.mark_active
+
+    redirect_to candidates_url, :notice => "Candidate \"#{@candidate.name}\" (#{@candidate.email}) was successfully reactived."
+  rescue ActiveRecord::RecordNotFound
+    redirect_to users_url, notice: 'Invalid user'
+  rescue
+    redirect_to candidates_url, :error => "Candidate \"#{@candidate.name}\" (#{@candidate.email}) cannot be reactived."
   end
 
   # NOTE: keep the destroy method since we are not sure whether it is needed or not

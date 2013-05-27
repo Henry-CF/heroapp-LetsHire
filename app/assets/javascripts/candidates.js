@@ -40,6 +40,22 @@ $(function() {
         });
     }
 
+    $(document).on('click', '.candidate-blacklist-link', function(event){
+        event.stopPropagation();
+        var candidate_id = $(this).attr('data-candidate-id');
+        var div_id = "candidate-blacklist-dialog-" + candidate_id;
+
+        $("div#" + div_id).dialog({
+            height: 350,
+            width: 450,
+            modal: true,
+            title: 'Deactive candidate',
+            close: function(event, ui){
+                $(this).dialog('destroy');
+            }
+        });
+    });
+
     if ($('.dropdown-toggle').length > 0) {
         $('.dropdown-toggle').dropdown();
     }
