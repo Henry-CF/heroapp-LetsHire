@@ -16,8 +16,6 @@ class User < ActiveRecord::Base
 
   self.per_page = 20
 
-  default_scope where(:deleted_at => nil)
-
   scope :name_order, order('name ASC')
 
   belongs_to :department

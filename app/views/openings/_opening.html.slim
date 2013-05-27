@@ -2,8 +2,11 @@ tr data-id=opening.id
   td= link_to opening.title, opening
   td= opening.department.try(:name)
   td
-    - if opening.hiring_manager
-      = link_to opening.hiring_manager.name, opening.hiring_manager
+    -if opening.hiring_manager
+      - if opening.hiring_manager.deleted_at.nil?
+        = link_to opening.hiring_manager.name, opening.hiring_manager
+      - else
+        = opening.hiring_manager.name
   td.capitalized-text = opening.status_str
   td= "#{opening.filled_no}/#{opening.total_no}"
   td= link_to "#{opening.candidates.active.count}", candidates_path(:opening_id => opening.id)
