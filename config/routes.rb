@@ -95,8 +95,6 @@ LetsHire::Application.routes.draw do
     resources :interviews
   end
 
-  get '/settings', to: 'settings#index'
-
   get '/addresses/subregion_options' => 'openings#subregion_options'
 
   # Sample resource route with options:

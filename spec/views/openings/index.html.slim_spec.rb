@@ -25,8 +25,8 @@ describe "openings/index" do
     render :template => "openings/index_anonymous"
 
     assert_select "tr>td", :text => "Title".to_s, :count => 2
-    expect(rendered).not_to include "View Mine"
-    expect(rendered).not_to include "View All"
+    expect(rendered).not_to include "My Interviews"
+    expect(rendered).not_to include "All"
     expect(rendered).not_to include "Add a Job Opening"
   end
 
@@ -39,11 +39,11 @@ describe "openings/index" do
   it "switch between view-all and view-mine" do
     sign_in_as_admin
     render
-    expect(rendered).to include "View All"
+    expect(rendered).to include "All"
     render :template => 'openings/index', :locals => { :mine => true }
-    expect(rendered).to include "View All"
+    expect(rendered).to include "All"
     render :template => 'openings/index', :locals => { :all => true }
-    expect(rendered).to include "View Mine"
+    expect(rendered).to include "My Openings"
   end
 
 end
