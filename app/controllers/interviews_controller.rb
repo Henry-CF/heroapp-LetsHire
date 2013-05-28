@@ -68,7 +68,7 @@ class InterviewsController < AuthenticatedController
     end
     opening = @opening_candidate.opening
 
-    return render :json => { :success => false, :messages => ['access denied']} unless (current_user.admin? || opening.owned_by?(current_user))
+    return render :json => { :success => false, :messages => ['access denied']} unless (current_user.admin? || opening.owned_by?(current_user.id))
 
     new_interviews.delete :opening_candidate_id
     new_interviews.delete :opening_id
