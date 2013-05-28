@@ -24,7 +24,7 @@ class DepartmentsController < AuthenticatedController
 
   def user_select
     @department = Department.find(params[:id])
-    users = @department.users
+    users = @department.users.active
     role = params[:role] || 'interviewer'
     users.select! { |user| (user.has_role?(role)) }
     render :partial => 'users/user_select', :locals => { :users => users}
