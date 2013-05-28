@@ -16,7 +16,7 @@ class DashboardController < ApplicationController
 
     if can? :manage, Opening
       @active_openings = Opening.published.owned_by(current_user.id)
-      @openings_without_candidate = Opening.without_candidates.owned_by(current_user.id)
+      @openings_without_candidate = Opening.published.without_candidates.owned_by(current_user.id)
     end
 
     if can? :manage, Candidate
@@ -41,7 +41,7 @@ class DashboardController < ApplicationController
     # data displayed in charts
     @openings_created_by_me = Opening.created_by(current_user.id).length
     @openings_assigned_to_me = Opening.owned_by(current_user.id).length
-    @openings_without_interviewers = Opening.without_interviewers.length
+    @openings_without_interviewers = Opening.published.without_interviewers.length
 
     # FIXME: Do we arrange interview on Sunday and Saturday ?
     @dates = []

@@ -11,27 +11,34 @@
       = f.select :recruiter_id, User.active.with_role(:recruiter).map { |user| [ user.name, user.id ] }
       = f.label "You are creating one job opening that doesn't belong to you! ", :class => 'warning_message_label', :id => 'opening_recruiting_warn', :"data-recruiter-id" => @current_user ? @current_user.id : current_user.id
 
-  .control-group
-    =f.label :department, :class => 'control-label'
-    .controls
-      - departments = current_user.has_role?(:recruiter) ? User.active_departments : [current_user.department]
-      - if departments.size > 0
-        = f.select :department_id, departments.map { |d| [d.name, d.id]}, :prompt => departments.size > 1
-      - else
-        = f.label 'No hiring manager created?!'
-
-  - unless @opening.closed?
+  - if current_user.has_role?(:recruiter)  && !@opening.closed?
+    .control-group
+      =f.label :department, :class => 'control-label'
+      .controls
+        - departments = current_user.has_role?(:recruiter) ? User.active_departments : [current_user.department]
+        - if departments.size > 0
+          = f.select :department_id, departments.map { |d| [d.name, d.id]}, :prompt => departments.size > 1
+        - else
+          = f.label 'No hiring manager created?!'
     .control-group
       =f.label :hiring_manager, 'Hiring Manager', :class => 'control-label'
       .controls
         -if @opening.department
-          - users = current_user.has_role?(:recruiter) ? @opening.department.users.select { |user| (user.has_role?(:hiring_manager) and user.active?) } : [ current_user]
-        = render :partial => 'users/user_select', :locals => { :name => :opening_hiring_manager_id, :users=> users, :selected => @opening.try(:hiring_manager_id) }
+          - users =  @opening.department.users.active.select { |user| user.has_role?(:hiring_manager) }
+          = render :partial => 'users/user_select', :locals => { :name => :opening_hiring_manager_id, :users=> users, :selected => @opening.try(:hiring_manager_id) }
   - else
+    =f.hidden_field :hiring_manager_id
+    =f.hidden_field :department_id
+    .control-group
+      =f.label :department, :class => 'control-label'
+      .controls
+        = text_field_tag nil, @opening.department.try(:name), :disabled => true
     .control-group
       =f.label :hiring_manager, 'Hiring Manager', :class => 'control-label'
       .controls
-        = f.label nil, @opening.hiring_manager.name.html_safe
+        = text_field_tag nil, @opening.hiring_manager.try(:name), :disabled => true
+
+
 
   .control-group
     =f.label :total_no, 'Total Seats', :class => 'control-label'

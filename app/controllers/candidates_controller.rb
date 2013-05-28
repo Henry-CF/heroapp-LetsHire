@@ -6,34 +6,44 @@ class CandidatesController < AuthenticatedController
   include ApplicationHelper
 
   def index
+    @default_filter = 'Active Candidates without job openigns'
+
     # TODO: too many cases, we need a neat approach here.
     @candidates = (if params.has_key? :no_openings
-        Candidate.active.without_opening
-      elsif params.has_key? :no_interviews
-        Candidate.active.without_interview
-      elsif params.has_key? :with_assessment
-        Candidate.active.with_assessment
-      elsif params.has_key? :without_assessment
-        Candidate.active.without_assessment
-      elsif params.has_key? :with_opening
-        Candidate.active.with_opening
-      elsif params.has_key? :inactive
-        Candidate.inactive
-      elsif params.has_key? :available
-        Candidate.available
-      elsif params.has_key? :all
-        Candidate
-      else
-        opening = nil
-        if (params[:opening_id])
-          opening = Opening.find(params[:opening_id])
-        end
-        if opening
-          opening.candidates.active
-        else
-          # NOTE: show active candidates by default
-          Candidate.active
-        end
+                     @default_filter = 'Active Candidates without job openigns'
+                     Candidate.active.without_opening
+                   elsif params.has_key? :no_interviews
+                     @default_filter = 'Active Candidates without interviews'
+                     Candidate.active.without_interview
+                   elsif params.has_key? :with_assessment
+                     @default_filter = 'Interviewed Candidates with final assessment'
+                     Candidate.active.with_assessment
+                   elsif params.has_key? :without_assessment
+                     @default_filter = 'Interviewed Candidates with no final assessment'
+                     Candidate.active.without_assessment
+                   elsif params.has_key? :with_opening
+                     @default_filter = 'All Active Candidates'
+                     Candidate.active.with_opening
+                   elsif params.has_key? :inactive
+                     @default_filter = 'Blacklisted Candidates'
+                     Candidate.inactive
+                   elsif params.has_key? :available
+                     @default_filter = 'PLACEHOLDER TODO'
+                     Candidate.available
+                   elsif params.has_key? :all
+                     @default_filter = 'All'
+                     Candidate
+                   else
+                     opening = nil
+                     if (params[:opening_id])
+                       opening = Opening.find(params[:opening_id])
+                     end
+                     if opening
+                       opening.candidates.active
+                     else
+                       # NOTE: show active candidates by default
+                       Candidate.active
+                     end
       end).order(sort_column('Candidate') + ' ' + sort_direction).paginate(:page => params[:page])
 
     if params.has_key? :partial
@@ -53,8 +63,11 @@ class CandidatesController < AuthenticatedController
       @opening_candidate = @latest_applying_job # to fit the assessment form
       @opening = @latest_applying_job.opening
       @interviews = @latest_applying_job.interviews
-      @assessment = Assessment.new(:opening_candidate_id => @latest_applying_job.id,
-                                   :creator => current_user)
+      unless @latest_applying_job.assessment.nil?
+        @assessment = @latest_applying_job.assessment
+      else
+        @assessment = @latest_applying_job.create_assessment(:opening_candidate_id => @latest_applying_job.id)
+      end
     end
 
     @applying_jobs = nil
