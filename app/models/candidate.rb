@@ -57,13 +57,17 @@ class Candidate < ActiveRecord::Base
   def mark_inactive(reason = '')
     # mark all unfinished interviews to be 'canceled' status
     # mark all opening_candidates during interviewing to be 'quit' status
-    opening_candidates.each do |opening_candidate|
-      opening_candidate.interviews.each do |interview|
-        unless interview.finished?
-          interview.cancel_interview(reason)
+    OpeningCandidate.transaction do
+      Interview.transaction do
+        opening_candidates.each do |opening_candidate|
+          opening_candidate.interviews.each do |interview|
+            unless interview.finished?
+              interview.cancel_interview(reason)
+            end
+          end
+          opening_candidate.fail_job_application('moved to blacklist: ' + reason) if opening_candidate.in_interview_loop?
         end
       end
-      opening_candidate.quit_job_application if opening_candidate.in_interview_loop?
     end
     update_attributes(:status => INACTIVE)
   end
