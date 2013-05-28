@@ -32,6 +32,7 @@ class Opening < ActiveRecord::Base
   scope :published, where(:status => 1)
   scope :owned_by,  ->(user_id) { where('hiring_manager_id = ? OR recruiter_id = ? OR creator_id = ?', user_id, user_id, user_id) }
   scope :created_by, ->(user_id) { where('creator_id = ?', user_id)}
+  scope :interviewed_by, ->(user_id) { joins(:opening_participants => [:participant]).where('users.id = ?', user_id) }
   scope :without_candidates, where(:opening_candidates_count => 0)
   scope :without_interviewers, where('id NOT IN (SELECT opening_id FROM opening_candidates)')
 
@@ -79,6 +80,10 @@ class Opening < ActiveRecord::Base
     total_no - filled_no
   end
 
+  def close_operation?(new_status)
+    (not closed?) and (new_status.to_i == STATUS_LIST[:closed])
+  end
+
   private
   def select_valid_owners_if_active
     if status != STATUS_LIST[:closed]
@@ -106,7 +111,6 @@ class Opening < ActiveRecord::Base
   def total_no_should_ge_than_filled_no
     errors.add(:total_no, 'is smaller than filled seat number.') if filled_no > total_no
   end
-
 
   STATUS_STRINGS = STATUS_LIST.invert
 end
