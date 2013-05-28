@@ -32,6 +32,7 @@ class Opening < ActiveRecord::Base
   scope :published, where(:status => 1)
   scope :owned_by,  ->(user_id) { where('hiring_manager_id = ? OR recruiter_id = ? OR creator_id = ?', user_id, user_id, user_id) }
   scope :created_by, ->(user_id) { where('creator_id = ?', user_id)}
+  scope :interviewed_by, ->(user_id) { joins(:opening_participants => [:participant]).where('users.id = ?', user_id) }
   scope :without_candidates, where(:opening_candidates_count => 0)
   scope :without_interviewers, where('id NOT IN (SELECT opening_id FROM opening_candidates)')
 

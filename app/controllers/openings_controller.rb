@@ -27,7 +27,8 @@ class OpeningsController < ApplicationController
         if can? :manage, Opening
           @openings = Opening.owned_by(current_user.id).order(sort_column('Opening') + ' ' + sort_direction).paginate(:page => params[:page])
         else
-          @openings = current_user.openings
+          #NOTE: here we get all openings which 'current_user' has interviews on
+          @openings = Opening.interviewed_by(current_user.id).paginate(:page => params[:page])
         end
       end
     end
@@ -141,10 +142,19 @@ class OpeningsController < ApplicationController
   def destroy
     @opening = Opening.find(params[:id])
     authorize! :manage, @opening
-    @opening.destroy
+    if @opening.published? or @opening.closed?
+      if current_user.admin?
+        @opening.destroy
+      else
+        #NOTE: only admin user is able to delete published or closed job openings
+        raise CanCan::AccessDenied
+      end
+    else
+      @opening.destroy
+    end
 
     redirect_to openings_url
-  rescue
+  rescue ActiveRecord::RecordNotFound
     redirect_to openings_url, notice: 'Invalid opening'
   end
 
