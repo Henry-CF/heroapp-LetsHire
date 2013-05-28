@@ -32,8 +32,6 @@ LetsHire::Application.routes.draw do
   match '/help', to: 'static_pages#help'
   match '/contact', to: 'static_pages#contact'
 
-
-
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
@@ -91,7 +89,7 @@ LetsHire::Application.routes.draw do
   end
 
   resources :opening_candidates do
-    resource :assessments
+    resources :assessments
     resources :interviews
   end
 

@@ -3,8 +3,7 @@ class AssessmentsController < ApplicationController
   def new
     @opening_candidate = OpeningCandidate.find params[:opening_candidate_id]
     if @opening_candidate
-      @assessment = Assessment.new(:opening_candidate_id => @opening_candidate.id,
-        :creator => current_user)
+      @assessment = Assessment.new(:opening_candidate_id => @opening_candidate.id)
       render 'assessments/edit'
     else
       render "static_pages/home", :notice => "The parent doesn't exist anymore"
@@ -30,7 +29,7 @@ class AssessmentsController < ApplicationController
     @opening_candidate = OpeningCandidate.find(params[:opening_candidate_id])
     @candidate = @opening_candidate.candidate
     @opening_candidate.status = params[:opening_candidate][:status]
-    @assessment = @opening_candidate.assessments.build(params[:assessment].merge(:creator => current_user))
+    @assessment = @opening_candidate.build_assessment(params[:assessment])
     respond_to do |format|
       if @assessment.save && @opening_candidate.save
         format.html { redirect_to @candidate, notice: 'Assessment was successfully made.' }
@@ -48,16 +47,19 @@ class AssessmentsController < ApplicationController
   # PUT /opening_candidates/:opening_candidate_id/assessments/:id
   # PUT /opening_candidates/:opening_candidate_id/assessments/:id.json
   def update
-    @assessment = Assessment.find(params[:id])
-    if params[:opening_candidate_id] != @assessement.opening_candidate_id
+    @assessment = Assessment.find(params[:id].to_i)
+
+    if params[:opening_candidate_id].to_i != @assessment.opening_candidate_id.to_i
       raise ActiveRecord::RecordNotFound
     end
-    @opening_candidate = @assessment.opening_candidate
+
+    @opening_candidate = OpeningCandidate.find(params[:opening_candidate_id])
     @candidate = @opening_candidate.candidate
+
     @opening_candidate.status = params[:assessment][:status]
     params[:assessment].delete(:status)
+    params[:assessment][:comment] = "\r\n\r\n" + "#{current_user.email} write feedback at #{Time.now.to_date}:\r\n"  + params[:assessment][:comment]
 
-    @assessment.creator = current_user
     respond_to do |format|
       if @assessment.update_attributes(params[:assessment]) && @opening_candidate.save
         format.html { redirect_to @candidate, notice: 'Assessment was successfully updated.' }

@@ -63,8 +63,11 @@ class CandidatesController < AuthenticatedController
       @opening_candidate = @latest_applying_job # to fit the assessment form
       @opening = @latest_applying_job.opening
       @interviews = @latest_applying_job.interviews
-      @assessment = Assessment.new(:opening_candidate_id => @latest_applying_job.id,
-                                   :creator => current_user)
+      unless @latest_applying_job.assessment.nil?
+        @assessment = @latest_applying_job.assessment
+      else
+        @assessment = @latest_applying_job.create_assessment(:opening_candidate_id => @latest_applying_job.id)
+      end
     end
 
     @applying_jobs = nil
