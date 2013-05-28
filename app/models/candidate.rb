@@ -65,7 +65,7 @@ class Candidate < ActiveRecord::Base
               interview.cancel_interview(reason)
             end
           end
-          opening_candidate.fail_job_application if opening_candidate.in_interview_loop?
+          opening_candidate.fail_job_application('moved to blacklist: ' + reason) if opening_candidate.in_interview_loop?
         end
       end
     end

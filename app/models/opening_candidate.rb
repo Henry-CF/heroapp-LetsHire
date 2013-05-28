@@ -60,8 +60,8 @@ class OpeningCandidate < ActiveRecord::Base
     status == OpeningCandidate::STATUS_LIST[OpeningCandidate::INTERVIEW_CLOSED]
   end
 
-  def fail_job_application
-    update_attributes(:status => OpeningCandidate::STATUS_LIST[OpeningCandidate::INTERVIEW_FAIL])
+  def fail_job_application(reason='')
+    update_attributes(:status => OpeningCandidate::STATUS_LIST[OpeningCandidate::INTERVIEW_FAIL], :assessment => reason)
   end
 
   def quit_job_application
