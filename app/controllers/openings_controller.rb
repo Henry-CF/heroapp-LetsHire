@@ -66,7 +66,10 @@ class OpeningsController < ApplicationController
   def new
     @opening = Opening.new(:title => '', :description => description_template)
     @opening.recruiter = current_user if current_user.has_role?(:recruiter)
-    @opening.hiring_manager = current_user if current_user.has_role?(:hiring_manager)
+    if current_user.has_role?(:hiring_manager)
+      @opening.hiring_manager_id = current_user.id
+      @opening.department_id = current_user.department_id
+    end
 
     respond_to do |format|
       format.html # edit.html.slim
