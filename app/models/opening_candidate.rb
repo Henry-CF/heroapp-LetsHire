@@ -14,26 +14,13 @@ class OpeningCandidate < ActiveRecord::Base
 
   accepts_nested_attributes_for :interviews, :allow_destroy => true, :reject_if => proc { |interview| interview.empty? }
 
-  def overall_status_str
-    if status.nil?
-      return "interview unscheduled"
-    elsif STATUS_STRINGS[status] == OpeningCandidate::INTERVIEW_LOOP
-      if interviews.count == 0
-        return "interview unscheduled"
-      else
-        return Interview.overall_status(interviews)
-      end
-    else
-      STATUS_STRINGS[status]
-    end
-  end
+  # find all 'rejected' records belong to recruiter user
+  scope :rejected, ->(user_id) { where( :status => STATUS_LIST['Offer Declined']).joins(:opening).where(['openings.recruiter_id = ?', user_id]) }
+  scope :notconfirmed, ->(user_id) { where( :status => STATUS_LIST['Offer Pending']).joins(:opening).where(['openings.recruiter_id = ?', user_id]) }
+  scope :accepted, ->(user_id) { OpeningCandidate.where( :status => STATUS_LIST['Offer Accepted']).joins(:opening).where(['openings.recruiter_id = ?', user_id]) }
 
   def status_str
-    if status.nil?
-      return "interview unscheduled"
-    else
-      STATUS_STRINGS[status]
-    end
+    status.nil? ? INTERVIEW_LOOP : STATUS_STRINGS[status]
   end
 
   def next_status_options
@@ -49,7 +36,7 @@ class OpeningCandidate < ActiveRecord::Base
   end
 
   def in_interview_loop?
-    status.nil? || (status == OpeningCandidate::STATUS_LIST[OpeningCandidate::INTERVIEW_LOOP])
+    status == OpeningCandidate::STATUS_LIST[OpeningCandidate::INTERVIEW_LOOP]
   end
 
   def quit?
@@ -65,37 +52,6 @@ class OpeningCandidate < ActiveRecord::Base
   end
 
   # find all 'rejected' records belong to recruiter user
-  def self.rejected?(user_id)
-    records = OpeningCandidate.find(:all, \
-                          :conditions=>["opening_candidates.opening_id=openings.id and \
-                                       openings.recruiter_id = users.id and \
-                                       users.id = #{user_id} and \
-                                       opening_candidates.status = #{STATUS_LIST['Offer Declined']}"], \
-                          :include=>[:opening=>[:recruiter]])
-    records
-  end
-
-  # find all 'notconfirmed' records belong to recruiter user
-  def self.notconfirmed?(user_id)
-    records = OpeningCandidate.find(:all, \
-                          :conditions=>["opening_candidates.opening_id=openings.id and \
-                                       openings.recruiter_id = users.id and \
-                                       users.id = #{user_id} and \
-                                       opening_candidates.status = #{STATUS_LIST['Offer Pending']}"], \
-                          :include=>[:opening=>[:recruiter]])
-    records
-  end
-
-  # find all 'accepted' records belong to recruiter user
-  def self.accepted?(user_id)
-    records = OpeningCandidate.find(:all, \
-                          :conditions=>["opening_candidates.opening_id=openings.id and \
-                                       openings.recruiter_id = users.id and \
-                                       users.id = #{user_id} and \
-                                       opening_candidates.status = #{STATUS_LIST['Offer Accepted']}"], \
-                          :include=>[:opening=>[:recruiter]])
-    records
-  end
 
   private
   INTERVIEW_LOOP = 'Interview Loop'

@@ -38,11 +38,6 @@ class Interview < ActiveRecord::Base
   scope :interviewed_by, ->(user_id) { joins(:interviewers).where('interviewers.user_id = ? ', user_id)}
   scope :owned_by, ->(user_id) { includes(:opening_candidate => [:opening]).where('openings.hiring_manager_id = ? OR openings.recruiter_id = ? OR openings.creator_id = ?', user_id, user_id, user_id) }
 
-  def self.overall_status(interviews)
-    interview_counts = interviews.group(:status).count
-    (interview_counts.collect { | key, value | "#{value} #{key} interviews" }).join(',')
-  end
-
   def cancel_interview(reason)
     update_attributes({:status => STATUS_CANCELED, :assessment=> reason})
   end

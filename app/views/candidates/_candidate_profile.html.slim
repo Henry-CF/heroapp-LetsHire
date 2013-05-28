@@ -9,11 +9,6 @@
             = link_to 'Edit', edit_candidate_path(@candidate), :class => "btn btn-primary"
       .control-group
         label.control-label
-          span Status
-        .controls
-          b = @candidate.status_str
-      .control-group
-        label.control-label
           span Email
         .controls
           a href="mailto:#{@candidate.email}" = @candidate.email
@@ -35,10 +30,6 @@
         label.control-label
           span Status
         .controls.controls-row
-          - if @latest_applying_job.nil?
-            p No job assigned
-          - else
-            - status_list = @latest_applying_job.overall_status_str.split(',')
-            div.span3
-              - status_list.each do |s|
-                label = s
+          label= @candidate.overall_status_str
+
+

@@ -54,8 +54,9 @@ class DashboardController < ApplicationController
       @interviews_upcoming_today << Interview.interviewed_by(current_user.id).during(date).length
     end
 
-    @offers_rejected = OpeningCandidate.rejected?(current_user.id).length
-    @offers_notconfirmed = OpeningCandidate.notconfirmed?(current_user.id).length
-    @offers_accepted = OpeningCandidate.accepted?(current_user.id).length
+    @offers_rejected = OpeningCandidate.rejected(current_user.id).count
+    @offers_notconfirmed = OpeningCandidate.notconfirmed(current_user.id).count
+    @offers_accepted = OpeningCandidate.accepted(current_user.id).count
+
   end
 end
