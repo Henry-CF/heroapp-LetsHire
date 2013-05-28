@@ -28,15 +28,26 @@ class Api::V1::InterviewsController < Api::V1::ApiController
     @interview = Interview.find(params['id'])
     @candidate = nil
     @opening = nil
+    resume_name = ''
+    resume_path = ''
     if requested_attrs.include? 'candidate'
       candidate_id = @interview.opening_candidate.candidate_id
       @candidate = Candidate.find(candidate_id)
       opening_candidate = OpeningCandidate.where(:candidate_id => candidate_id).first
       @opening = Opening.find(opening_candidate.opening_id)
+      if @candidate
+        resume_name = @candidate.resume.name unless @candidate.resume.nil?
+        resume_path = resume_candidate_path({:id => @candidate.id})
+      end
     end
     @attachment = nil
 
-    render :json => {:ret => OK, :interview => @interview, :candidate => @candidate, :attachment => @attachment, :opening => @opening}
+    @resume = {
+        :name => resume_name,
+        :path => resume_path
+    }
+
+    render :json => {:ret => OK, :interview => @interview, :candidate => @candidate, :attachment => @attachment, :opening => @opening, :resume => @resume}
   rescue ActiveRecord::RecordNotFound
     return unavailable_instance
   end
@@ -47,12 +58,21 @@ class Api::V1::InterviewsController < Api::V1::ApiController
     @interview = Interview.find(params['id'])
     @candidate = nil
     @opening = nil
+    @resume = nil
+    resume_name = ''
+    resume_path = ''
     if @interview.update_attributes(params['interview'])
       candidate_id = @interview.opening_candidate.candidate
       @candidate = Candidate.find(candidate_id)
       opening_candidate = OpeningCandidate.where(:candidate_id => candidate_id).first
       @opening = Opening.find(opening_candidate.opening_id)
-      render :json => {:interview => @interview, :candidate => @candidate, :opening => @opening }, :status => 200
+      resume_name = @canidate.resume.name unless @candidate.resume.nil?
+      resume_path = resume_candidate_path({:id => @candidate.id})
+      @resume = {
+          :name => resume_name,
+          :path => resume_path
+      }
+      render :json => {:interview => @interview, :candidate => @candidate, :opening => @opening, :resume => @resume }, :status => 200
     else
       render :json => {:ret => ERROR, :message => 'internal error'}, :status => 500
     end
