@@ -36,12 +36,12 @@ class OpeningsController < ApplicationController
       format.html  do
         if user_signed_in?
           if params.has_key?(:partial)
-            render :partial => "openings/openings_index"
+            render :partial => 'openings/openings_index'
           else
-            render "openings/index"
+            render 'openings/index'
           end
         else
-          render "openings/index_anonymous"
+          render 'openings/index_anonymous'
         end
       end
       format.json { render json: @openings }
@@ -95,7 +95,7 @@ class OpeningsController < ApplicationController
     if @opening.save
       redirect_to @opening, notice: 'Opening was successfully created.'
     else
-      render action: "new"
+      render action: 'new'
     end
   end
 
@@ -111,10 +111,24 @@ class OpeningsController < ApplicationController
     end
     params[:opening].delete :creator_id
 
+    if @opening.close_operation?(params[:opening][:status])
+      # transaction update the related opening_candidates status
+      OpeningCandidate.transaction do
+        Interview.transaction do
+          @opening.opening_candidates.each do |opening_candidate|
+            opening_candidate.interviews.each do |interview|
+              interview.cancel_interview('Job Opening Closed')
+            end
+            opening_candidate.close_job_application if opening_candidate.in_interview_loop?
+          end
+        end
+      end
+    end
+
     if @opening.update_attributes(params[:opening])
       redirect_to @opening, notice: 'Opening was successfully updated.'
     else
-      render action: "edit"
+      render action: 'edit'
     end
   rescue ActiveRecord::RecordNotFound
     redirect_to openings_url, notice: 'Invalid opening'

@@ -16,10 +16,10 @@ class OpeningCandidate < ActiveRecord::Base
 
   def overall_status_str
     if status.nil?
-      return "interview unscheduled"
+      return 'interview unscheduled'
     elsif STATUS_STRINGS[status] == OpeningCandidate::INTERVIEW_LOOP
       if interviews.count == 0
-        return "interview unscheduled"
+        return 'interview unscheduled'
       else
         return Interview.overall_status(interviews)
       end
@@ -30,7 +30,7 @@ class OpeningCandidate < ActiveRecord::Base
 
   def status_str
     if status.nil?
-      return "interview unscheduled"
+      return 'interview unscheduled'
     else
       STATUS_STRINGS[status]
     end
@@ -56,8 +56,20 @@ class OpeningCandidate < ActiveRecord::Base
     status == OpeningCandidate::STATUS_LIST[OpeningCandidate::INTERVIEW_QUIT]
   end
 
+  def closed?
+    status == OpeningCandidate::STATUS_LIST[OpeningCandidate::INTERVIEW_CLOSED]
+  end
+
+  def fail_job_application(reason='')
+    update_attributes(:status => OpeningCandidate::STATUS_LIST[OpeningCandidate::INTERVIEW_FAIL], :assessment => reason)
+  end
+
   def quit_job_application
     update_attributes(:status => OpeningCandidate::STATUS_LIST[OpeningCandidate::INTERVIEW_QUIT])
+  end
+
+  def close_job_application
+    update_attributes(:status => OpeningCandidate::STATUS_LIST[OpeningCandidate::INTERVIEW_CLOSED])
   end
 
   def reopen_job_application
@@ -99,11 +111,14 @@ class OpeningCandidate < ActiveRecord::Base
 
   private
   INTERVIEW_LOOP = 'Interview Loop'
+  INTERVIEW_FAIL = 'Fail'
   INTERVIEW_QUIT = 'Quit'
+  INTERVIEW_CLOSED = 'Closed'
   #Don't change order randomly. order matters.
   STATUS_LIST = { INTERVIEW_LOOP => 1,
                   'Fail' => 2,
-                  'Quit' => 3,
+                  'Quit' => 3,   # candidate quit
+                  'Closed' => 4, # opening closed
                   'Offer Pending' => 7,
                   'Offer Sent' => 8,
                   'Offer Declined' => 9,
