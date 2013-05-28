@@ -79,6 +79,10 @@ class Opening < ActiveRecord::Base
     total_no - filled_no
   end
 
+  def close_operation?(new_status)
+    (not closed?) and (new_status.to_i == STATUS_LIST[:closed])
+  end
+
   private
   def select_valid_owners_if_active
     if status != STATUS_LIST[:closed]
@@ -106,7 +110,6 @@ class Opening < ActiveRecord::Base
   def total_no_should_ge_than_filled_no
     errors.add(:total_no, 'is smaller than filled seat number.') if filled_no > total_no
   end
-
 
   STATUS_STRINGS = STATUS_LIST.invert
 end
