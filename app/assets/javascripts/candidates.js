@@ -120,13 +120,25 @@ $(function() {
         var target = getEventTarget(event);
         document.getElementById('candidates_filtername').innerHTML = target.innerHTML.toString();
         switch (getIndex(target)) {
-            case 0: // View Active
+            case 0: // View Active without openings
+                refreshCandidates('no_openings');
+                break;
+            case 1: // View Active without Interviews
+                refreshCandidates('no_interviews');
+                break;
+            case 2: // View interviewed candidates without final assessment
+                refreshCandidates('without_assessment');
+                break;
+            case 3: // View interviewed candidates with final assessment
+                refreshCandidates('with_assessment');
+                break;
+            case 4: // View Active
                 refreshCandidates('with_opening');
                 break;
-            case 1: // View Inactive
+            case 5: // View Inactive
                 refreshCandidates('inactive');
                 break;
-            case 2: // View All
+            case 6: // View All
                 refreshCandidates('all');
                 break;
             default:

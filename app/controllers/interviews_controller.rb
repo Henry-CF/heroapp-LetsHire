@@ -4,27 +4,36 @@ class InterviewsController < AuthenticatedController
   def index
     authorize! :read, Interview
 
+    @default_filter = 'My Interviews Today'
+
     @interviews = (if params.has_key? :owned_by_me
-      Interview.owned_by(current_user.id)
-    elsif params.has_key? :interviewed_by_me
-      Interview.interviewed_by(current_user.id)
-    elsif params.has_key? :interviewed_by_me_today
-      Interview.interviewed_by(current_user.id).during(Time.zone.now)
-    elsif params.has_key? :no_feedback
-      Interview.owned_by(current_user.id).where(:assessment => nil)
-    else
-      if can? :manage, Interview
-          if params.has_key? :all
-            Interview
-          else
-            Interview.owned_by(current_user.id)
-          end
-      elsif can? :update, Interview
-        Interview.owned_by(current_user.id)
-      else
-        Interview.interviewed_by(current_user.id)
-      end
-    end).paginate(:page => params[:page])
+                     @default_filter = 'Any Interviews Related to Me'
+                     Interview.owned_by(current_user.id)
+                   elsif params.has_key? :interviewed_by_me
+                     @default_filter = 'My Interviews Today'
+                     Interview.interviewed_by(current_user.id)
+                   elsif params.has_key? :interviewed_by_me_today
+                     @default_filter = 'All of My Interviews'
+                     Interview.interviewed_by(current_user.id).during(Time.zone.now)
+                   elsif params.has_key? :no_feedback
+                     @default_filter = 'Interviews without Feedback'
+                     Interview.owned_by(current_user.id).where(:assessment => nil)
+                  else
+                    if can? :manage, Interview
+                        if params.has_key? :all
+                          @default_filter = 'All'
+                          Interview
+                        else
+                          Interview.owned_by(current_user.id)
+                        end
+                    elsif can? :update, Interview
+                      @default_filter = 'Any Interviews Related to Me'
+                      Interview.owned_by(current_user.id)
+                    else
+                      @default_filter = 'My Interviews Today'
+                      Interview.interviewed_by(current_user.id)
+                    end
+                  end).paginate(:page => params[:page])
 
     if params.has_key? :partial
       render :partial => 'interviews/interviews_index', :locals => {:opening_candidate => nil}

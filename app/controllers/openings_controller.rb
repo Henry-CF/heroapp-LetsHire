@@ -13,11 +13,15 @@ class OpeningsController < ApplicationController
       #TODO: need exclude certain fields from anonymous access, such as 'Hiring Manager'
       @openings = Opening.published.order(sort_column('Opening') + ' ' + sort_direction).paginate(:page => params[:page])
     else
+      @default_filter = 'My Openings'
       if params.has_key?(:all)
+        @default_filter = 'All'
         @openings = Opening.order(sort_column('Opening') + ' ' + sort_direction).paginate(:page => params[:page])
       elsif params.has_key? :no_candidates
-        @openings = Opening.without_candidates.owned_by(current_user.id).order(sort_column('Opening') + ' ' + sort_direction).paginate(:page => params[:page])
+        @default_filter = 'Openings with Zero Candidates'
+        @openings = Opening.published.without_candidates.owned_by(current_user.id).order(sort_column('Opening') + ' ' + sort_direction).paginate(:page => params[:page])
       elsif params.has_key? :owned_by_me
+        @default_filter = 'My Openings'
         @openings = Opening.owned_by(current_user.id).order(sort_column('Opening') + ' ' + sort_direction).paginate(:page => params[:page])
       else
         if can? :manage, Opening
