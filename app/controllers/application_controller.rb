@@ -10,13 +10,13 @@ class ApplicationController < ActionController::Base
   end
 
   def init
-    return render :text => 'This page does not exist' if User.count > 0
+    return redirect_to root_path if User.count > 0
     @user = User.new
     render :file => 'utilities/admin_setup'
   end
 
   def admin_setup
-    return render :text => 'This page does not exist' if User.count > 0
+    return redirect_to root_path  if User.count > 0
     Department.create(Department::DEFAULT_SET) if Department.count == 0
 
     it = Department.find_by_name 'IT'
