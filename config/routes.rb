@@ -30,7 +30,6 @@ LetsHire::Application.routes.draw do
   post '/init', to: 'application#admin_setup'
 
   root to: 'dashboard#overview'
-  match '/help', to: 'static_pages#help'
   match '/contact', to: 'static_pages#contact'
 
   # The priority is based upon order of creation:
