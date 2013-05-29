@@ -85,6 +85,10 @@ class Candidate < ActiveRecord::Base
     STATUS_DESC[status]
   end
 
+  def overall_status_str
+    inactive? ? 'Inactive' : (opening_candidates.last.nil? ? 'No job assigned' : opening_candidates.last.status_str)
+  end
+
   def inactive?
     # NOTE: Shall we keep another table to store candidates in blacklist?
     status == INACTIVE # means the candidate is in blacklist

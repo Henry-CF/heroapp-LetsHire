@@ -56,8 +56,7 @@ class AssessmentsController < ApplicationController
     @opening_candidate = OpeningCandidate.find(params[:opening_candidate_id])
     @candidate = @opening_candidate.candidate
 
-    @opening_candidate.status = params[:assessment][:status]
-    params[:assessment].delete(:status)
+    @opening_candidate.status = params[:opening_candidate][:status].to_i
     params[:assessment][:comment] = "\r\n\r\n" + "#{current_user.email} write feedback at #{Time.now.to_date}:\r\n"  + params[:assessment][:comment]
 
     respond_to do |format|

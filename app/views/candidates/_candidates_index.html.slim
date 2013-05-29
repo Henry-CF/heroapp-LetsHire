@@ -14,7 +14,7 @@ div id="all-candidates"
           td= link_to candidate.name, candidate
           td= h(candidate.email)
           td= candidate.openings.last.try(:title)
-          td= candidate.opening_candidates.try(:last).try(:status_str) || 'None'
+          td= candidate.overall_status_str
           td.actions
             .dropdown
               a.dropdown-toggle.icon-cog.icon-large.action-icon data-toggle="dropdown" href="#"

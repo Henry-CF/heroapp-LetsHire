@@ -6,11 +6,11 @@ class CandidatesController < AuthenticatedController
   include ApplicationHelper
 
   def index
-    @default_filter = 'Active Candidates without job openigns'
+    @default_filter = 'All Active Candidates'
 
     # TODO: too many cases, we need a neat approach here.
     @candidates = (if params.has_key? :no_openings
-                     @default_filter = 'Active Candidates without job openigns'
+                     @default_filter = 'Active Candidates without job openings'
                      Candidate.active.without_opening
                    elsif params.has_key? :no_interviews
                      @default_filter = 'Active Candidates without interviews'
