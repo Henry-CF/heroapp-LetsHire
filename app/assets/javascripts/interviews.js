@@ -389,7 +389,7 @@ $(function () {
                 return false;
             }
             var interviews = GetAllInterviews(tbody);
-            if (interviews === false) {
+            if (!interviews) {
                 return false;
             }
             $.post('/interviews/update_multiple',
