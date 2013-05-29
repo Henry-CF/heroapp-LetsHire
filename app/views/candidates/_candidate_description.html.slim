@@ -7,5 +7,6 @@ h3 Candidate Details
     .row-fluid
       .span6
       .span6
-        = link_to 'Assign Job Opening', "", :class => 'candidate_new_opening btn btn-primary'
+        -unless @candidate.inactive?
+          = link_to 'Assign Job Opening', "", :class => 'candidate_new_opening btn btn-primary'
 p = "#{h(truncate(@candidate.description, :length => 1000))}"
