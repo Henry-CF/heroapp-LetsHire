@@ -27,6 +27,10 @@ class OpeningCandidate < ActiveRecord::Base
     STATUS_LIST
   end
 
+  def candidate_name
+    candidate.try(:name)
+  end
+
   def all_interviews_finished?
     return false if interviews.empty?
     interviews.each do |interview|

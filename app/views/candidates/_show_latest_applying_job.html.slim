@@ -5,7 +5,8 @@
     .span7
       .row-fluid
         .span6
-          = link_to 'Schedule Interviews', edit_multiple_interviews_path(:opening_candidate_id => @latest_applying_job.id), :class => "btn btn-primary"
+          -if @latest_applying_job.in_interview_loop?
+            = link_to 'Schedule Interviews', edit_multiple_interviews_path(:opening_candidate_id => @latest_applying_job.id), :class => "btn btn-primary"
         .span6
           a.btn.btn-primary id='candidate-assessment-btn' Assess Candidate
   hr

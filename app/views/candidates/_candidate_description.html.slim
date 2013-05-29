@@ -1,8 +1,11 @@
 h3 Candidate Details
 =hidden_field_tag :candidate_id, @candidate.id
-div.row-fluid
+.row-fluid
   .span5
     h3 = "#{@candidate.name}"
-  .span4
-    = link_to 'Assign Job Opening', "", :class => 'candidate_new_opening btn btn-primary'
+  .span7
+    .row-fluid
+      .span6
+      .span6
+        = link_to 'Assign Job Opening', "", :class => 'candidate_new_opening btn btn-primary'
 p = "#{h(truncate(@candidate.description, :length => 1000))}"
