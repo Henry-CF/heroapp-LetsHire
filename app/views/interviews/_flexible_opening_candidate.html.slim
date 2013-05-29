@@ -3,7 +3,7 @@ dl.dl-horizontal.clear-both
   dt Job Opening
   dd =link_to opening.title_with_department , opening
   dt Candidate
-  dd = collection_select(nil, :candidate_id, opening.candidates, :id, :name, { :prompt => 'Please select a candidate'}, { :id => :candidate_id, :name => nil })
+  dd = collection_select(nil, :candidate_id, opening.opening_candidates.select { |c| c.in_interview_loop? }, :candidate_id, :candidate_name, { :prompt => 'Please select a candidate'}, { :id => :candidate_id, :name => nil })
   dt#opening_candidate_status_label.hide Status
   dd#opening_candidate_status_field.hide
 

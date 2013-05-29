@@ -11,7 +11,7 @@
       = f.select :recruiter_id, User.active.with_role(:recruiter).map { |user| [ user.name, user.id ] }
       = f.label "You are creating one job opening that doesn't belong to you! ", :class => 'warning_message_label', :id => 'opening_recruiting_warn', :"data-recruiter-id" => @current_user ? @current_user.id : current_user.id
 
-  - if current_user.has_role?(:recruiter)  && !@opening.closed?
+  - if current_user.has_role?(:recruiter) && (!@opening.persisted? || (@opening.published?  && can?(:manage, @opening)))
     .control-group
       =f.label :department, :class => 'control-label'
       .controls
@@ -23,9 +23,8 @@
     .control-group
       =f.label :hiring_manager, 'Hiring Manager', :class => 'control-label'
       .controls
-        -if @opening.department
-          - users =  @opening.department.users.active.select { |user| user.has_role?(:hiring_manager) }
-          = render :partial => 'users/user_select', :locals => { :name => :opening_hiring_manager_id, :users=> users, :selected => @opening.try(:hiring_manager_id) }
+        - users =  @opening.department ? @opening.department.users.active.select { |user| user.has_role?(:hiring_manager) } : []
+        = render :partial => 'users/user_select', :locals => { :name => :opening_hiring_manager_id, :users=> users, :selected => @opening.try(:hiring_manager_id) }
   - else
     =f.hidden_field :hiring_manager_id
     =f.hidden_field :department_id

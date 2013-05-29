@@ -56,18 +56,13 @@ describe InterviewsController do
       end
 
       describe "with invalid params" do
-        it "assigns the interview as @interview" do
+        it "assigns the interview as @interview and redirects to given url" do
           interview = Interview.create! valid_interview
           Interview.any_instance.stub(:save).and_return(false)
           put :update, { :id => interview.to_param, :interview => {} }
+          request.env['HTTP_REFERER'] = interviews_url
           assigns(:interview).should eq(interview)
-        end
-
-        it "re-renders the 'edit' template" do
-          interview = Interview.create! valid_interview
-          Interview.any_instance.stub(:save).and_return(false)
-          put :update, { :id => interview.to_param, :interview => {} }
-          response.should render_template("edit")
+          response.should redirect_to(interviews_url)
         end
       end
 

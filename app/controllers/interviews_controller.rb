@@ -77,7 +77,9 @@ class InterviewsController < AuthenticatedController
     end
     opening = @opening_candidate.opening
 
-    return render :json => { :success => false, :messages => ['access denied']} unless (current_user.admin? || opening.owned_by?(current_user.id))
+    unless can? :manage, opening
+      return render :json => { :success => false, :messages => ['access denied']}
+    end
 
     new_interviews.delete :opening_candidate_id
     new_interviews.delete :opening_id
@@ -137,12 +139,11 @@ class InterviewsController < AuthenticatedController
   def update
     @interview = Interview.find params[:id]
     authorize! :update, @interview
-    unless params[:interview][:assessment].nil?
-      unless is_interviewer? @interview.interviewers
-        prepare_edit
-        return render :action => :edit, :notice => 'Not an interviewer'
-      else
+    unless params[:interview][:assessment].nil? || params[:interview][:assessment].length == 0
+      if is_interviewer? @interview.interviewers
         @interview.assessment = params[:interview][:assessment]
+      else
+        return redirect_to request.referer, :notice => 'Not an interviewer'
       end
     end
     @interview.status = params[:interview][:status] unless params[:interview][:status].nil?
@@ -150,8 +151,7 @@ class InterviewsController < AuthenticatedController
     if @interview.save
       redirect_to request.referer, :notice => 'Interview is updated successfully'
     else
-      prepare_edit
-      render :action => :edit
+      redirect_to request.referer
     end
   end
 
