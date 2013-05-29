@@ -26,7 +26,8 @@ LetsHire::Application.routes.draw do
 
 
   # Hacker for initialization
-  match '/db_seed', to: 'application#db_seed'
+  get '/init', to: 'application#init'
+  post '/init', to: 'application#admin_setup'
 
   root to: 'dashboard#overview'
   match '/help', to: 'static_pages#help'

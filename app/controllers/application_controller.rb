@@ -9,19 +9,24 @@ class ApplicationController < ActionController::Base
     redirect_to root_path, :notice => NO_PERMISSION
   end
 
-  # Hack for db_seed because 'vmc console' is slow
-  def db_seed
-    return render :text => 'DB is initialized already' if User.count > 0 || Department.count > 0
-    long_password = '123456789'
+  def init
+    return redirect_to root_path if User.count > 0
+    @user = User.new
+    render :file => 'utilities/admin_setup'
+  end
 
-    Department.create(Department::DEFAULT_SET)
+  def admin_setup
+    return redirect_to root_path  if User.count > 0
+    Department.create(Department::DEFAULT_SET) if Department.count == 0
+
     it = Department.find_by_name 'IT'
-    User.new_admin(:email => 'admin@local.com',
-                   :password => long_password,
-                   :name => 'System Administrator',
-                   :department_id => it.id).save
-
-    redirect_to new_user_session_path, :notice => 'DB initialized successfully'
+    @user = User.new_admin(params[:user])
+    @user.department_id = it.id
+    if @user.save
+      redirect_to new_user_session_path, :notice => 'Admin user created successfully, enjoy LetsHire '
+    else
+      redirect_to request.referer, :notice => 'Creating admin user failed, retry'
+    end
   end
 
   private
