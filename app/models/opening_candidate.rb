@@ -44,45 +44,45 @@ class OpeningCandidate < ActiveRecord::Base
   end
 
   def quit?
-    status == OpeningCandidate::STATUS_LIST[OpeningCandidate::INTERVIEW_QUIT]
+    status == OpeningCandidate::STATUS_LIST[OpeningCandidate::QUIT]
   end
 
   def closed?
-    status == OpeningCandidate::STATUS_LIST[OpeningCandidate::INTERVIEW_CLOSED]
+    status == OpeningCandidate::STATUS_LIST[OpeningCandidate::CLOSED]
   end
 
   def fail_job_application(reason='')
-    update_attributes(:status => OpeningCandidate::STATUS_LIST[OpeningCandidate::INTERVIEW_FAIL], :assessment => reason)
+    update_attributes(:status => OpeningCandidate::STATUS_LIST[OpeningCandidate::FAIL], :assessment => reason)
   end
 
   def quit_job_application
-    update_attributes(:status => OpeningCandidate::STATUS_LIST[OpeningCandidate::INTERVIEW_QUIT])
+    update_attributes(:status => OpeningCandidate::STATUS_LIST[OpeningCandidate::QUIT])
   end
 
   def close_job_application
-    update_attributes(:status => OpeningCandidate::STATUS_LIST[OpeningCandidate::INTERVIEW_CLOSED])
+    update_attributes(:status => OpeningCandidate::STATUS_LIST[OpeningCandidate::CLOSED])
   end
 
   def reopen_job_application
-    update_attributes(:status => OpeningCandidate::STATUS_LIST[OpeningCandidate::INTERVIEW_LOOP])
+    update_attributes(:status => OpeningCandidate::STATUS_LIST[OpeningCandidate::LOOP])
   end
 
   # find all 'rejected' records belong to recruiter user
 
-  private
   INTERVIEW_LOOP = 'Interview Loop'
-  INTERVIEW_FAIL = 'Fail'
-  INTERVIEW_QUIT = 'Quit'
-  INTERVIEW_CLOSED = 'Closed'
+  FAIL = 'Fail'
+  QUIT = 'Quit'
+  CLOSED = 'Closed'
+  OFFER_ACCEPTED = 'Offer Accepted'
   #Don't change order randomly. order matters.
   STATUS_LIST = { INTERVIEW_LOOP => 1,
-                  'Fail' => 2,
-                  'Quit' => 3,   # candidate quit
-                  'Closed' => 4, # opening closed
+                  FAIL => 2,
+                  QUIT => 3,   # candidate quit
+                  CLOSED => 4, # opening closed
                   'Offer Pending' => 7,
                   'Offer Sent' => 8,
                   'Offer Declined' => 9,
-                  'Offer Accepted' => 10}
+                  OFFER_ACCEPTED => 10}
   STATUS_STRINGS = STATUS_LIST.invert
 
 end

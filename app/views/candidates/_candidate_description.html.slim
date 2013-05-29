@@ -7,6 +7,6 @@ h3 Candidate Details
     .row-fluid
       .span6
       .span6
-        -unless @candidate.inactive?
+        -unless @candidate.inactive? || @candidate.overall_status_str == OpeningCandidate::OFFER_ACCEPTED
           = link_to 'Assign Job Opening', "", :class => 'candidate_new_opening btn btn-primary'
 p = "#{h(truncate(@candidate.description, :length => 1000))}"
