@@ -82,10 +82,7 @@ p {
 
 /* footer */
 footer {
-  margin-top: 45px;
-  padding-top: 5px;
   border-top:  1px solid $grayMediumLight;
-  color:  $grayLight;
   a {
     color: $gray;
     &:hover {
@@ -96,13 +93,19 @@ footer {
     float: left;
   }
   ul {
-    float: right;
+    float: left;
     list-style: none;
     li {
       float: left;
       margin-left: 10px;
+      color: white;
+      vertical-align: middle;
     }
   }
+}
+
+footer .container {
+  padding-top: 10px;
 }
 
 /* for devise prompts */
