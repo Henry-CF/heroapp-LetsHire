@@ -25,13 +25,12 @@
 }
 
 .carousel-wrapper {
-  margin: 10px auto;
+  margin: 0px auto;
   margin-bottom: 0;
   position: relative;
   border: 10px solid #fff;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
+  -webkit-border-radius: 0px 0px 5px 5px;
+  -moz-border-radius: 0px 0px 5px 5px;
   -webkit-box-shadow: 0 0 2px #999;
   -moz-box-shadow: 0 0 2px #999;
   box-shadow: 0 0 2px #999;
@@ -119,7 +118,9 @@ a.carousel-control-next {
   background-color: #7ab5d3;
   padding: 2px;
   margin: 1px;
-  border-radius: 5px;
+  border-radius: 5px 5px 0px 0px;
+  border-bottom: 2px solid;
+  border-bottom-color: rgb(0,0,255);
 }
 
 .action-item-title span{
@@ -136,7 +137,8 @@ a.carousel-control-next {
   margin: 15px;
   border: 3px solid skyblue;
   background: none repeat scroll 0 0 #7ab5d3;
-  opacity: 0.9;
+  opacity: 0.8;
+  
 }
 
 .action-item {
@@ -178,6 +180,8 @@ a.carousel-control-next {
 
 .status-board {
   text-align: center;
+  vertical-align: middle;
+  height: 280px;
 }
 
 .status-board top-part,bottom-part {
@@ -189,5 +193,19 @@ a.carousel-control-next {
   height: 38px;
   font-size: 38px;
   font-family: "Arial Black", Gadget, sans-serif;
+}
+
+/** stats-charts **/
+.stats-chart {
+  border: 1px solid;
+  border-color: gainsboro;
+  border-radius: 5px;
+  float: left;
+  margin: 10px;
+  padding: 5px
+}
+
+.stats-chart h4 {
+  text-align: center
 }
 
