@@ -1,7 +1,6 @@
-.pull-left
-  h3 Users + Roles
-.pull-right.align-to-title
-  a.btn.btn-primary href=new_user_path Add a User
+h3 Users
+.pull-right
+  = link_to 'Add a User', new_user_path, :class => 'btn btn-primary'
 table class='table table-hover'
   thead
     tr
