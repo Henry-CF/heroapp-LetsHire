@@ -25,16 +25,16 @@
 }
 
 .carousel-wrapper {
-  margin: 10px auto;
+  margin: 0px auto;
   margin-bottom: 0;
   position: relative;
-  border: 10px solid #fff;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
+  padding: 10px;
+  -webkit-border-radius: 0px 0px 5px 5px;
+  -moz-border-radius: 0px 0px 5px 5px;
   -webkit-box-shadow: 0 0 2px #999;
   -moz-box-shadow: 0 0 2px #999;
   box-shadow: 0 0 2px #999;
+  background-color: white;
 }
 
 
@@ -43,7 +43,6 @@
   right: 15px;
   bottom: 0;
   font-size: 13px;
-  color: #fff;
   text-shadow: 0 0 1px rgba(0, 0, 0, 0.85);
   opacity: .66;
 }
@@ -116,10 +115,12 @@ a.carousel-control-next {
 /** title bar **/
 
 .action-item-title {
-  background-color: #7ab5d3;
+  background-color: #fcfcfc;
   padding: 2px;
   margin: 1px;
-  border-radius: 5px;
+  border-radius: 5px 5px 0px 0px;
+  border-bottom: 2px solid;
+  border-bottom-color: #0077b3;
 }
 
 .action-item-title span{
@@ -133,10 +134,10 @@ a.carousel-control-next {
   height: 100%;
   width: 180px;
   text-align: center;
-  margin: 15px;
-  border: 3px solid skyblue;
-  background: none repeat scroll 0 0 #7ab5d3;
-  opacity: 0.9;
+  margin: 18px;
+  background: none repeat scroll 0 0 #fcfcfc;
+  opacity: 0.8;
+  
 }
 
 .action-item {
@@ -159,7 +160,6 @@ a.carousel-control-next {
   line-height: 18px;
   opacity: 1.0;
   color: rgb(43, 43, 43);
-  font-family: "Arial Black", Gadget, sans-serif;
 }
 
 .action-item a {
@@ -168,9 +168,9 @@ a.carousel-control-next {
   padding: 4px 15px;
   position: absolute;
   text-decoration: none;
-  background: none repeat scroll 0 0 rgb(43, 43, 43);
+  background: none repeat scroll 0 0;
   text-align: center;
-  color:  #7aba7b;
+  color:  black;
   opacity: 1.0;
 }
 
@@ -178,6 +178,8 @@ a.carousel-control-next {
 
 .status-board {
   text-align: center;
+  vertical-align: middle;
+  height: 280px;
 }
 
 .status-board top-part,bottom-part {
@@ -189,5 +191,28 @@ a.carousel-control-next {
   height: 38px;
   font-size: 38px;
   font-family: "Arial Black", Gadget, sans-serif;
+}
+
+/** stats-charts **/
+
+.stats-chart-container {
+  margin-top: 2rem;
+  border-top: 2px solid #0077b3;
+  padding-top: 1.5rem;
+}
+
+
+.stats-chart {
+  border: 1px solid;
+  border-color: gainsboro;
+  border-radius: 5px;
+  float: left;
+  margin: 11px;
+  padding: 5px;
+  background-color: white;
+}
+
+.stats-chart h4 {
+  text-align: center
 }
 

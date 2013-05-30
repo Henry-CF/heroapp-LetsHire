@@ -6,14 +6,12 @@ br
     .bird_sight.span3
       = render partial: 'dashboard/recent_status'
 
-.container
-  h4.lightyellow_background Recruiting Progress
-  .container
-    .div.row-fluid
-      .stats-chart.span4
-        = render partial: 'dashboard/openings_chart'
-      .stats-chart.span5
-        = render partial: 'dashboard/interviews_chart'
-      .stats-chart.span3
-        = render partial: 'dashboard/offers_chart'
+.container.stats-chart-container
+  .div.row-fluid
+    .stats-chart
+      = render partial: 'dashboard/openings_chart'
+    .stats-chart
+      = render partial: 'dashboard/interviews_chart'
+    .stats-chart
+      = render partial: 'dashboard/offers_chart'
 
