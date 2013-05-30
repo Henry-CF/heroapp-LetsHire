@@ -96,12 +96,12 @@ body {
 
 .content {
   clear: left;
-  margin-top: 30px;
   border-top: 4px ridge rgba(0, 0, 0, 0.04);
 }
 
 .nav-header {
-  background-image: linear-gradient(rgb(237, 238, 244), rgb(227, 229, 233), 100px)
+  background-image: linear-gradient(rgb(237, 238, 244), rgb(227, 229, 233), 100px);
+  margin-bottom: 30px;
 }
 
 .nav-bar {
