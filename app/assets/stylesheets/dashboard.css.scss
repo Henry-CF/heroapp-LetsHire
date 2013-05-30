@@ -194,12 +194,20 @@ a.carousel-control-next {
 }
 
 /** stats-charts **/
+
+.stats-chart-container {
+  margin-top: 2rem;
+  border-top: 2px solid #0077b3;
+  padding-top: 1.5rem;
+}
+
+
 .stats-chart {
   border: 1px solid;
   border-color: gainsboro;
   border-radius: 5px;
   float: left;
-  margin: 10px;
+  margin: 11px;
   padding: 5px;
   background-color: white;
 }
