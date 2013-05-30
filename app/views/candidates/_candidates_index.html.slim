@@ -1,6 +1,6 @@
 div id="all-candidates"
-  table class='table table-hover'
-    thead class='sortable'
+  table class='table table-hover table-bordered'
+    thead class='sortable colheader'
       tr
         th = sortable 'Candidate', 'name', 'Name'
         th = sortable 'Candidate', 'email', 'Email'
@@ -17,6 +17,9 @@ div id="all-candidates"
           td= candidate.overall_status_str
           td.actions
             .dropdown
+              -if can? :manage, @candidate
+                =link_to '', edit_candidate_path(candidate) , :class => 'icon-file-alt icon-large action-icon'
+
               a.dropdown-toggle.icon-cog.icon-large.action-icon data-toggle="dropdown" href="#"
               ul.dropdown-menu
                 li = link_to 'View Details', candidate
@@ -28,8 +31,6 @@ div id="all-candidates"
                       a.candidate-blacklist-link href='#' data-candidate-id=candidate.id Move to Blacklist
                   - else
                     li = link_to 'Reactivate', reactivate_candidate_path(candidate), :method => :post, :confirm => 'Please confirm?'
-              -if can? :manage, @candidate
-                =link_to '', edit_candidate_path(candidate) , :class => 'icon-file-alt icon-large action-icon'
           =render 'candidates/candidate_blacklist', {:candidate => candidate}
 
   = will_paginate @candidates, :class => "digg-paginate"

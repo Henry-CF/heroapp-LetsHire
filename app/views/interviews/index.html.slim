@@ -10,29 +10,31 @@ h3 Interviews
 - opening_candidate ||= nil
 =hidden_field_tag :opening_candidate_id, opening_candidate.try(:id)
 
-div.row-fluid
-  .pull-left
-    .div.btn-group
-      label.inline-label.filter-button-label View
-      button.btn id="interviews_filtername" = @default_filter
-
-      button.btn.dropdown-toggle data-toggle="dropdown"
-        span.caret
-      ul.dropdown-menu id="interviews_viewfilter"
-        li
-          a href="#" My Interviews Today
-        li
-          a href="#" All of My Interviews
-        li
-          a href="#" Any Interviews Related to Me
-        li
-          a href="#" Interviews without Feedback
-        li
-          a href="#" All
-  
-  -if can? :update, Interview
-    .pull-right
-
-      = button_tag 'Schedule Interviews', :class => 'flexible_schedule_interviews btn-primary'
-br
-=render :partial => 'interviews_index', :locals => {:opening_candidate => opening_candidate}
+div.div-profile id="outer"
+  div.div-border id="inner"
+    div.row-fluid
+      .pull-left.index-view-filter
+        .div.btn-group
+          label.inline-label.filter-button-label View
+          button.btn id="interviews_filtername" = @default_filter
+    
+          button.btn.dropdown-toggle data-toggle="dropdown"
+            span.caret
+          ul.dropdown-menu id="interviews_viewfilter"
+            li
+              a href="#" My Interviews Today
+            li
+              a href="#" All of My Interviews
+            li
+              a href="#" Any Interviews Related to Me
+            li
+              a href="#" Interviews without Feedback
+            li
+              a href="#" All
+      
+      -if can? :update, Interview
+        .pull-right.index-edit-button
+    
+          = button_tag 'Schedule Interviews', :class => 'flexible_schedule_interviews btn-primary'
+    br
+    =render :partial => 'interviews_index', :locals => {:opening_candidate => opening_candidate}
