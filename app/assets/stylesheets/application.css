@@ -83,3 +83,50 @@ label.filter-button-label {
   text-align: center;
   vertical-align: middle;
 }
+
+img.logo {
+  float: left;
+  width: 300px;
+  height: 80px;
+}
+
+body {
+  background-color: rgb(237, 238, 244);
+}
+
+.content {
+  clear: left;
+  border-top: 4px ridge rgba(0, 0, 0, 0.04);
+}
+
+.nav-header {
+  background-image: linear-gradient(rgb(237, 238, 244), rgb(227, 229, 233), 100px);
+  margin-bottom: 30px;
+}
+
+.nav-bar {
+  padding-top: 50px;
+}
+
+.nav-bar span {
+  font-weight: bold;
+  border-right: 1px solid rgba(0, 0, 0, 0.04);
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+.nav-bar span:last-child {
+    border-right: 0px solid rgba(0, 0, 0, 0.04);
+}
+
+.nav-bar span a {
+    color: graytext;
+}
+
+.nav-bar span a.current {
+    color: #2d6987;
+}
+
+
+
+

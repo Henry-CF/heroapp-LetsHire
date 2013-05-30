@@ -23,17 +23,21 @@ html
     = render 'layouts/header'
     .container
       - if user_signed_in?
-        .navbar
-          .navbar-inner
-            ul.nav
-              li = link_to 'Dashboard', root_path
-              li = link_to 'Job Openings', openings_path
-              li = link_to 'Candidates', candidates_path
-              li = link_to 'Interviews', interviews_path
-              - if current_user.admin?
-                li.lastli = link_to 'Users', users_path
-      - flash.each do |name, msg|
-        = content_tag :div, msg, :id => "flash_#{name}", :class => "alert flash-#{name}" if msg.is_a?(String)
+        .nav-header
+          div
+            img.logo src='/images/logo.png'
+          .nav-bar.pull-right
+            span = link_to 'Dashboard', root_path, class: current_page(root_path)
+            span = link_to 'Job Openings', openings_path, class: current_page(openings_path)
+            span = link_to 'Candidates', candidates_path, class: current_page(candidates_path)
+            span = link_to 'Interviews', interviews_path, class: current_page(interviews_path)
+            - if current_user.admin?
+              span = link_to 'Users', users_path, class: current_page(users_path)
+      .content
+        - flash.each do |name, msg|
+          = content_tag :div, msg, :id => "flash_#{name}", :class => "alert flash-#{name}" if msg.is_a?(String)
 
-      == yield
+        == yield
     = render 'layouts/footer'
+
+

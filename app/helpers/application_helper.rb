@@ -24,4 +24,8 @@ module ApplicationHelper
   def sort_direction
     %w[asc desc].include?(params[:direction]) ? params[:direction] : 'asc'
   end
+
+  def current_page(path)
+    "current" if current_page?(path)
+  end
 end
