@@ -1,13 +1,13 @@
 br
-.container-fluid
-  .row-fluid
-    .action_items.span9
+.container
+  div
+    .action_items
       = render partial: 'dashboard/action_items'
-    .bird_sight.span3
+    .bird_sight
       = render partial: 'dashboard/recent_status'
 
 .container.stats-chart-container
-  .div.row-fluid
+  div
     .stats-chart
       = render partial: 'dashboard/openings_chart'
     .stats-chart
