@@ -110,13 +110,13 @@ body {
 
 .nav-bar span {
   font-weight: bold;
-  border-right: 1px solid rgba(0, 0, 0, 0.04);
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
   padding-left: 30px;
   padding-right: 30px;
 }
 
 .nav-bar span:last-child {
-    border-right: 0px solid rgba(0, 0, 0, 0.04);
+    border-right: 0;
 }
 
 .nav-bar span a {
@@ -126,7 +126,4 @@ body {
 .nav-bar span a.current {
     color: #2d6987;
 }
-
-
-
 

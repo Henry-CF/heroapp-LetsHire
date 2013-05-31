@@ -1,11 +1,7 @@
-div.well
-  div.status-board
-    div.top-part
-      h4 Current Active
-      h3 = @active_openings.size
-      h4 Job Openings
-    hr
-    div.bottom-part
-      h4 Upcomming Today
-      h3 = @interviews_owned_by_me.size
-      h4 Interviews
+div.status-board
+  div.top-part
+    h3 = @active_openings.size
+    h4 Job Openings
+  div.bottom-part
+    h3 = @interviews_owned_by_me.size
+    h4 Interviews
