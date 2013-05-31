@@ -11,16 +11,18 @@ tr data-id=opening.id
   td= "#{opening.filled_no}/#{opening.total_no}"
   td= link_to "#{opening.candidates.active.count}", candidates_path(:opening_id => opening.id)
 
-  td.actions
+  td
     - if can? :update, opening
-      .dropdown
-        = link_to '', edit_opening_path(opening), class: 'icon-file-alt icon-large action-icon'
+      div.row-fluid.actions
+        .span6.action-icon
+          = link_to '', edit_opening_path(opening), class: 'icon-edit'
 
-        a.dropdown-toggle.icon-cog.icon-large.action-icon data-toggle="dropdown" href="#"
-        ul.dropdown-menu
-          li = link_to 'View Details', opening
-          li = link_to 'Edit', edit_opening_path(opening)
-          - if opening.published?
-            li = link_to 'Assign Candidates', '', :class => 'assign_candidates'
-          -if current_user.admin? || opening.status == Opening::STATUS_LIST[:draft]
-            li = link_to 'Delete', opening, :confirm => 'Are you sure?', :method => :delete
+        .span6.action-icon
+          a.dropdown-toggle.icon-gear data-toggle="dropdown" href="#"
+          ul.dropdown-menu
+            li = link_to 'View Details', opening
+            li = link_to 'Edit', edit_opening_path(opening)
+            - if opening.published?
+              li = link_to 'Assign Candidates', '', :class => 'assign_candidates'
+            -if current_user.admin? || opening.status == Opening::STATUS_LIST[:draft]
+              li = link_to 'Delete', opening, :confirm => 'Are you sure?', :method => :delete
