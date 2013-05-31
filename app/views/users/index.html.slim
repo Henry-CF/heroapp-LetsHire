@@ -16,18 +16,22 @@ table class='table table-hover'
         td = user.email
         td = user.department.try(:name)
         td = user.roles_string
-        td.actions
-          .dropdown
-            a.dropdown-toggle.icon-cog.icon-large.action-icon data-toggle="dropdown" href="#"
-            ul.dropdown-menu
-              li = link_to 'View Details', user
-              li = link_to 'Edit', edit_user_path(user)
-              -if user != current_user
-                -if user.deleted_at.nil?
-                  li =link_to 'Deactivate',  disable_user_path(user), :confirm => 'Are you sure?'
-                -else
-                  li =link_to 'Reactivate',  enable_user_path(user)
-            = link_to '', edit_user_path(user.id), :class => 'icon-file-alt icon-large action-icon'
+        td
+          div.row-fluid.actions
+            .span6.action-icon
+              = link_to '', edit_user_path(user.id), :class => 'icon-edit'
+
+            .span6.action-icon
+              .dropdown
+                a.dropdown-toggle.icon-gear data-toggle="dropdown" href="#"
+                ul.dropdown-menu
+                  li = link_to 'View Details', user
+                  li = link_to 'Edit', edit_user_path(user)
+                  -if user != current_user
+                    -if user.deleted_at.nil?
+                      li =link_to 'Deactivate',  disable_user_path(user), :confirm => 'Are you sure?'
+                    -else
+                      li =link_to 'Reactivate',  enable_user_path(user)
 
 div.digg_pagination
   = will_paginate @users, :class => "digg-paginate"
