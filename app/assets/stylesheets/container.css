@@ -1,0 +1,45 @@
+.page-container-wrapper {
+    margin: auto;
+    width: 1080px;
+    padding: 0;
+}
+
+.page-container-wrapper h3 {
+
+}
+
+.page-container {
+    width: 100%;
+
+    border-top: 3px solid #4f86ba;
+    padding: 28px 0 0 0;
+
+
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 2%, from(#DCDCDC), to(#EDEEF4));
+    background-image: -webkit-linear-gradient(top, #DCDCDC 0%, #EDEEF4 2%);
+    background-image:    -moz-linear-gradient(top, #DCDCDC 0%, #EDEEF4 2%);
+    background-image:     -ms-linear-gradient(top, #DCDCDC 0%, #EDEEF4 2%);
+    background-image:      -o-linear-gradient(top, #DCDCDC 0%, #EDEEF4 2%);
+}
+
+.page-container-inner {
+    border-style: solid;
+    border-color: gainsboro;
+    border-width: 1px;
+    border-radius: 5px;
+    margin: 0;
+
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 20%, from(#DCDCDC), to(#FFFFFF));
+    background-image: -webkit-linear-gradient(top, #DCDCDC 0%, #FFFFFF 20%);
+    background-image:    -moz-linear-gradient(top, #DCDCDC 0%, #FFFFFF 20%);
+    background-image:     -ms-linear-gradient(top, #DCDCDC 0%, #FFFFFF 20%);
+    background-image:      -o-linear-gradient(top, #DCDCDC 0%, #FFFFFF 20%);
+}
+
+.page-container-inner-form {
+    padding: 30px 35px 10px 15px;
+}
+
+.page-container-inner-list {
+    padding: 30px 0px 50px 0px;
+}
