@@ -88,10 +88,11 @@ img.logo {
   float: left;
   width: 300px;
   height: 80px;
+  margin-top: 30px;
 }
 
 body {
-  background-color: #ededf4;
+  background: url(body_content.png);
 }
 
 .clearfix:before {
@@ -109,13 +110,12 @@ body {
 }
 
 .nav-header {
-  padding-top: 10px;
-  padding-bottom: 10px;
-  border-bottom: 1px ridge rgba(0, 0, 0, 0.1);
+  height: 119px;
+  background: url(nav_bg.png) repeat-x top;
 }
 
 .nav-bar {
-  padding-top: 50px;
+  margin-top: 85px;
 }
 
 .nav-bar span {
