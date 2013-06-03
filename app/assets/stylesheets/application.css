@@ -91,7 +91,8 @@ img.logo {
   margin-top: 30px;
 }
 
-body {
+body,
+.ui-dialog {
   background: url(body_content.png);
 }
 
