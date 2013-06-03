@@ -272,7 +272,7 @@ $(function () {
                 $(interviewer_td).children(":first-child").removeClass('field_with_errors');
             }
             $(interviewer_td).data('users', interviewers_selection_container.data('users').slice(0));
-            $(interviewer_td).find('span:first-child').text(interviewers_selection_container.data('users').join());
+            $(interviewer_td).find('span:first-child').html(interviewers_selection_container.data('users').join(';<br/>'));
             var original_user_ids = $(interviewer_td).data('origin_user_ids');
             if (!original_user_ids) {
                 // Definitely a change comparing to content loading
