@@ -1,5 +1,10 @@
 - unless applying_job.nil?
-  h4 Recruiting History for #{applying_job.opening.title}
+  div.row-fluid
+    - if applying_job.fail? or applying_job.quit?
+      div.candidate_failed
+    - else
+      div.candidate_successful
+    h4.interview_result Recruiting History for #{applying_job.opening.title}
   hr.candidate-splitter-line
   div
     - if applying_job.interviews.length > 0
@@ -13,15 +18,18 @@
                 div.accordion-group
                   div.accordion-heading
                     a.accordion-toggle.collapsed data-toggle="collapse" data-parent="#accordion3" href="#collapse3-#{index}-#{i}"
-                      ul.interviewline.large-interval
-                        li
-                          = interview.scheduled_at_iso
-                        li
-                          = interview.modality
-                        li
-                          = interview.duration
-                        li
-                          = interview.status
+                      table.interviewline.large-interval
+                        tr
+                          td
+                            img.indicator
+                          td
+                            = interview.scheduled_at
+                          td
+                            = interview.modality
+                          td
+                            = interview.duration
+                          td
+                            = interview.status
                     - if interview.status == 'finished'
                       div.accordion-body.collapse id="collapse3-#{index}-#{i}"
                         div.accordion-inner

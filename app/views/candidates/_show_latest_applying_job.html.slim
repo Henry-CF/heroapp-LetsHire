@@ -18,15 +18,18 @@
         div.accordion-group
           div.accordion-heading
             a.accordion-toggle.collapsed data-toggle="collapse" data-parent="#accordion2" href="#collapse2-#{i}"
-              ul.interviewline
-                li
-                  = interview.scheduled_at
-                li
-                  = interview.modality
-                li
-                  = interview.duration
-                li
-                  = interview.status
+              table.interviewline
+                tr
+                  td
+                    img.indicator
+                  td
+                    = interview.scheduled_at
+                  td
+                    = interview.modality
+                  td 
+                    = interview.duration
+                  td
+                    = interview.status
             - if interview.status == 'finished'
               div.accordion-body.collapse id="collapse2-#{i}"
                 div.accordion-inner

@@ -2,14 +2,18 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
-.interviewline li {
-  display: inline;
-  list-style-type: none;
-  padding: 10px;
+.interviewline td {
+  padding: 0px 15px 0px 15px;
 }
 
-.interviewline.large-interval li {
-  padding: 30px;
+.interviewline.large-interval td {
+  padding: 0px 30px 0px 30px;
+}
+
+img.indicator {
+  width: 13px;
+  height: 12px;
+  background: url(arrow.png) no-repeat center;
 }
 
 div.feedbackborder {
@@ -27,11 +31,6 @@ div.assessment-candidate-dialog {
 
 div.dialog-candidate-blacklist-div {
   display: none;
-}
-
-div.candidate-overview {
-  border-top: solid #628cb3;
-  padding-top: 30px;
 }
 
 div.candidate-panel {
@@ -71,7 +70,7 @@ p.candidate-status-font {
   width: 90%;
   height: 30px;
   padding: 5px;
-  background:url(mark_inactive.png) no-repeat left;
+  background: url(mark_inactive.png) no-repeat left;
 }
 
 .candidate-assign-job-button {
@@ -80,7 +79,7 @@ p.candidate-status-font {
   width: 90%;
   height: 30px;
   padding: 5px;
-  background:url(assign_job_opening.png) no-repeat left;
+  background: url(assign_job_opening.png) no-repeat left;
 }
 
 table.candidate-profile {
@@ -101,4 +100,24 @@ table.candidate-profile {
 .candidate-profile td.align-right {
     width: 30%;
     text-align: right;
+}
+
+div.candidate_successful {
+    float: left;
+    padding: 10px;
+    width: 35px;
+    height: 35px;
+    background: url(candidate_successful.png) no-repeat center;
+}
+
+div.candidate_failed {
+    float: left;
+    padding: 10px;
+    width: 35px;
+    height: 35px;
+    background: url(candidate_failed.png) no-repeat center;
+}
+
+h4.interview_result {
+    padding: 10px 5px 15px 5px;
 }
