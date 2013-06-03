@@ -14,14 +14,15 @@ tr
           = link_to '', edit_multiple_interviews_path(:opening_candidate_id => interview.opening_candidate_id), :class => 'icon-edit'
 
       .span6.action-icon
-        a.dropdown-toggle.icon-gear data-toggle="dropdown" href="#"
-        ul.dropdown-menu
-          li = link_to 'View Details', interview_path(interview)
-          -if can? :update, interview
-            li = link_to 'Edit', edit_interview_path(interview)
-          -if is_interviewer? interview.interviewers
-            li
-              a.interview-feedback-btn href='#' data-interview-id=interview.id Add Feedback
-          -if can_manage
-            li = link_to 'Delete', interview, :confirm => 'Are you sure?', :method => :delete
+        .dropdown
+          a.dropdown-toggle.icon-gear data-toggle="dropdown" href="#"
+          ul.dropdown-menu
+            li = link_to 'View Details', interview_path(interview)
+            -if can? :update, interview
+              li = link_to 'Edit', edit_interview_path(interview)
+            -if is_interviewer? interview.interviewers
+              li
+                a.interview-feedback-btn href='#' data-interview-id=interview.id Add Feedback
+            -if can_manage
+              li = link_to 'Delete', interview, :confirm => 'Are you sure?', :method => :delete
   =render 'interviews/interview_feedback', {:interview => interview }
