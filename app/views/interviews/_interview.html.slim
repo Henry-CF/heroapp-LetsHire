@@ -7,19 +7,22 @@ tr
   td= interview.interviewers_str
   td= interview.status
   - can_manage = can? :manage, interview
-  td.actions
-    .dropdown
-      -if can_manage
-        = link_to '', edit_multiple_interviews_path(:opening_candidate_id => interview.opening_candidate_id), :class => 'icon-file-alt icon-large action-icon'
-
-      a.dropdown-toggle.icon-cog.icon-large.action-icon data-toggle="dropdown" href="#"
-      ul.dropdown-menu
-        li = link_to 'View Details', interview_path(interview)
-        -if can? :update, interview
-          li = link_to 'Edit', edit_interview_path(interview)
-        -if is_interviewer? interview.interviewers
-          li
-            a.interview-feedback-btn href='#' data-interview-id=interview.id Add Feedback
+  td
+    div.row-fluid.actions
+      .span6.action-icon
         -if can_manage
-          li = link_to 'Delete', interview, :confirm => 'Are you sure?', :method => :delete
+          = link_to '', edit_multiple_interviews_path(:opening_candidate_id => interview.opening_candidate_id), :class => 'icon-edit'
+
+      .span6.action-icon
+        .dropdown
+          a.dropdown-toggle.icon-gear data-toggle="dropdown" href="#"
+          ul.dropdown-menu
+            li = link_to 'View Details', interview_path(interview)
+            -if can? :update, interview
+              li = link_to 'Edit', edit_interview_path(interview)
+            -if is_interviewer? interview.interviewers
+              li
+                a.interview-feedback-btn href='#' data-interview-id=interview.id Add Feedback
+            -if can_manage
+              li = link_to 'Delete', interview, :confirm => 'Are you sure?', :method => :delete
   =render 'interviews/interview_feedback', {:interview => interview }

@@ -91,17 +91,27 @@ img.logo {
 }
 
 body {
-  background-color: rgb(237, 238, 244);
+  background-color: #ededf4;
 }
 
-.content {
-  clear: left;
-  border-top: 4px ridge rgba(0, 0, 0, 0.04);
+.clearfix:before {
+  content: "";
+  display: table;
+}
+
+.clearfix:after {
+  clear: both;
+}
+
+/* IE 6/7 */
+.clearfix {
+  zoom: 1;
 }
 
 .nav-header {
-  background-image: linear-gradient(rgb(237, 238, 244), rgb(227, 229, 233), 100px);
-  margin-bottom: 30px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px ridge rgba(0, 0, 0, 0.1);
 }
 
 .nav-bar {
@@ -110,20 +120,20 @@ body {
 
 .nav-bar span {
   font-weight: bold;
+  font-size: 115%;
   border-right: 1px solid rgba(0, 0, 0, 0.1);
   padding-left: 30px;
   padding-right: 30px;
 }
 
 .nav-bar span:last-child {
-    border-right: 0;
+  border-right: 0;
 }
 
 .nav-bar span a {
-    color: graytext;
+  color: graytext;
 }
 
 .nav-bar span a.current {
-    color: #2d6987;
+  color: #2d6987;
 }
-
