@@ -1,16 +1,19 @@
-h3 Editing Candidate
+page-container-wrapper
+h3 Candidates -> Edit
 
-br
-= form_for @candidate, :html => { :class => 'form-horizontal' }  do |f|
-  = f.error_messages
-  .control-group
-    = f.label :status, :class => 'control-label'
-    .controls
-      = f.select :status, Candidate.status_description, :selected => @candidate.status
-  = render 'form', :f => f
+div.page-container
+  div.page-container-inner.page-container-inner-form
 
-  .control-group
-    .controls
-      .actions
-        = f.submit 'Save', :class => 'btn btn-primary'
-        = link_to 'Back', :back, :class => 'btn'
+    = form_for @candidate, :html => { :class => 'form-horizontal' }  do |f|
+      = f.error_messages
+      .control-group
+        = f.label :status, :class => 'control-label'
+        .controls
+          = f.select :status, Candidate.status_description, :selected => @candidate.status
+      = render 'form', :f => f
+
+      .control-group
+        .controls
+          .actions
+            = f.submit 'Save', :class => 'btn btn-primary'
+            = link_to 'Cancel', :back, :class => 'btn'
