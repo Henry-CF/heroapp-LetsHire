@@ -105,7 +105,7 @@ $(function () {
             {
                 var interviewer_td = $(row).find('td:eq(4)');
                 interviewer_td.find('div').removeClass('field_with_errors');
-                if ($(row).find('.icon-remove').length > 0) {
+                if ($(row).find('.button-remove').length > 0) {
                     var user_ids = interviewer_td.data('user_ids');
                     if (user_ids == null || user_ids.length == 0) {
                         interviewer_td.find('div').addClass('field_with_errors');
@@ -145,7 +145,7 @@ $(function () {
             }
 
 
-
+                                                                   f
         }
 
         // Read the row into an object
@@ -156,7 +156,7 @@ $(function () {
 
             interview.id = row.data('interview_id');
             interview.status = row.find('#status').val();
-            if (row.find('.icon-remove').length > 0) {
+            if (row.find('.button-remove').length > 0) {
                 interview.scheduled_at_iso = row.find('td:eq(0) input').data('iso');
                 interview.duration = row.find('td:eq(1) input').val();
                 interview.modality = row.find('td:eq(2) select').val();
@@ -352,7 +352,7 @@ $(function () {
             });
         });
 
-        table.on('click', 'td i.icon-remove', function() {
+        table.on('click', 'td a.button-remove', function() {
             var tbody = table.find('tbody');
             var row = $(this).closest('tr');
             if (row.data('interview_id')) {
