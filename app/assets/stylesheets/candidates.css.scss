@@ -33,16 +33,12 @@ div.dialog-candidate-blacklist-div {
   display: none;
 }
 
-div.candidate-panel {
+div.page-container-inner.candidate-panel {
   background-color: #ffffff;
   padding: 20px;
-  border:1px solid #dcdbdf;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
 }
 
-div.candidate-panel.fixed-size {
+div.page-container-inner.candidate-panel.fixed-size {
   overflow: auto;
 }
 

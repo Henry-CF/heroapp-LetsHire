@@ -1,20 +1,19 @@
 .page-container-wrapper
   h3 Candidate Details
   .page-container
-    .page-container-inner.page-container-inner-list
       div.row-fluid
         .span8
-          div.candidate-panel.fixed-size id="candidate-applying-panel"
+          div.page-container-inner.candidate-panel.fixed-size id="candidate-applying-panel"
             =render 'show_latest_applying_job'
         .span4
-          div.candidate-panel id="candidate-profile-panel"
+          div.page-container-inner.candidate-panel id="candidate-profile-panel"
             =render 'candidate_profile'
       - j = 0
       - unless @applying_jobs.nil?
         - @applying_jobs.each do |job|
           - j += 1
           br
-          div.candidate-panel
+          div.page-container-inner.candidate-panel
             div.row-fluid
               .span12
                 = render :partial => 'recruiting_history', :locals => { :applying_job => job, :index => j }
