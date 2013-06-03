@@ -38,6 +38,6 @@
             -if can? :update, Interview
               .pull-right.index-edit-button
 
-                = button_tag 'Schedule Interviews', :class => 'flexible_schedule_interviews btn-primary'
+                = button_tag 'Schedule Interviews', :class => 'flexible_schedule_interviews btn btn-primary'
           br
           =render :partial => 'interviews_index', :locals => {:opening_candidate => opening_candidate}
