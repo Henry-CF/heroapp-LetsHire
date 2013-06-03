@@ -1,35 +1,36 @@
 - unless @candidate.nil?
-  div
-    .form-horizontal.clear-both
-      .control-group
-        label.control-label
-          h4 Profile
-        .controls
+  div style="line-height: 50px"
+    div align="left"
+      p.candidate-name-font #{@candidate.name}
+      div.row-fluid
+        .span8 align="center"
+          p.candidate-status-font #{@candidate.overall_status_str}
+        .span4
           - if can? :manage, @candidate
             = link_to 'Edit', edit_candidate_path(@candidate), :class => "btn btn-primary"
-      .control-group
-        label.control-label
-          span Email
-        .controls
-          a href="mailto:#{@candidate.email}" = @candidate.email
-      .control-group
-        label.control-label
-          span Phone
-        .controls = @candidate.phone
-      .control-group
-        label.control-label
-          span Sources
-        .controls = @candidate.source
-      .control-group
-        label.control-label
-          span Resume
-        .controls
-          - if not @resume.nil?
-            = link_to "#{@resume}", resume_candidate_path({:id => @candidate.id})
-      .control-group
-        label.control-label
-          span Status
-        .controls.controls-row
-          label= @candidate.overall_status_str
-
-
+    
+    div align="center"
+      table.candidate-profile
+        tr
+          td.align-right E-mail
+          td
+            a href="mailto:#{@candidate.email}" = @candidate.email
+        tr
+          td.align-right Phone
+          td
+            = @candidate.phone
+        tr
+          td.align-right From
+          td
+            = @candidate.source
+        tr
+          td.align-right Resume
+          td
+            - if not @resume.nil?
+              = link_to "#{@resume}", resume_candidate_path({:id => @candidate.id})
+ 
+    div align="center"
+      = hidden_field_tag :candidate_id, @candidate.id
+      = link_to 'Assign Job Opening', '#', :class => 'btn candidate-assign-job-button candidate_new_opening'
+      = link_to 'Mark Inactive', '#', :class => 'btn candidate-mark-inactive-button candidate-blacklist-link', :"data-candidate-id" => @candidate.id
+      = render 'candidates/candidate_blacklist', {:candidate => @candidate}

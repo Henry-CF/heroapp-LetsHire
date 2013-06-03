@@ -1,51 +1,44 @@
-- unless @applying_jobs.nil?
-  h4 Recruiting History
-  hr
+- unless applying_job.nil?
+  h4 Recruiting History for #{applying_job.opening.title}
+  hr.candidate-splitter-line
   div
-    - j = 0
-    - @applying_jobs.each do |job|
-      - j += 1
-      div
-        p style="text-decoration:underline" = "For #{job.opening.title}"
-        - if job.interviews.length > 0
-          p style="text-indent: 2em" = "Interviews:"
-          div.container-fluid
-            div.row-fluid
-              div.span1
-              div.span11
-                div.accordion id="accordion3"
-                  - i = 0
-                  - job.interviews.each do |interview|
-                    - i += 1
-                    div.accordion-group
-                      div.accordion-heading
-                        a.accordion-toggle.collapsed data-toggle="collapse" data-parent="#accordion3" href="#collapse3-#{j}-#{i}"
-                          ul.interviewline
-                            li
-                              = interview.scheduled_at_iso
-                            li
-                              = interview.modality
-                            li
-                              = interview.duration
-                            li
-                              = interview.status
-                        - if interview.status == 'finished'
-                          div.accordion-body.collapse id="collapse3-#{j}-#{i}"
-                            div.accordion-inner
-                              div.feedbackborder
-                                p Feedback from interviews
-                                div.accordion id="accordion3-#{j}-#{i}-internal"
-                                  div.accordion-group
-                                    div.accordion-heading
-                                      a.accordion-toggle.collapsed data-toggle="collapse" data-parent="#accordion3-#{j}-#{i}-internal" href="#collapse3-#{j}-#{i}-internal"
-                                        - uids = interview.interviewers.map{|u| u.user_id}
-                                        - interviews = User.active.find(:all, :conditions => ['id in (?)', uids]).map{|u| u.name}
-                                        span
-                                          = "From #{interviews.join(' ')}"
-                                      div.accordion-body.collapse id="collapse3-#{j}-#{i}-internal"
-                                        div.accordion-inner
-                                        span
-                                          = interview.assessment
-        p style="text-indent: 2em" = "Final Assessment:"
-        =render :partial => 'job_assessment', :locals => { :opening_candidate => job }
-        br
+    - if applying_job.interviews.length > 0
+      div.container-fluid
+        div.row-fluid
+          div.span12
+            div.accordion id="accordion3"
+              - i = 0
+              - applying_job.interviews.each do |interview|
+                - i += 1
+                div.accordion-group
+                  div.accordion-heading
+                    a.accordion-toggle.collapsed data-toggle="collapse" data-parent="#accordion3" href="#collapse3-#{index}-#{i}"
+                      ul.interviewline.large-interval
+                        li
+                          = interview.scheduled_at_iso
+                        li
+                          = interview.modality
+                        li
+                          = interview.duration
+                        li
+                          = interview.status
+                    - if interview.status == 'finished'
+                      div.accordion-body.collapse id="collapse3-#{index}-#{i}"
+                        div.accordion-inner
+                          div.feedbackborder
+                            p Feedback from interviews
+                            div.accordion id="accordion3-#{index}-#{i}-internal"
+                              div.accordion-group
+                                div.accordion-heading
+                                  a.accordion-toggle.collapsed data-toggle="collapse" data-parent="#accordion3-#{index}-#{i}-internal" href="#collapse3-#{index}-#{i}-internal"
+                                    - uids = interview.interviewers.map{|u| u.user_id}
+                                    - interviews = User.active.find(:all, :conditions => ['id in (?)', uids]).map{|u| u.name}
+                                    span
+                                      = "From #{interviews.join(' ')}"
+                                  div.accordion-body.collapse id="collapse3-#{index}-#{i}-internal"
+                                    div.accordion-inner
+                                    span
+                                      = interview.assessment
+    p style="text-indent: 2em" = "Final Assessment:"
+    =render :partial => 'job_assessment', :locals => { :opening_candidate => applying_job }
+    br

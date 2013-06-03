@@ -1,12 +1,22 @@
-div.row-fluid
-  .span8
-    =render 'candidate_description'
-    =render 'show_latest_applying_job'
-    h4 Assessment
-    = render :partial => 'job_assessment', :locals => { :opening_candidate => @latest_applying_job }
-    = render 'recruiting_history'
-  .span4
-    =render 'candidate_profile'
-
-
-= render 'new_opening'
+h3 Candidate Details
+div.candidate-overview
+  div.row-fluid
+    .span8
+      div.candidate-panel.fixed-size id="candidate-applying-panel"
+        =render 'show_latest_applying_job'
+        h4 Assessment
+        = render :partial => 'job_assessment', :locals => { :opening_candidate => @latest_applying_job }
+    .span4
+      div.candidate-panel id="candidate-profile-panel"
+        =render 'candidate_profile'
+  - j = 0
+  - unless @applying_jobs.nil?
+    - @applying_jobs.each do |job|
+      - j += 1
+      br
+      div.candidate-panel
+        div.row-fluid
+          .span12
+            = render :partial => 'recruiting_history', :locals => { :applying_job => job, :index => j }
+  
+  = render 'new_opening'
