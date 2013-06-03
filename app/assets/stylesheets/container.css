@@ -44,6 +44,14 @@
     padding: 30px 0px 50px 0px;
 }
 
+.page-container-inner-list table.users {
+    margin-top: 50px;
+}
+
+.page-container-inner-view {
+    padding: 10px 35px 20px 35px;
+}
+
 .page-container-inner-interview-info {
 
 }

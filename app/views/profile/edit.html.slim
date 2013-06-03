@@ -1,20 +1,22 @@
-h3
-  span
-  = "Profile for #{@user.email}"
+.page-container-wrapper
+  h3
+    span
+    = "Profile for #{@user.email}"
+  .page-container
+    .page-container-inner.page-container-inner-form
+      = form_for @user, :url => { :action => 'update' } do |form|
+        = form.error_messages
 
-= form_for @user, :url => { :action => 'update' } do |form|
-  = form.error_messages
-
-  .field
-    = form.label :current_password
-    = form.password_field :current_password
-  .field
-    = form.label :password, 'Password'
-    = form.password_field :password, :autocomplete => 'off'
-  .field
-    = form.label :password_confirmation
-    = form.password_field :password_confirmation
-  .action_container
-    = form.submit 'Reset Password', :class => 'btn btn-primary'
-    = link_to 'Cancel', root_path, :class => 'btn'
+        .field
+          = form.label :current_password
+          = form.password_field :current_password
+        .field
+          = form.label :password, 'Password'
+          = form.password_field :password, :autocomplete => 'off'
+        .field
+          = form.label :password_confirmation
+          = form.password_field :password_confirmation
+        .action_container
+          = form.submit 'Reset Password', :class => 'btn btn-primary'
+          = link_to 'Cancel', root_path, :class => 'btn'
 
