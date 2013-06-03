@@ -144,8 +144,6 @@ $(function () {
                 return interviews;
             }
 
-
-                                                                   f
         }
 
         // Read the row into an object
