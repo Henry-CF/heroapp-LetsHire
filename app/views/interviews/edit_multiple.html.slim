@@ -1,30 +1,37 @@
-h3 Schedule Interviews
+.page-container-wrapper
+  h3 Interviews -> Schedule
+  .page-container
 
-#previous_url.hide data-value=request.referer
--if @opening_candidate
-  = render :partial => "fixed_opening_candidate", :locals => { :opening_candidate => @opening_candidate}
--else
-  = render :partial => "flexible_opening_candidate", :locals => { :opening => @opening}
+    .page-container-inner-interview-info
 
-#errorExplanation.hide
-  h2 Interviews cannot be saved due to the following errors.
-  ul#error_messages
+      #previous_url.hide data-value=request.referer
+      -if @opening_candidate
+        = render :partial => "fixed_opening_candidate", :locals => { :opening_candidate => @opening_candidate}
+      -else
+        = render :partial => "flexible_opening_candidate", :locals => { :opening => @opening}
 
-.pull-left
-  h4 Interviews
-.pull-right
-  = button_tag 'Schedule New', :class => 'add_new_interview btn'
+      #errorExplanation.hide
+        h2 Interviews cannot be saved due to the following errors.
+        ul#error_messages
 
-#interviewers_selection_container.hide
-  = collection_select(nil, :participants_department_id, Department.with_users, :id, :name, { :selected => @opening.department_id }, { :prompt => 'Filter by department', :id => :participants_department_id })
-  #interviewers_selection
+    .page-container-inner-interviews
+      div.add-new-interview-div
+        = link_to '#', :class=> 'add_new_interview' do
+          = image_tag('add.png')
+          = 'Schedule New'
+        end
 
-table.table.table-hover.schedule_interviews
-  = render :partial => 'schedule_reload'
 
-p
-.action_container
-  = submit_tag 'OK', :class => 'btn btn-primary submit_interviews'
-  = link_to 'Cancel', :back, :class => 'btn'
+      #interviewers_selection_container.hide
+        = collection_select(nil, :participants_department_id, Department.with_users, :id, :name, { :selected => @opening.department_id }, { :prompt => 'Filter by department', :id => :participants_department_id })
+        #interviewers_selection
+
+      table.table.table-hover.table-bordered.table-striped.schedule_interviews
+        = render :partial => 'schedule_reload'
+
+      p
+      .action_container.pull-right
+        = submit_tag 'OK', :class => 'btn btn-primary submit_interviews'
+        = link_to 'Cancel', :back, :class => 'btn'
 
 
