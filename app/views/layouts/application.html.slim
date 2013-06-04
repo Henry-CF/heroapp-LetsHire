@@ -24,7 +24,9 @@ html
     - if user_signed_in?
       .nav-header
         .clearfix.container
-          img.logo src='/assets/logo.png'
+          = link_to '/' do
+            img.logo src='/assets/logo.png'
+          end
           .nav-bar.pull-right
             span = link_to 'Dashboard', root_path, class: current_page(root_path)
             span = link_to 'Job Openings', openings_path, class: current_page(openings_path)
