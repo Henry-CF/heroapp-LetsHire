@@ -7,13 +7,18 @@
     .span8
       .center.hero-unit
         h1.home-title Welcome to LetsHire
+
     .span4
-      .sign-in
-        h3 Sign in
-        = form_for("user", :url => user_session_path) do |f|
-          = f.text_field :email, :placeholder => "Email", :class => "full-input", :autofocus => true
-          = f.password_field :password, :placeholder => "Password", :class => "full-input", :autocomplete => 'off'
-          div id="login_div"
-            = f.check_box :remember_me, :id => "login_checkbox", :checked => "checked"
-            = f.label :remember_me, :class => "inline-label"
-            = f.submit 'Sign in', :class => "pull-right btn btn-primary"
+      .auth-form
+        .auth-form-header
+          h3 Sign in
+        .auth-form-body
+          = form_for('user', :url => user_session_path) do |form|
+            = form.label :email
+            = form.text_field :email, :class => 'full-input', :autofocus => true
+            = form.label :password
+            = form.password_field :password, :class => 'full-input', :autocomplete => 'off'
+            div id="login_div"
+              = form.check_box :remember_me, :id => 'login_checkbox', :checked => 'checked'
+              = form.label :remember_me, :class => 'inline-label'
+              = form.submit 'Sign in', :class => 'pull-right btn '
