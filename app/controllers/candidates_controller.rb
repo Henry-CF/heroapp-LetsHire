@@ -72,7 +72,7 @@ class CandidatesController < AuthenticatedController
 
     @applying_jobs = nil
     unless @latest_applying_job.nil?
-      @applying_jobs = @candidate.opening_candidates.where("opening_candidates.id != #{@latest_applying_job.id}")
+      @applying_jobs = @candidate.opening_candidates.where("opening_candidates.id != #{@latest_applying_job.id}").order("opening_candidates.id DESC")
     end
 
     @resume = @candidate.resume.name unless @candidate.resume.nil?
