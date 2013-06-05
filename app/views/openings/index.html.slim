@@ -13,11 +13,12 @@ div.page-container-wrapper
                   span.caret
                 ul.dropdown-menu id="openings_viewfilter"
                   li
-                    a href="#" My Openings
+                    a href="?mode=owned_by_me" My Openings
                   li
-                    a href="#" Openings with Zero Candidates
-                  li
-                    a href="#" All
+                    a href="?mode=no_candidates" Openings with Zero Candidates
+                  -if can? :manage, Opening
+                    li
+                      a href="?mode=all" All
 
             .pull-right.index-edit-button
               -if can? :create, Opening

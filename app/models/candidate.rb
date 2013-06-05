@@ -31,12 +31,13 @@ class Candidate < ActiveRecord::Base
 
   scope :active, where(:status => NORMAL)
   scope :inactive, where(:status => INACTIVE)
-  scope :without_opening, where('id NOT IN (SELECT DISTINCT candidate_id FROM opening_candidates)')
+  scope :no_openings, where('id NOT IN (SELECT DISTINCT candidate_id FROM opening_candidates)')
   scope :not_in_opening, ->(opening_id) { where("id NOT IN (SELECT DISTINCT candidate_id FROM opening_candidates WHERE opening_id=#{opening_id})") }
-  scope :available, where(:status => INACTIVE).without_opening
+  scope :available, where(:status => INACTIVE).no_openings
   scope :with_opening, joins(:opening_candidates).uniq
   scope :with_interview, joins(:opening_candidates => :interviews).uniq
-  scope :without_interview, where('id NOT in ( SELECT DISTINCT "candidates"."id" FROM "candidates" INNER JOIN "opening_candidates" ON "opening_candidates"."candidate_id" = "candidates"."id" INNER JOIN "interviews" ON "interviews"."opening_candidate_id" = "opening_candidates"."id" )')
+  #Todo: need filter out candidates not assigned to interviews
+  scope :no_interviews, where('id NOT in ( SELECT DISTINCT "candidates"."id" FROM "candidates" INNER JOIN "opening_candidates" ON "opening_candidates"."candidate_id" = "candidates"."id" INNER JOIN "interviews" ON "interviews"."opening_candidate_id" = "opening_candidates"."id" )')
   scope :with_assessment, joins(:opening_candidates => :assessment).uniq
 
   def opening(index)
@@ -102,9 +103,8 @@ class Candidate < ActiveRecord::Base
     description
   end
 
-  def self.without_assessment
-    candidates = Candidate.with_interview
-    candidates.select! do |candidate|
+  def self.no_assessment
+    candidates = Candidate.with_interview.select! do |candidate|
       candidate.interviews_finished_no_assess?
     end
     candidates

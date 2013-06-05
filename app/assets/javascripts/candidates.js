@@ -16,7 +16,7 @@ $(function() {
         $('select#opening_id').attr('name', 'candidate[opening_ids]');
 
         $('body').delegate('select#department_id', 'change', function() {
-            Common.reload_opening($(this), $('#candidate_openingid_select_wrapper'), 'candidate[opening_ids]');
+            Common.reloadOpening($(this), $('#candidate_openingid_select_wrapper'), 'candidate[opening_ids]');
         });
 
         var opening_selection_container = $("#opening_selection_container");
@@ -59,93 +59,6 @@ $(function() {
     if ($('.dropdown-toggle').length > 0) {
         $('.dropdown-toggle').dropdown();
     }
-
-    $('#candidates_viewfilter').click(function(event) {
-        function getEventTarget(e) {
-            e = e || window.event;
-            return e.target || e.srcElement;
-        }
-
-        function getIndex(sender) {
-            var aElements = sender.parentNode.parentNode.getElementsByTagName("a");
-            var aElementsLength = aElements.length;
-
-            var index;
-            for (var i = 0; i < aElementsLength; i ++) {
-                if (aElements[i] == sender) {
-                    index = i;
-                    return index;
-                }
-            }
-        }
-
-        function refreshCandidates(condition) {
-            var xmlhttp = null;
-            var url = null;
-            if (condition == '') {
-                url = '/candidates?partial';
-            } else {
-                url = '/candidates?partial&' + condition;
-            }
-
-            if (window.XMLHttpRequest) {
-                xmlhttp = new XMLHttpRequest();
-            } else if (window.ActiveXObject) {
-                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-            } 
-            
-            if (xmlhttp != null) {
-                xmlhttp.onreadystatechange = function() {
-                    if (xmlhttp.readyState == 4) { // loaded
-                       if (xmlhttp.status == 200) { // ok
-                           document.getElementById('all-candidates').innerHTML = xmlhttp.responseText;
-                           if ($('.dropdown-toggle').length > 0) {
-                               $('.dropdown-toggle').dropdown();
-                           }
-                       }
-                       else {
-                           alert("Problem retrieving data:" + xmlhttp.statusText);
-                       }
-                    }
-                };
-                xmlhttp.open("GET", url, true);
-                xmlhttp.send(null);
-            }
-            else {
-                alert("Your browser does not support XMLHTTP.");
-            }
-        }
-
-
-        var target = getEventTarget(event);
-        document.getElementById('candidates_filtername').innerHTML = target.innerHTML.toString();
-        switch (getIndex(target)) {
-            case 0: // View Active without openings
-                refreshCandidates('no_openings');
-                break;
-            case 1: // View Active without Interviews
-                refreshCandidates('no_interviews');
-                break;
-            case 2: // View interviewed candidates without final assessment
-                refreshCandidates('without_assessment');
-                break;
-            case 3: // View interviewed candidates with final assessment
-                refreshCandidates('with_assessment');
-                break;
-            case 4: // View Active
-                refreshCandidates('with_opening');
-                break;
-            case 5: // View Inactive
-                refreshCandidates('inactive');
-                break;
-            case 6: // View All
-                refreshCandidates('all');
-                break;
-            default:
-                alert('Invalid choice');
-                break;
-        }
-    });
 
     $('#candidate_resume').change(function(event) {
         var maxsize = 10 * 1024 * 1024;

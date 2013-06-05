@@ -5,51 +5,47 @@ class CandidatesController < AuthenticatedController
 
   include ApplicationHelper
 
+  FILTER_LITERAL = {
+      :no_opening => 'Active Candidates without job openings',
+      :with_opening => 'Active Candidates assigned to job openings',
+      :no_interviews => 'Active Candidates without interviews',
+      :with_assessment => 'Interviewed Candidates with final assessment',
+      :without_assessment => 'Interviewed Candidates with no final assessment',
+      :active => 'Active Candidates',
+      :inactive => 'Blacklisted Candidates',
+      :all => 'All'
+  }
+
   def index
     @default_filter = 'All Active Candidates'
 
-    # TODO: too many cases, we need a neat approach here.
-    @candidates = (if params.has_key? :no_openings
-                     @default_filter = 'Active Candidates without job openings'
-                     Candidate.active.without_opening
-                   elsif params.has_key? :no_interviews
-                     @default_filter = 'Active Candidates without interviews'
-                     Candidate.active.without_interview
-                   elsif params.has_key? :with_assessment
-                     @default_filter = 'Interviewed Candidates with final assessment'
-                     Candidate.active.with_assessment
-                   elsif params.has_key? :without_assessment
-                     @default_filter = 'Interviewed Candidates with no final assessment'
-                     Candidate.active.without_assessment
-                   elsif params.has_key? :with_opening
-                     @default_filter = 'All Active Candidates'
-                     Candidate.active.with_opening
-                   elsif params.has_key? :inactive
-                     @default_filter = 'Blacklisted Candidates'
-                     Candidate.inactive
-                   elsif params.has_key? :available
-                     @default_filter = 'PLACEHOLDER TODO'
-                     Candidate.available
-                   elsif params.has_key? :all
-                     @default_filter = 'All'
-                     Candidate
-                   else
-                     opening = nil
-                     if (params[:opening_id])
-                       opening = Opening.find(params[:opening_id])
-                     end
-                     if opening
-                       opening.candidates.active
-                     else
-                       # NOTE: show active candidates by default
-                       Candidate.active
-                     end
-      end).order(sort_column('Candidate') + ' ' + sort_direction).paginate(:page => params[:page])
+    mode = (params.has_key? :mode) ? params[:mode].to_s : 'active'
 
-    if params.has_key? :partial
-      render partial: 'candidates/candidates_index'
-    end
-    end
+    @default_filter = FILTER_LITERAL[mode.to_sym] || 'Active Candidates'
+
+    @candidates = (if %w[no_openings no_interviews with_assessement with_opening available].include?(mode)
+      puts "HELLOsfadsdfadsfadsfssdfadsfadsfadsfadsfadsfadsfadsfadwfaewwfreqwrw"
+      Candidate.active.send(mode.to_sym)
+    elsif mode == 'inactive'
+      Candidate.inactive
+    elsif mode == 'all'
+      Candidate
+    elsif mode == 'without_assessment'
+      #TODO Not supported right now
+      Candidate.active
+    else
+      opening = nil
+      if (params[:opening_id])
+       opening = Opening.find(params[:opening_id])
+      end
+      if opening
+       opening.candidates.active
+      else
+       # NOTE: show active candidates by default
+       Candidate.active
+      end
+    end).order(sort_column('Candidate') + ' ' + sort_direction).paginate(:page => params[:page])
+  end
 
 
   def show

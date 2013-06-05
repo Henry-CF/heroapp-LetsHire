@@ -20,9 +20,9 @@ class DashboardController < ApplicationController
     end
 
     if can? :manage, Candidate
-      @candidates_without_opening = Candidate.active.without_opening
-      @candidates_without_interview = Candidate.active.without_interview
-      @candidates_without_assessment = Candidate.active.without_assessment
+      @candidates_without_opening = Candidate.active.no_openings
+      @candidates_without_interview = Candidate.active.no_interviews
+      @candidates_without_assessment = Candidate.active.no_assessment
       @candidates_with_assessment = Candidate.active.with_assessment
     end
 

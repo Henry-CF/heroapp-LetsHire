@@ -8,7 +8,7 @@ $(function () {
             opening_selection_container.find('select#opening_id').attr('name', 'opening_id');
 
             $('body').delegate('select#department_id', 'change', function(event) {
-                Common.reload_opening($(this), $('#interview_openingid_select_wrapper'), 'opening_id');
+                Common.reloadOpening($(this), $('#interview_openingid_select_wrapper'), 'opening_id');
             });
 
             $('.flexible_schedule_interviews').click(function(event) {
@@ -45,7 +45,7 @@ $(function () {
     });
 
 
-    function setup_datetimepicker(elements) {
+    function setupDatetimePicker(elements) {
         $(elements).datetimepicker().each(function(index, elem) {
             var isoTime = new Date($(elem).data('iso'));
             var new_id = elem.id.replace("scheduled_at", "scheduled_at_iso");
@@ -59,7 +59,7 @@ $(function () {
         });
     }
 
-    setup_datetimepicker($(".datetimepicker"));
+    setupDatetimePicker($(".datetimepicker"));
 
     $(".iso-time").each(function (index, elem) {
         elem.innerHTML = new Date(elem.innerHTML).toLocaleString();
@@ -200,7 +200,7 @@ $(function () {
                         $('#opening_candidate_status_field').show();
                         $('.submit_interviews').show();
                         $(this).find('td .datetimepicker').each(function(index, elem) {
-                            setup_datetimepicker(elem);
+                            setupDatetimePicker(elem);
                         });
                         $(".iso-time").each(function (index, elem) {
                             elem.innerHTML = new Date(elem.innerHTML).toLocaleString();
@@ -219,7 +219,7 @@ $(function () {
 
 
         var interviewers_selection_container = $("#interviewers_selection_container");
-        function load_interviewers_status(){
+        function loadInterviewersStatus(){
             var current_selected_user_ids = interviewers_selection_container.data('user_ids');
             var participants = $('#opening_id').data('participants');
             if (!participants) {
@@ -260,7 +260,7 @@ $(function () {
         }
 
 
-        function calculate_interviewers_change(interviewer_td) {
+        function calculateInterviewersChange(interviewer_td) {
 
             var new_user_ids = interviewers_selection_container.data('user_ids');
             var old_user_ids = $(interviewer_td).data('user_ids');
@@ -289,7 +289,7 @@ $(function () {
         }
 
         $('#participants_department_id').change(function() {
-            Users.reload_department_users($('#interviewers_selection'), $('#participants_department_id').val(), load_interviewers_status);
+            Users.reloadDepartmentUsers($('#interviewers_selection'), $('#participants_department_id').val(), loadInterviewersStatus);
         });
 
         table.on('click', 'td .edit_interviewers', function() {
@@ -300,7 +300,7 @@ $(function () {
             var new_val = $('#opening_id').data('department');
             $('#interviewers_selection').empty().append('Loading users...');
             $('#participants_department_id').val(new_val);
-            Users.reload_department_users($('#interviewers_selection'), $('#participants_department_id').val(), load_interviewers_status);
+            Users.reloadDepartmentUsers($('#interviewers_selection'), $('#participants_department_id').val(), loadInterviewersStatus);
             interviewers_selection_container.show().dialog({
                 width : 400,
                 height: 500,
@@ -309,7 +309,7 @@ $(function () {
                 buttons: {
                     "OK": function() {
                         $("#interviewers_selection_container").hide().dialog( "close" );
-                        calculate_interviewers_change(interviewer_td);
+                        calculateInterviewersChange(interviewer_td);
                     },
                     Cancel: function() {
                         $("#interviewers_selection_container").hide().dialog( "close" );
@@ -318,7 +318,7 @@ $(function () {
             });
         });
 
-        Common.prepare_object_selection_container($('#interviewers_selection'), load_interviewers_status, function (checkbox) {
+        Common.prepareObjectSelectionContainer($('#interviewers_selection'), loadInterviewersStatus, function (checkbox) {
             var user_ids= interviewers_selection_container.data('user_ids');
             var users = interviewers_selection_container.data('users');
             var current_val = parseInt($(checkbox).val());
@@ -347,7 +347,7 @@ $(function () {
             $.get(url, function(data, status) {
                 if (status == 'success') {
                     var newElem = $(data).appendTo(tbody);
-                    setup_datetimepicker(newElem.find("td .datetimepicker"));
+                    setupDatetimePicker(newElem.find("td .datetimepicker"));
                 }
             });
         });
@@ -367,7 +367,7 @@ $(function () {
             row.remove();
         });
 
-        function display_submit_errors(errors) {
+        function displaySubmitErrors(errors) {
             if (errors.length > 0) {
                 var error_content = '<ul>';
                 for (var i = 0; i < errors.length; i ++) {
@@ -402,7 +402,7 @@ $(function () {
                 })
             .done(function(response) {
                 if (!response.success) {
-                    display_submit_errors(response.messages);
+                    displaySubmitErrors(response.messages);
                 }
                 else {
                     var url = $('#previous_url').data('value');
@@ -413,7 +413,7 @@ $(function () {
                 }
             })
             .fail(function(jqXHR, textStatus, errorThrown) {
-                display_submit_errors(['Server error']);
+                    displaySubmitErrors(['Server error']);
             });
             return false;
         });
@@ -422,92 +422,6 @@ $(function () {
     if ($('.dropdown-toggle').length > 0) {
         $('.dropdown-toggle').dropdown();
     }
-
-    $('#interviews_viewfilter').click(function(event) {
-        function getEventTarget(e) {
-            e = e || window.event;
-            return e.target || e.srcElement;
-        }
-
-        function getIndex(sender) {
-            var aElements = sender.parentNode.parentNode.getElementsByTagName("a");
-            var aElementsLength = aElements.length;
-
-            var index;
-            for (var i = 0; i < aElementsLength; i ++) {
-                if (aElements[i] == sender) {
-                    index = i;
-                    return index;
-                }
-            }
-        }
-
-        function refreshInterviews(condition) {
-            var xmlhttp = null;
-            var url = null;
-            if (condition == '') {
-                url = '/interviews?partial';
-            } else {
-                url = '/interviews?partial&' + condition;
-            }
-
-            if (window.XMLHttpRequest) {
-                xmlhttp = new XMLHttpRequest();
-            } else if (window.ActiveXObject) {
-                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-            } 
-            
-            if (xmlhttp != null) {
-                xmlhttp.onreadystatechange = function() {
-                    if (xmlhttp.readyState == 4) { // loaded
-                       if (xmlhttp.status == 200) { // ok
-                           document.getElementById('all-interviews').innerHTML = xmlhttp.responseText;
-
-                           $(".iso-time").each(function (index, elem) {
-                               elem.innerHTML = new Date(elem.innerHTML).toLocaleString();
-                           });
-
-                           if ($('.dropdown-toggle').length > 0) {
-                               $('.dropdown-toggle').dropdown();
-                           }
-                       }
-                       else {
-                           alert("Problem retrieving data:" + xmlhttp.statusText);
-                       }
-                    }
-                };
-                xmlhttp.open("GET", url, true);
-                xmlhttp.send(null);
-            }
-            else {
-                alert("Your browser does not support XMLHTTP.");
-            }
-        }
-
-
-        var target = getEventTarget(event);
-        document.getElementById('interviews_filtername').innerHTML = target.innerHTML.toString();
-        switch (getIndex(target)) {
-            case 0: // View Mine as interviewer today
-                refreshInterviews('interviewed_by_me_today');
-                break;
-            case 1: // View Mine as interviewer
-                refreshInterviews('interviewed_by_me');
-                break;
-            case 2: // View My job openings related
-                refreshInterviews('owned_by_me');
-                break;
-            case 3:
-                refreshInterviews('no_feedback');
-                break;
-            case 4: // View All
-                refreshInterviews('all');
-                break;
-            default:
-                alert('Invalid choice');
-                break;
-        }
-    });
 
 
 });
