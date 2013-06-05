@@ -8,33 +8,62 @@
         - if is_interviewer? @interview.interviewers
           a.interview-feedback-btn.btn.btn-primary href='#' data-interview-id=@interview.id Update Feedback
     .page-container-inner.page-container-inner-view
+     
+      .form-horizontal.clear-both
+        .control-group
+          label.control-label
+            b Title:
+          .controls
+            = link_to @candidate.name, candidate_path(@candidate)
+            span = " for "
+            span = link_to @opening_candidate.opening.title, opening_path(@opening_candidate.opening)
+        .control-group
+          label.control-label
+            b Interview Type:
+          .controls
+            span = @interview.modality
+        .control-group
+          label.control-label
+            b Scheduled At:
+          .controls
+            span.iso-time = @interview.scheduled_at_iso
+        .control-group
+          label.control-label
+            b Duration(min):
+          .controls
+            span = @interview.duration.to_s
+        .control-group
+          label.control-label
+            - if @interview.modality.include?("phone")
+              b Phone:
+            - else
+              b Location:
+          .controls
+            - if @interview.modality.include?("phone")
+              span = @interview.phone
+            - else
+              span = @interview.location
+        .control-group
+          label.control-label
+            b Status:
+          .controls
+            span = @interview.status
+        .control-group
+          label.control-label
+            b Interviewers:
+          .controls
+            span = @interview.interviewers_str
+        .control-group
+          label.control-label
+            b Description
+          .controls
+            span = simple_format h(@interview.description)
+        .control-group
+          label.control-label
+            b Feedback
+          .controls
+            span = simple_format h(@interview.assessment)
 
-      dl.dl-horizontal.clear-both
-        dt Title
-        dd
-          = link_to @candidate.name, candidate_path(@candidate)
-          span= " for "
-          span= link_to @opening_candidate.opening.title, opening_path(@opening_candidate.opening)
-        dt Interview Type
-        dd =@interview.modality
-        dt Scheduled At
-        dd.iso-time= @interview.scheduled_at_iso
-        dt Duration(min)
-        dd= @interview.duration.to_s
-        - if @interview.modality.include?("phone")
-          dt Phone
-          dd= @interview.phone
-        - if @interview.modality.include?("onsite")
-          dt Location
-          dd= @interview.location
-        dt Status
-        dd= @interview.status
-        dt Interviewers
-        dd= @interview.interviewers_str
-        dt Description
-        dd = simple_format h(@interview.description)
-        dt Feedback
-        dd= simple_format h(@interview.assessment)
       =render 'interviews/interview_feedback', {:interview => @interview}
 
 
