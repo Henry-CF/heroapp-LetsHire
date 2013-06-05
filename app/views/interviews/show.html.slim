@@ -1,8 +1,5 @@
 .page-container-wrapper
-  h3
-    = link_to @candidate.name, candidate_path(@candidate)
-    span= " for "
-    span= link_to @opening_candidate.opening.title, opening_path(@opening_candidate.opening)
+  h3 Interview Details
   .page-container
     .pull-right.align-to-title
       - if (can? :manage, @interview) && @opening_candidate.in_interview_loop?
@@ -11,7 +8,13 @@
         - if is_interviewer? @interview.interviewers
           a.interview-feedback-btn.btn.btn-primary href='#' data-interview-id=@interview.id Update Feedback
     .page-container-inner.page-container-inner-view
+
       dl.dl-horizontal.clear-both
+        dt Title
+        dd
+          = link_to @candidate.name, candidate_path(@candidate)
+          span= " for "
+          span= link_to @opening_candidate.opening.title, opening_path(@opening_candidate.opening)
         dt Interview Type
         dd =@interview.modality
         dt Scheduled At
