@@ -25,15 +25,17 @@
                   span.caret
                 ul.dropdown-menu id="interviews_viewfilter"
                   li
-                    a href="#" My Interviews Today
+                    a href="?mode=interviewed_by_me_today" My Interviews Today
                   li
-                    a href="#" All of My Interviews
+                    a href="?mode=interviewed_by_me" All of My Interviews
+                  -if can? :manage, Interview
+                    li
+                      a href="?mode=owned_by_me" Any Interviews Related to Me
                   li
-                    a href="#" Any Interviews Related to Me
-                  li
-                    a href="#" Interviews without Feedback
-                  li
-                    a href="#" All
+                    a href="?mode=no_feedback" Interviews without Feedback
+                  - if can? :manage, Interview
+                    li
+                      a href="?mode=all" All
 
             -if can? :update, Interview
               .pull-right.index-edit-button

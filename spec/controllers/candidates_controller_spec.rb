@@ -47,7 +47,7 @@ describe CandidatesController do
       candidate.should be_valid
       opening_candidate = OpeningCandidate.create!(:opening_id => @opening.id, :candidate_id => candidate.id)
       opening_candidate.should be_valid
-      get :index, {:all => true}
+      get :index, {:mode => 'all' }
       assigns(:candidates).should include(candidate)
       assigns(:candidates).should include(@candidate)
     end

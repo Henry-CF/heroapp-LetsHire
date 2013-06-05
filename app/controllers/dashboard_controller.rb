@@ -2,16 +2,6 @@ class DashboardController < ApplicationController
   before_filter :require_login
 
   def overview
-    # opening related action items data providers
-    @active_openings = []
-    @openings_without_candidate = []
-
-    # candidates related action items data providers
-    @candidates_without_opening = []
-    @candidates_without_interview = []
-    @candidates_without_assessment = []
-    @candidates_with_assessment = []
-
     # interviews related action items data providers
 
     if can? :manage, Opening
@@ -20,9 +10,10 @@ class DashboardController < ApplicationController
     end
 
     if can? :manage, Candidate
-      @candidates_without_opening = Candidate.active.without_opening
-      @candidates_without_interview = Candidate.active.without_interview
-      @candidates_without_assessment = Candidate.active.without_assessment
+      @candidates_without_opening = Candidate.active.no_openings
+      @candidates_without_interview = Candidate.active.no_interviews
+      #Fixme: no_assessment isn't a scope, cannot apply scope 'active' for without_assessment
+      @candidates_without_assessment = Candidate.no_assessment
       @candidates_with_assessment = Candidate.active.with_assessment
     end
 
@@ -33,6 +24,18 @@ class DashboardController < ApplicationController
     else
       @interviews_without_feedback = current_user.interviews.where(:assessment => nil)
     end
+
+    # opening related action items data providers
+    @active_openings ||= []
+    @openings_without_candidate ||= []
+
+    # candidates related action items data providers
+    @candidates_without_opening ||= []
+    @candidates_without_interview ||= []
+    @candidates_without_assessment ||= []
+    @candidates_with_assessment ||= []
+
+
     @interviews_owned_by_me ||= []
     @interviews_interviewed_by_me ||= []
     @interviews_without_feedback ||= []

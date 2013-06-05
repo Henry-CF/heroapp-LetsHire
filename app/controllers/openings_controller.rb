@@ -14,13 +14,14 @@ class OpeningsController < ApplicationController
       @openings = Opening.published.order(sort_column('Opening') + ' ' + sort_direction).paginate(:page => params[:page])
     else
       @default_filter = 'My Openings'
-      if params.has_key?(:all)
+      case params[:mode]
+      when 'all'
         @default_filter = 'All'
         @openings = Opening.order(sort_column('Opening') + ' ' + sort_direction).paginate(:page => params[:page])
-      elsif params.has_key? :no_candidates
+      when 'no_candidates'
         @default_filter = 'Openings with Zero Candidates'
         @openings = Opening.published.without_candidates.owned_by(current_user.id).order(sort_column('Opening') + ' ' + sort_direction).paginate(:page => params[:page])
-      elsif params.has_key? :owned_by_me
+      when 'owned_by_me'
         @default_filter = 'My Openings'
         @openings = Opening.owned_by(current_user.id).order(sort_column('Opening') + ' ' + sort_direction).paginate(:page => params[:page])
       else

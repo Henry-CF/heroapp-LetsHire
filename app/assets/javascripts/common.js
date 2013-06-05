@@ -1,5 +1,5 @@
 var Common = {
-    prepare_object_selection_container:function (object, paginate_callback, change_event_callback) {
+    prepareObjectSelectionContainer:function (object, paginate_callback, change_event_callback) {
         var parent_object = object.parent();
         parent_object.delegate('.pagination a', 'click', function () {
             $('.pagination').html('Page is loading...');
@@ -30,17 +30,25 @@ var Common = {
         });
     },
 
-    reload_opening:  function(department_control, opening_control, opening_control_name) {
-    $(department_control).attr('disabled', true);
-    var url = '/openings/opening_options?selected_department_id=' + $(department_control).val();
-    return $(opening_control).load(url, function() {
-        $(department_control).attr('disabled', false);
-        $(opening_control).find('select#opening_id').attr('name', opening_control_name);
-    });
-}
+    reloadOpening:  function(department_control, opening_control, opening_control_name) {
+        $(department_control).attr('disabled', true);
+        var url = '/openings/opening_options?selected_department_id=' + $(department_control).val();
+        return $(opening_control).load(url, function() {
+            $(department_control).attr('disabled', false);
+            $(opening_control).find('select#opening_id').attr('name', opening_control_name);
+        });
+    },
 
-
-
+    updateQueryStringParameter: function (uri, key, value) {
+        var re = new RegExp("([?|&])" + key + "=.*?(&|$)", "i");
+        separator = uri.indexOf('?') !== -1 ? "&" : "?";
+        if (uri.match(re)) {
+            return uri.replace(re, '$1' + key + "=" + value + '$2');
+        }
+        else {
+            return uri + separator + key + "=" + value;
+        }
+    }
 };
 
 $(function() {
