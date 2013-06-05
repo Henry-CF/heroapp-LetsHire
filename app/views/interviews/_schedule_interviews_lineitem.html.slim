@@ -3,7 +3,10 @@ tr data-interview_id=interview.id
     td = text_field_tag :scheduled_at, nil, :class => 'datetimepicker', :id => nil, :data => {:iso => interview.scheduled_at_iso}
     td = number_field_tag :duration, interview.duration, :in => 30..180, :step => 10
     td = select_tag :modality, options_for_select(Interview::MODALITIES.collect { |x| [x,x] }, interview.modality)
-    td = text_field_tag :location, interview.location
+    - if interview.phone_interview? 
+      td = text_field_tag :phone, interview.phone
+    - else
+      td = text_field_tag :location, interview.location
     td data-user_ids=interview.user_ids data-users=interview.users.collect{ |user| user.name } data-interviewers=interview.interviewers.collect{ |i| [i.id, i.user_id] }
       div
         span= simple_format(interview.interviewers_str.join(';<br/>'))
@@ -20,6 +23,9 @@ tr data-interview_id=interview.id
     td.iso-time data-iso=interview.scheduled_at_iso = interview.scheduled_at_iso
     td#duration = interview.duration
     td#modality = interview.modality
-    td#location = interview.location
+    - if interview.phone_interview?
+      td#phone = interview.phone
+    - else
+      td#location = interview.location
     td = simple_format(interview.interviewers_str.join(';<br/>'))
     td = select_tag :status, options_for_select(Interview::STATUS.collect { |x| [x, x]}, interview.status)
