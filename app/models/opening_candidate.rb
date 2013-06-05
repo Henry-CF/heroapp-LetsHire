@@ -71,6 +71,14 @@ class OpeningCandidate < ActiveRecord::Base
     update_attributes(:status => OpeningCandidate::STATUS_LIST[OpeningCandidate::LOOP])
   end
 
+  def status_changed_to_accepted? (new_status)
+    ( status != STATUS_LIST[OFFER_ACCEPTED] ) and ( new_status == STATUS_LIST[OFFER_ACCEPTED] )
+  end
+
+  def status_changed_from_accepted? (new_status)
+    ( status == STATUS_LIST[OFFER_ACCEPTED] ) and ( new_status != STATUS_LIST[OFFER_ACCEPTED] )
+  end
+
   # find all 'rejected' records belong to recruiter user
 
   INTERVIEW_LOOP = 'Interview Loop'

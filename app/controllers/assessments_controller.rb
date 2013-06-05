@@ -47,25 +47,39 @@ class AssessmentsController < ApplicationController
   # PUT /opening_candidates/:opening_candidate_id/assessments/:id
   # PUT /opening_candidates/:opening_candidate_id/assessments/:id.json
   def update
-    @assessment = Assessment.find(params[:id].to_i)
+    Assessment.transaction do
+      OpeningCandidate.transaction do
+        Opening.transaction do
+          @assessment = Assessment.find(params[:id].to_i)
 
-    if params[:opening_candidate_id].to_i != @assessment.opening_candidate_id.to_i
-      raise ActiveRecord::RecordNotFound
-    end
+          if params[:opening_candidate_id].to_i != @assessment.opening_candidate_id.to_i
+            raise ActiveRecord::RecordNotFound
+          end
 
-    @opening_candidate = OpeningCandidate.find(params[:opening_candidate_id])
-    @candidate = @opening_candidate.candidate
+          @opening_candidate = OpeningCandidate.find(params[:opening_candidate_id])
+          @candidate = @opening_candidate.candidate
 
-    @opening_candidate.status = params[:opening_candidate][:status].to_i
-    params[:assessment][:comment] = "\r\n\r\n" + "#{current_user.email} write feedback at #{Time.now.to_date}:\r\n"  + params[:assessment][:comment]
+          if @opening_candidate.status_changed_to_accepted? params[:opening_candidate][:status].to_i
+            opening = Opening.find(@opening_candidate.opening_id)
+            opening.increment! :filled_no
+          elsif @opening_candidate.status_changed_from_accepted? params[:opening_candidate][:status].to_i
+            opening = Opening.find(@opening_candidate.opening_id)
+            opening.decrement! :filled_no
+          end
 
-    respond_to do |format|
-      if @assessment.update_attributes(params[:assessment]) && @opening_candidate.save
-        format.html { redirect_to @candidate, notice: 'Assessment was successfully updated.' }
-        format.json { render json: @candidate, status: :created, location: @candidate }
-      else
-        format.html { render action: "edit" }
-        format.json { render json: @assessment.errors, status: :unprocessable_entity }
+          @opening_candidate.status = params[:opening_candidate][:status].to_i
+          params[:assessment][:comment] = "\r\n\r\n" + "#{current_user.email} write feedback at #{Time.now.to_date}:\r\n"  + params[:assessment][:comment]
+
+          respond_to do |format|
+            if @assessment.update_attributes(params[:assessment]) && @opening_candidate.save
+              format.html { redirect_to @candidate, notice: 'Assessment was successfully updated.' }
+              format.json { render json: @candidate, status: :created, location: @candidate }
+            else
+              format.html { render action: "edit" }
+              format.json { render json: @assessment.errors, status: :unprocessable_entity }
+            end
+          end
+        end
       end
     end
 
