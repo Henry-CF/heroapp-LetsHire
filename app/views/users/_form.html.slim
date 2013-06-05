@@ -10,15 +10,15 @@ div.page-container
       .control-group
         = form.label :email, :class => 'control-label'
         .controls
-          = form.text_field :email
+          = form.text_field :email, :autocomplete => 'off'
       .control-group
         = form.label :password, :class => 'control-label'
         .controls
-          = form.password_field :password
+          = form.password_field :password, :autocomplete => 'off'
       .control-group
         = form.label :password_confirmation, "Confirm Password", :class => 'control-label'
         .controls
-          = form.password_field :password_confirmation
+          = form.password_field :password_confirmation, :autocomplete => 'off'
       .control-group
         = form.label :department, :class => 'control-label'
         .controls
