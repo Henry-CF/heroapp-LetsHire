@@ -23,9 +23,7 @@
 }
 
 .page-container-inner {
-    border-style: solid;
-    border-color: gainsboro;
-    border-width: 1px;
+    border: 1px solid #DCDCDC;
     border-radius: 5px;
     margin: 0;
 
