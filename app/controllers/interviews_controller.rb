@@ -5,6 +5,14 @@ class InterviewsController < AuthenticatedController
     authorize! :read, Interview
 
     mode = params[:mode]
+    if mode == 'all'
+     if can? :manage, Interview
+     elsif can? :update, Interview
+       mode = 'owned_by_me'
+     else
+       mode = 'interviewed_by_me'
+     end
+    end
     @interviews = (case mode
                   when 'owned_by_me'
                      @default_filter = 'Any Interviews Related to Me'
@@ -18,22 +26,12 @@ class InterviewsController < AuthenticatedController
                   when 'no_feedback'
                      @default_filter = 'Interviews without Feedback'
                      Interview.owned_by(current_user.id).where(:assessment => nil)
+                  when 'all'
+                     @default_filter = 'All'
+                     Interview
                   else
-                    if can? :manage, Interview
-                        if mode == 'all'
-                          @default_filter = 'All'
-                          Interview
-                        else
-                          @default_filter = 'Any Interviews Related to Me'
-                          Interview.owned_by(current_user.id)
-                        end
-                    elsif can? :update, Interview
-                      @default_filter = 'Any Interviews Related to Me'
-                      Interview.owned_by(current_user.id)
-                    else
-                      @default_filter = 'My Interviews Today'
-                      Interview.interviewed_by(current_user.id)
-                    end
+                     @default_filter = 'Any Interviews Related to Me'
+                     Interview.owned_by(current_user.id)
                   end).paginate(:page => params[:page])
 
     if params.has_key? :partial

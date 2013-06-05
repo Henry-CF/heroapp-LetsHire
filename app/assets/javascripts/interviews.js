@@ -113,7 +113,7 @@ $(function () {
                     }
                 }
             });
-            display_submit_errors(errors);
+            displaySubmitErrors(errors);
             return (errors.length == 0);
         }
 
