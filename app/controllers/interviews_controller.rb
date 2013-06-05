@@ -18,10 +18,10 @@ class InterviewsController < AuthenticatedController
                      @default_filter = 'Any Interviews Related to Me'
                      Interview.owned_by(current_user.id)
                   when 'interviewed_by_me'
-                     @default_filter = 'My Interviews Today'
+                     @default_filter = 'All of My Interviews'
                      Interview.interviewed_by(current_user.id)
                   when 'interviewed_by_me_today'
-                     @default_filter = 'All of My Interviews'
+                     @default_filter = 'My Interviews Today'
                      Interview.interviewed_by(current_user.id).during(Time.zone.now)
                   when 'no_feedback'
                      @default_filter = 'Interviews without Feedback'

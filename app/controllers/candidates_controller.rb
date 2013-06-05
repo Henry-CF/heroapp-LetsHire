@@ -6,7 +6,7 @@ class CandidatesController < AuthenticatedController
   include ApplicationHelper
 
   FILTER_LITERAL = {
-      :no_opening => 'Active Candidates without job openings',
+      :no_openings => 'Active Candidates without job openings',
       :with_opening => 'Active Candidates assigned to job openings',
       :no_interviews => 'Active Candidates without interviews',
       :with_assessment => 'Interviewed Candidates with final assessment',
