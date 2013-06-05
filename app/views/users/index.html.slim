@@ -4,7 +4,7 @@
     .page-container-inner.page-container-inner-list
       .pull-right
         = link_to 'Add a User', new_user_path, :class => 'btn btn-primary'
-      table class='table table-hover'
+      table class='table table-hover table-striped table-bordered users'
         thead
           tr
             th Name
@@ -22,7 +22,7 @@
               td
                 div.row-fluid.actions
                   .span6.action-icon
-                    = link_to '', edit_user_path(user.id), :class => 'icon-edit'
+                    = link_to '', edit_user_path(user.id), :class => 'icon-editor'
 
                   .span6.action-icon
                     .dropdown

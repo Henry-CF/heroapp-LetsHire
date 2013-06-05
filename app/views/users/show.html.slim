@@ -1,27 +1,30 @@
 = notice
-h3.pull-left User Details
-.pull-right.align-to-title
-  =link_to 'Edit', edit_user_path(@user.id), :class => 'btn btn-primary'
+.page-container-wrapper
+  h3 User Details -> #{@user.name}
+  .page-container
+    .page-container-inner.page-container-inner-form
+      .pull-right
+        =link_to 'Edit', edit_user_path(@user.id), :class => 'btn btn-primary'
 
-= form_for @user, :html => {:class => 'form-horizontal clear-both'} do |form|
-  .control-group
-    = form.label 'Name', :class => 'control-label'
-    .controls
-      = form.text_field :name, :disabled => true
-  .control-group
-    = form.label 'Email', :class => 'control-label'
-    .controls
-      = form.text_field :email, :disabled => true
-  .control-group
-    = form.label 'Roles', :class => 'control-label'
-    .controls
-      = form.text_field :roles_string, :disabled => true, :class => 'input-xxlarge'
-  .control-group
-    = form.label 'Department', :class => 'control-label'
-    .controls
-      = form.text_field :department_string, :disabled => true
-  - if @user.admin
-    .controls
-      = form.label 'This User is Administrator'
+      = form_for @user, :html => {:class => 'form-horizontal clear-both'} do |form|
+        .control-group
+          = form.label 'Name', :class => 'control-label'
+          .controls
+            = form.text_field :name, :disabled => true
+        .control-group
+          = form.label 'Email', :class => 'control-label'
+          .controls
+            = form.text_field :email, :disabled => true
+        .control-group
+          = form.label 'Roles', :class => 'control-label'
+          .controls
+            = form.text_field :roles_string, :disabled => true, :class => 'input-xxlarge'
+        .control-group
+          = form.label 'Department', :class => 'control-label'
+          .controls
+            = form.text_field :department_string, :disabled => true
+        - if @user.admin
+          .controls
+            = form.label 'This User is Administrator'
 
 

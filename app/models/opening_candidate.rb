@@ -43,6 +43,10 @@ class OpeningCandidate < ActiveRecord::Base
     status == OpeningCandidate::STATUS_LIST[OpeningCandidate::INTERVIEW_LOOP]
   end
 
+  def fail?
+    status == OpeningCandidate::STATUS_LIST[OpeningCandidate::FAIL]
+  end
+
   def quit?
     status == OpeningCandidate::STATUS_LIST[OpeningCandidate::QUIT]
   end

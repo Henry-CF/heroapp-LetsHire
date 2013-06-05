@@ -4,14 +4,14 @@ tr
   -unless opening_candidate
     td= link_to interview.opening_candidate.candidate.name + " for " + interview.opening_candidate.opening.title, interview
   td= interview.duration
-  td= interview.interviewers_str
+  td= simple_format(interview.interviewers_str.join(';<br/>'))
   td= interview.status
   - can_manage = can? :manage, interview
   td
     div.row-fluid.actions
       .span6.action-icon
         -if can_manage
-          = link_to '', edit_multiple_interviews_path(:opening_candidate_id => interview.opening_candidate_id), :class => 'icon-edit'
+          = link_to '', edit_multiple_interviews_path(:opening_candidate_id => interview.opening_candidate_id), :class => 'icon-editor'
 
       .span6.action-icon
         .dropdown

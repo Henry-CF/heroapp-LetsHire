@@ -6,18 +6,20 @@ tr data-interview_id=interview.id
     td = text_field_tag :location, interview.location
     td data-user_ids=interview.user_ids data-users=interview.users.collect{ |user| user.name } data-interviewers=interview.interviewers.collect{ |i| [i.id, i.user_id] }
       div
-        span= interview.interviewers_str
+        span= simple_format(interview.interviewers_str.join(';<br/>'))
         span.pull-right= button_tag '>', :class => 'edit_interviewers btn btn-small'
-    td = select_tag :status, options_for_select(Interview::STATUS.collect { |x| [x, x]}, interview.status)
     td
-      i.icon-remove
-      span= ' '
+      span
+        = select_tag :status, options_for_select(Interview::STATUS.collect { |x| [x, x]}, interview.status)
+      span
+        = link_to '#', :class => 'button-remove' do
+          = image_tag('error.png')
+        end
 
   - else
     td.iso-time data-iso=interview.scheduled_at_iso = interview.scheduled_at_iso
     td#duration = interview.duration
     td#modality = interview.modality
     td#location = interview.location
-    td = interview.interviewers_str
+    td = simple_format(interview.interviewers_str.join(';<br/>'))
     td = select_tag :status, options_for_select(Interview::STATUS.collect { |x| [x, x]}, interview.status)
-    td
