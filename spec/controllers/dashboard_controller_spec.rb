@@ -135,7 +135,7 @@ describe DashboardController do
       assigns(:candidates_with_assessment).should include(@candidate)
     end
 
-    it 'assign interviewed candidate without final assessment to @candidates_without_assessment' do
+    xit 'assign interviewed candidate without final assessment to @candidates_without_assessment' do
       sign_in @recruiter
       get 'overview'
       assigns(:candidates_without_assessment).should_not include(@candidate)

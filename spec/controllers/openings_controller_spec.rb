@@ -80,18 +80,18 @@ describe OpeningsController do
         opening1 = Opening.create! valid_attributes, :status => 0
         get :index, {}
         assigns(:openings).index(opening1).should nil
-        get :index, { :all => true}
+        get :index, { :mode => 'all' }
         assigns(:openings).index(opening1).should be_true
 
         sign_in @user1
-        get :index, { :all => true}
+        get :index, { :mode => 'all' }
         assigns(:openings).index(opening1).should be_true
 
         Opening.stub(:owned_by).and_return(Opening)
         sign_in @hiring_manager1
         get :index, {}
         assigns(:openings).index(opening1).should be_true
-        get :index, { :all => true}
+        get :index, { :mode => 'all' }
         assigns(:openings).index(opening1).should be_true
       end
     end

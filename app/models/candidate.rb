@@ -107,7 +107,7 @@ class Candidate < ActiveRecord::Base
     candidates = Candidate.with_interview.select! do |candidate|
       candidate.interviews_finished_no_assess?
     end
-    candidates
+    candidates || []
   end
 
 end
