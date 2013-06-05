@@ -8,10 +8,13 @@ tr data-interview_id=interview.id
       div
         span= simple_format(interview.interviewers_str.join(';<br/>'))
         span.pull-right= button_tag '>', :class => 'edit_interviewers btn btn-small'
-    td = select_tag :status, options_for_select(Interview::STATUS.collect { |x| [x, x]}, interview.status)
     td
-      i.icon-remove
-      span= ' '
+      span
+        = select_tag :status, options_for_select(Interview::STATUS.collect { |x| [x, x]}, interview.status)
+      span
+        = link_to '#', :class => 'button-remove' do
+          = image_tag('error.png')
+        end
 
   - else
     td.iso-time data-iso=interview.scheduled_at_iso = interview.scheduled_at_iso
@@ -20,4 +23,3 @@ tr data-interview_id=interview.id
     td#location = interview.location
     td = simple_format(interview.interviewers_str.join(';<br/>'))
     td = select_tag :status, options_for_select(Interview::STATUS.collect { |x| [x, x]}, interview.status)
-    td

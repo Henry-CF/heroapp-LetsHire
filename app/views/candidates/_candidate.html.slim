@@ -7,7 +7,7 @@ tr data-id=candidate.id
     div.row-fluid.actions
       .span6.action-icon
         -if can? :manage, @candidate
-          =link_to '', edit_candidate_path(candidate) , :class => 'icon-edit'
+          =link_to '', edit_candidate_path(candidate) , :class => 'icon-editor'
 
       .span6.action-icon
         .dropdown

@@ -2,10 +2,18 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
-.interviewline li {
-  display: inline;
-  list-style-type: none;
-  padding: 10px;
+.interviewline td {
+  padding: 0px 15px 0px 15px;
+}
+
+.interviewline.large-interval td {
+  padding: 0px 30px 0px 30px;
+}
+
+img.indicator {
+  width: 13px;
+  height: 12px;
+  background: url(arrow.png) no-repeat center;
 }
 
 div.feedbackborder {
@@ -23,4 +31,89 @@ div.assessment-candidate-dialog {
 
 div.dialog-candidate-blacklist-div {
   display: none;
+}
+
+div.page-container-inner.candidate-panel {
+  background-color: #ffffff;
+  padding: 20px;
+}
+
+div.page-container-inner.candidate-panel.fixed-size {
+  overflow: auto;
+}
+
+hr.candidate-splitter-line {
+  color: #dcdbdf;
+  background-color: #dcdbdf;
+  height: 2px;
+  margin-top: 0px;
+  margin-bottom: 20px;
+}
+
+p.candidate-name-font {
+  color: #2c639b;
+  font-size: 40px;
+}
+
+p.candidate-status-font {
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.candidate-mark-inactive-button {
+  font-size: 20px;
+  font-color: #2c639b;
+  width: 90%;
+  height: 30px;
+  padding: 5px;
+  background: url(mark_inactive.png) no-repeat left;
+}
+
+.candidate-assign-job-button {
+  font-size: 20px;
+  font-color: #2c639b;
+  width: 90%;
+  height: 30px;
+  padding: 5px;
+  background: url(assign_job_opening.png) no-repeat left;
+}
+
+table.candidate-profile {
+  table-layout: fixed;
+  width: 80%;
+}
+
+.candidate-profile td { 
+    padding: 5px;
+    font-size: 15px;
+    white-space: pre-wrap; /* css-3 */
+    white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+    white-space: -pre-wrap; /* Opera 4-6 */
+    white-space: -o-pre-wrap; /* Opera 7 */
+    word-wrap: break-word; /* Internet Explorer 5.5+ */
+}
+
+.candidate-profile td.align-right {
+    width: 30%;
+    text-align: right;
+}
+
+div.candidate_successful {
+    float: left;
+    padding: 10px;
+    width: 35px;
+    height: 35px;
+    background: url(candidate_successful.png) no-repeat center;
+}
+
+div.candidate_failed {
+    float: left;
+    padding: 10px;
+    width: 35px;
+    height: 35px;
+    background: url(candidate_failed.png) no-repeat center;
+}
+
+h4.interview_result {
+    padding: 10px 5px 15px 5px;
 }

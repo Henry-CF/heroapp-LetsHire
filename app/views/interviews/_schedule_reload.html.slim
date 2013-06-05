@@ -6,7 +6,6 @@ thead
     th Location
     th Interviewers
     th Status
-    th
 tbody data-status=@opening_candidate.try(:status_str)
   -if @opening_candidate
     = render :partial => "interviews/schedule_interviews_lineitem", :collection => @interviews, :as => :interview
