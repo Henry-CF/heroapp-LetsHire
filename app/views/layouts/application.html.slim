@@ -34,7 +34,7 @@ html
             span = link_to 'Interviews', interviews_path, class: current_page(interviews_path)
             - if current_user.admin?
               span = link_to 'Users', users_path, class: current_page(users_path)
-    .content.container
+    #main-content.container
       = render 'layouts/flash_message'
       == yield
     = render 'layouts/footer'
