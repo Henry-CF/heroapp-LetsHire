@@ -1,30 +1,32 @@
 = notice
 .page-container-wrapper
-  h3 User Details -> #{@user.name}
+  h3 #{@user.name}
   .page-container
     .page-container-inner.page-container-inner-form
       .pull-right
         =link_to 'Edit', edit_user_path(@user.id), :class => 'btn btn-primary'
 
-      = form_for @user, :html => {:class => 'form-horizontal clear-both'} do |form|
+      .form-horizontal.clear-both
         .control-group
-          = form.label 'Name', :class => 'control-label'
+          label.control-label
+            b Name:
           .controls
-            = form.text_field :name, :disabled => true
+            span = @user.name
         .control-group
-          = form.label 'Email', :class => 'control-label'
+          label.control-label
+            b Email:
           .controls
-            = form.text_field :email, :disabled => true
+            span = @user.email
         .control-group
-          = form.label 'Roles', :class => 'control-label'
+          label.control-label
+            b Roles:
           .controls
-            = form.text_field :roles_string, :disabled => true, :class => 'input-xxlarge'
+            span = @user.roles_string
         .control-group
-          = form.label 'Department', :class => 'control-label'
+          label.control-label
+            b Departments:
           .controls
-            = form.text_field :department_string, :disabled => true
+            span = @user.department_string
         - if @user.admin
           .controls
-            = form.label 'This User is Administrator'
-
-
+            span = 'This User is Administrator'
