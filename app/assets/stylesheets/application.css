@@ -112,8 +112,8 @@ body,
 }
 
 .nav-header {
-  height: 119px;
-  background: url(nav_bg.png) repeat-x top;
+  height: 150px;
+  background: url(nav_bg.png) repeat-x bottom;
 }
 
 .nav-bar {
